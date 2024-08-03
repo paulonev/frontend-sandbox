@@ -12,6 +12,7 @@ import { PortfolioApi } from "../Api/PortfolioApi";
 import { useModalState } from "../Common/ModalStateProvider";
 import { Spinner } from "reactstrap";
 import { AxiosError } from "axios";
+import { telegram_showAlert } from "../Telegram/utils";
 
 const CreatePortfolioScreen = (): JSX.Element => {
     const modalState = useModalState("createPortfolio");
@@ -36,7 +37,9 @@ const CreatePortfolioScreen = (): JSX.Element => {
             setError("root.serverError", {
                 type: axiosError.code,
                 message: axiosError.message
-            })
+            });
+
+            telegram_showAlert(Vocab.ServerErrorRu);
         }
     }
 
