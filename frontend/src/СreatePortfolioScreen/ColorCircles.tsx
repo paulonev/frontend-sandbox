@@ -63,7 +63,7 @@ export const ColorCircles = ({ control }: IColorCirclesProps) => {
 const PointStyleRules = {
     width: 40,
     height: 40,
-    marginRight: 18,
+    marginRight: 16,
     borderRadius: "50%",
     boxSizing: "border-box",
     boxShadow: "0 4px 6px rgba(0, 0, 0, 0.15)"
