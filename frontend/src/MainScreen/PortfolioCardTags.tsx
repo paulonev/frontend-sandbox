@@ -13,7 +13,7 @@ export const PortfolioCardTags = ({ value, colorScheme }: IPortfolioCardTagsProp
 
     return (
         <TagsContainerStyled>
-            {value.map((tag, i) => (<TagStyled key={i} colorScheme={colorScheme} theme={theme}>{tag}</TagStyled>))}
+            {value.map((tag, i) => (<TagStyled key={i} colorScheme={colorScheme} theme={theme} disabled>{tag}</TagStyled>))}
         </TagsContainerStyled>
     );
 }

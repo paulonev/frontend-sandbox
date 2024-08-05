@@ -32,7 +32,7 @@ export const TypeSelect = ({ control }: ITypeSelectProps) => {
                         >
                             <option value="crypto">{Vocab.CryptoSelectOptionRu}</option>
                             <option value="stocks" disabled={true} aria-disabled={true}>
-                                {Vocab.StocksSelectOptionRu}
+                                {Vocab.StocksSelectOptionRu} ({Vocab.SoonRu})
                             </option>
                         </Input>
                     </FormGroup>
