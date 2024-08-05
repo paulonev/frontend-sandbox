@@ -70,7 +70,7 @@ const Point = ({ style, className, title, checked, color, onClick, rectProps }: 
     boxSizing: 'border-box',
     transition: 'height 100ms ease 0s, width 100ms ease 0s',
     ...rectProps!.style,
-    border: checked ? '1px solid rgba(0, 0, 0, 0.2)' : 'transparent',
+    border: checked ? '1px solid rgba(0, 0, 0, 0.12)' : 'transparent',
   } as CSSProperties;
 
   useEffect(() => {
