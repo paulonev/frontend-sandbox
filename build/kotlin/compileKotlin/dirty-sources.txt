@@ -1,0 +1,1 @@
+/Users/aleksandr/capitalview/src/main/kotlin/Main.kt
