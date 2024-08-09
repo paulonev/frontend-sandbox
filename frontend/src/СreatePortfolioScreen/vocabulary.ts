@@ -15,5 +15,8 @@ export const Vocab = {
     SubmitButtonRu: "Создать",
 
     ServerErrorRu: "Ошибка сервера. Попробуйте позже",
-    SoonRu: "скоро"
+    SoonRu: "скоро",
+
+    GeneralErrorRu: "Что-то пошло не так",
+    TryAgainButtonTextRu: "Попробовать снова",
 }

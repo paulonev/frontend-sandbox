@@ -1,4 +1,4 @@
-import { createContext, Dispatch, SetStateAction, useContext } from 'react';
+import { createContext, useContext } from 'react';
 
 export type Modals = "createPortfolio";
 
@@ -8,7 +8,7 @@ export type ModalStates = {
 
 export interface IModalState {
     readonly open: boolean;
-    readonly setOpen: Dispatch<SetStateAction<boolean>>;
+    readonly setOpen: (value: boolean) => void;
 }
 
 const ModalStateContext = createContext<ModalStates | null>(null);
