@@ -13,8 +13,8 @@ export const PortfolioCarousel = ({ items }: IPortfolioCarouselProps) => {
 
     const handleClickAddPortfolio = () => {
         if (modalState) {
-            const { setOpen } = modalState;
-            setOpen(value => !value);
+            const { open, setOpen } = modalState;
+            setOpen(!open);
         }
     }
 
