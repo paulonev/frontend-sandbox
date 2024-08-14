@@ -2,16 +2,6 @@ name: capitalview
 
 services:
   #.... frontend, nginx
-  backend:
-    #....
-    build:
-      context: .
-      dockerfile: backend/Dockerfile
-    ports:
-      - "4444:4444"
-    depends_on:
-      - database
-
   database:
     image: postgres:latest
     environment:
@@ -22,5 +12,13 @@ services:
       - "5432:5432"
     volumes:
       - ./initdb:/docker-entrypoint-initdb.d
-    profiles: [dev] # would run only when docker compose initialized with "--profile dev" attribute for "docker compose" command
-                    # full request docker compose --profile dev up
+
+  backend:
+    #....
+    build:
+      context: backend
+      dockerfile: Dockerfile
+    ports:
+      - "4444:4444"
+    depends_on:
+      - database
