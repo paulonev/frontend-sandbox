@@ -5,15 +5,15 @@ networks:
 
 services:
   database:
-    image: postgres:latest
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: capitalview-local
       POSTGRES_USER: capitalview
       POSTGRES_PASSWORD: capitalview
     ports:
       - "5432:5432"
-    volumes:
-      - ./initdb:/docker-entrypoint-initdb.d
+    # volumes:
+      # - ./initdb:/var/lib/postgresql/data # if we want to add files like configuration or init.sql to the database
     networks:
       - dev
 
@@ -48,3 +48,8 @@ services:
       - frontend
     networks:
       - dev
+
+# enable to have data persist between container restarts
+# volumes:
+#   initdb:
+#     driver: local
