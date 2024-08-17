@@ -5,15 +5,21 @@ networks:
 
 services:
   database:
+    container_name: capitalview-db
     image: postgres:16.4-alpine
     environment:
-      POSTGRES_DB: capitalview-local
+      POSTGRES_DB: capitalview
       POSTGRES_USER: capitalview
       POSTGRES_PASSWORD: capitalview
     ports:
       - "5432:5432"
     # volumes:
       # - ./initdb:/var/lib/postgresql/data # if we want to add files like configuration or init.sql to the database
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U capitalview" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
     networks:
       - dev
 
@@ -33,7 +39,8 @@ services:
     ports:
       - "4444:4444"
     depends_on:
-      - database
+      database:
+        condition: service_healthy
     networks:
       - dev
 
