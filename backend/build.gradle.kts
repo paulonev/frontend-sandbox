@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val kotlinVersion = "1.8.0"
 val ktorVersion = "2.3.12"
+val exposedVersion = "0.53.0"
 
 plugins {
     kotlin("jvm") version "2.0.0"
@@ -28,7 +29,16 @@ dependencies {
 //    implementation("io.ktor:ktor-jackson:$ktorVersion")
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+    implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
+    implementation("org.postgresql:postgresql:42.7.3")
     testImplementation("junit:junit:4.13.2")
+
+    implementation("ch.qos.logback:logback-classic:1.2.11")
+    implementation("org.slf4j:slf4j-api:1.7.30")
+    implementation("org.slf4j:slf4j-simple:1.7.30")
 //    implementation("io.ktor:ktor-gson:$ktorVersion")
 }
 
