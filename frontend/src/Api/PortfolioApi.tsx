@@ -3,17 +3,19 @@ import { NewPortfolioFormData } from "../СreatePortfolioScreen/types";
 import HttpClient from "./HttpClient";
 
 export class PortfolioApi {
-    private static getUrl = () => `${import.meta.env.VITE_SERVER_API_BASEURL}/api`;
-
     public static async createPortfolio(data: NewPortfolioFormData): Promise<void> {
-        return HttpClient.post(`${PortfolioApi.getUrl()}/portfolio`, data);
+        return HttpClient.post(`api/portfolio`, data);
     }
 
     public static async getPortfolios(): Promise<PortfoliosData> {
-        return HttpClient.get(`${PortfolioApi.getUrl()}/portfolio`);
+        return HttpClient.get(`api/portfolio`);
     }
 
     public static async getPortfolio(id: number): Promise<PortfolioItem> {
-        return HttpClient.get(`${PortfolioApi.getUrl()}/portfolio/${id}`);
+        return HttpClient.get(`api/portfolio/${id}`);
+    }
+
+    public static async getGson(): Promise<unknown> {
+        return HttpClient.get(`api/gson`);
     }
 }
