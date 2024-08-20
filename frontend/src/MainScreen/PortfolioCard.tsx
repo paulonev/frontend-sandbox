@@ -25,8 +25,8 @@ export const PortfolioCard = ({ item }: IPortfolioCardProps) => {
 
 // [== STYLES ==]
 const PortfolioCardStyled = styled.div<{ colorScheme?: string; theme: DefaultTheme }>`
-    background-color: ${props => props.colorScheme ? props.theme[props.colorScheme].bgColor : props.theme.default.bgColor};
-    color: ${props => props.colorScheme ? props.theme[props.colorScheme].textColor : props.theme.default.textColor};
+    background-color: ${props => props.colorScheme ? props.theme[props.colorScheme].bgColor : props.theme.card_default.bgColor};
+    color: ${props => props.colorScheme ? props.theme[props.colorScheme].textColor : props.theme.card_default.textColor};
 
     border-radius: 10px;
     padding: 20px;
