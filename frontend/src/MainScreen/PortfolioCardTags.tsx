@@ -25,8 +25,8 @@ const TagsContainerStyled = styled.div`
 `;
 
 const TagStyled = styled.button<{ colorScheme?: string; theme: DefaultTheme }>`
-    background-color: ${props => props.colorScheme ? props.theme[props.colorScheme].tagsBgColor : props.theme.default.tagsBgColor};
-    color: ${props => props.colorScheme ? props.theme[props.colorScheme].textColor : props.theme.default.textColor};
+    background-color: ${props => props.colorScheme ? props.theme[props.colorScheme].tagsBgColor : props.theme.card_default.tagsBgColor};
+    color: ${props => props.colorScheme ? props.theme[props.colorScheme].textColor : props.theme.card_default.textColor};
     
     border: none;
     border-radius: 10px;

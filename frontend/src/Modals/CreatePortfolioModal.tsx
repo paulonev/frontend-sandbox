@@ -11,12 +11,13 @@ export const CreatePortfolioModal = () => {
     const queryClient = useQueryClient();
     const modalState = useModalState("createPortfolio");
 
-    const invalidatePortfolioScreenQuery = () =>
-        queryClient.invalidateQueries({ queryKey: [PortfolioScreenQueryKey], exact: true });
+    //reset PortfolioScreen query to its pre-loaded (null in our case) state, and refetch the query since it's active
+    const resetPortfolioScreenQuery = () =>
+        queryClient.resetQueries({ queryKey: [PortfolioScreenQueryKey], exact: true });
 
     return (
         // data for portfolioScreenQuery will be refetched once modal is closed
-        <Modal fullscreen={true} isOpen={modalState?.open} fade={false} onClosed={invalidatePortfolioScreenQuery}>
+        <Modal fullscreen={true} isOpen={modalState?.open} fade={false} onClosed={resetPortfolioScreenQuery}>
 			<GoBackButtonStyled onClick={() => modalState?.setOpen(false)}>
 				<ArrowLeft />
 			</GoBackButtonStyled>

@@ -27,6 +27,8 @@ export type CardSchemeStyles = {
     readonly bgColor: string;
     readonly textColor: string;
     readonly tagsBgColor: string;
+    readonly gainColor: string;
+    readonly lossColor: string;
 }
 
 export type PortfolioCardColorTheme = {

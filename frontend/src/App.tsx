@@ -4,6 +4,9 @@ import { useState } from 'react';
 import { ProvideModalState } from './Common/ModalStateProvider';
 import { CreatePortfolioModal } from './Modals/CreatePortfolioModal';
 import { GlobalErrorBoundary } from './GlobalErrorBoundary';
+import { DefaultTheme, ThemeProvider } from 'styled-components';
+import { Black, Green, Red } from './Common/colors';
+import { PortfolioCardTheme } from './MainScreen/PortfolioCardTheme';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,21 +21,33 @@ function App() {
   const [createPortfolioModalOpen, setCreatePortfolioModalOpen] = useState(false);
 
   return (
-      <ProvideModalState value={
-          { createPortfolio: { open: createPortfolioModalOpen, setOpen: setCreatePortfolioModalOpen } }
-      }>
-          <QueryClientProvider client={queryClient}>
-              <QueryErrorResetBoundary>
-                {({ reset }) => (
-                    <GlobalErrorBoundary reset={reset}>
-                        <MainScreen />
-                        <CreatePortfolioModal />
-                    </GlobalErrorBoundary>
-                )}
-              </QueryErrorResetBoundary>
-          </QueryClientProvider>
-      </ProvideModalState>
+      <ThemeProvider theme={{...defaultTheme, ...PortfolioCardTheme}}>
+        <ProvideModalState value={
+            { createPortfolio: { open: createPortfolioModalOpen, setOpen: setCreatePortfolioModalOpen } }
+        }>
+            <QueryClientProvider client={queryClient}>
+                <QueryErrorResetBoundary>
+                  {({ reset }) => (
+                      <GlobalErrorBoundary reset={reset}>
+                          <MainScreen />
+                          <CreatePortfolioModal />
+                      </GlobalErrorBoundary>
+                  )}
+                </QueryErrorResetBoundary>
+            </QueryClientProvider>
+        </ProvideModalState>
+      </ThemeProvider>
   )
 }
 
 export default App
+
+const defaultTheme: DefaultTheme = {
+  card_default: {
+    bgColor: "#DCEBFF",
+    textColor: Black,
+    tagsBgColor: "rgba(255, 255, 255, 0.2)",
+    gainColor: Green,
+    lossColor: Red,
+  }
+};

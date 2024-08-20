@@ -2,7 +2,7 @@
 import { MainScreen } from './vocabulary';
 import { formatGainLoss, formatPrice } from '../Common/formatter';
 import styled from 'styled-components';
-import { Green, SecondaryHeaderColor } from '../Common/colors';
+import { Green, Red, SecondaryHeaderColor } from '../Common/colors';
 import { DifferenceType, isGain, PortfolioDifference } from './types';
 import { AppGlobalCurrencyCode } from '../constants';
 
@@ -60,5 +60,5 @@ const GainLossAmountStyled = styled.div<{ $type: DifferenceType; }>`
     font-family: "Inter", sans-serif;
     font-weight: 500;
     font-size: 14px;
-    color: ${props => isGain(props.$type) ? Green : "red"};
+    color: ${props => isGain(props.$type) ? Green : Red};
 `;
