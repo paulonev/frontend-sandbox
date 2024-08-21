@@ -2,11 +2,11 @@ import { Input } from "reactstrap";
 import { PortfolioSecondaryColorScheme } from "../Common/colors";
 import { Control, Controller } from "react-hook-form";
 import { NewPortfolioFormData } from "./types";
-import Circle from "@uiw/react-color-circle";
 import { CSSProperties } from "react";
 import { FormFieldStyled, LabelStyled } from "./styles";
 import { Vocab } from "./vocabulary";
 import { PortfolioCardTheme } from "../MainScreen/PortfolioCardTheme";
+import { CustomCircle } from "./CustomCircle";
 
 type ColorsToHexMap = { [key in PortfolioSecondaryColorScheme | string]: string; }
 type HexToColorsMap = { [key: string]: PortfolioSecondaryColorScheme | string; }
@@ -33,28 +33,28 @@ interface IColorCirclesProps {
     readonly control: Control<NewPortfolioFormData>;
 }
 
-// TODO: disable reverse transform when any circle loses focus
 export const ColorCircles = ({ control }: IColorCirclesProps) => {
     return (
         <Controller 
             name="portfolioColor"
             control={control}
-            render={({ field: { onChange, onBlur, name, value, ref }}) => (
+            render={({ field: { onChange, name, value, ref } }) => (
                 <FormFieldStyled>
                     <LabelStyled htmlFor="portfolioColor">{Vocab.ChoosePortfolioColorRu}</LabelStyled>
                     <Input type="hidden" name={name} value={value} innerRef={ref} />
-                    <Circle 
+                    <CustomCircle
                         colors={Object.keys(hexToColorsMap)}
                         color={colorsToHexMap[value]} 
                         onChange={(color) => {
                             onChange(hexToColorsMap[color.hex]);
                         }}
-                        onBlur={onBlur}
                         pointProps={{ style: PointStyleRules }}
                         rectProps={{ style: SelectedStyleRules }}
                     />
                 </FormFieldStyled>
             )}
+            rules={{ required: true}}
+            shouldUnregister // to remove portfolioColor from the form data
         />
     )
 }
@@ -66,7 +66,6 @@ const PointStyleRules = {
     marginRight: 16,
     borderRadius: "50%",
     boxSizing: "border-box",
-    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.15)"
 } as CSSProperties;
 
 const SelectedStyleRules = {

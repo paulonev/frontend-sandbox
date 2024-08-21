@@ -60,6 +60,7 @@ const CreatePortfolioScreen = (): JSX.Element => {
 }
 
 export default CreatePortfolioScreen;
+
 // [== STYLES ==]
 const ButtonStyled = styled.button`
     background-color: ${PortfolioCardTheme.main.bgColor};

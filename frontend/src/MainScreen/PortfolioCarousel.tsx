@@ -1,8 +1,8 @@
 import styled from "styled-components";
 import { PortfolioItem } from "./types";
 import { PortfolioCard } from "./PortfolioCard";
-import addPortfolioButton from '../assets/add-portfolio-btn.png'
 import { useModalState } from "../Common/ModalStateProvider";
+import { AddPortfolioButton } from "../Common/components/AddPortfolioButton";
 
 interface IPortfolioCarouselProps {
     readonly items: PortfolioItem[];
@@ -13,8 +13,8 @@ export const PortfolioCarousel = ({ items }: IPortfolioCarouselProps) => {
 
     const handleClickAddPortfolio = () => {
         if (modalState) {
-            const { setOpen } = modalState;
-            setOpen(value => !value);
+            const { open, setOpen } = modalState;
+            setOpen(!open);
         }
     }
 
@@ -24,7 +24,7 @@ export const PortfolioCarousel = ({ items }: IPortfolioCarouselProps) => {
                 {items.length ? items.map((x, index) => <PortfolioCard key={index} item={x} />) : null}
                 <AddButtonCardStyled>
                     <button onClick={handleClickAddPortfolio}>
-                        <img src={addPortfolioButton} alt="Add Portfolio" />
+                        <AddPortfolioButton />
                     </button>
                 </AddButtonCardStyled>
             </CarouselStyled>

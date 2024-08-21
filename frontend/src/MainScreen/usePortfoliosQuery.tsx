@@ -1,5 +1,6 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { PortfoliosData } from './types';
+import { PortfolioScreenQueryKey } from '../constants';
 
 const MOCK_PORTFOLIOS: PortfoliosData = {
     meta: {
@@ -71,37 +72,15 @@ const MOCK_PORTFOLIOS: PortfoliosData = {
 };
 
 export const usePortfoliosQuery = () => {
-    return useSuspenseQuery<PortfoliosData>({
-        queryKey: ['portfoliosScreen'],
+    return useQuery<PortfoliosData>({
+        queryKey: [PortfolioScreenQueryKey],
         queryFn: () => {
-            return Promise.resolve(MOCK_PORTFOLIOS)
+            //simulate network delay
+            return new Promise(res => setTimeout(() => {
+                res(MOCK_PORTFOLIOS);
+            }, 1000));
         },
-        //about initialData and placeholderData - https://tkdodo.eu/blog/placeholder-and-initial-data-in-react-query
-        initialData: {
-            meta: {
-                overallVolume: 1111,
-                gainLoss: {
-                    inVolume: 11,
-                    inPercentage: 11,
-                    type: "gain"
-                }
-            },
-            items: [
-                {
-                    meta: {
-                        volume: 111,
-                        gainLoss: {
-                            inVolume: 11,
-                            inPercentage: 11,
-                            type: "gain"
-                        }
-                    },
-                    isMain: true,
-                    name: "Undefined",
-                    tags: ["undefined"],
-                    colorScheme: "main"
-                }
-            ],
-        }        
+        retry: false //to bail out error asap
+        //about initialData and placeholderData - https://tkdodo.eu/blog/placeholder-and-initial-data-in-react-query     
     })
 }

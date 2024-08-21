@@ -18,5 +18,5 @@ const ParagraphStyled = styled.p<{ colorScheme?: string; theme: DefaultTheme }>`
     font-size: 16px;
     margin: 0;
 
-    color: ${props => props.colorScheme ? props.theme[props.colorScheme].textColor : props.theme.main.textColor};
+    color: ${props => props.colorScheme ? props.theme[props.colorScheme].textColor : props.theme.card_default.textColor};
 `;
