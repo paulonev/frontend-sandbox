@@ -3,7 +3,7 @@ package org.example.db.users
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.javatime.datetime
 
-object UsersTable : IntIdTable() {
+object UsersTable : IntIdTable("users") {
     val firstName = varchar("first_name", 50).nullable()
     val lastName = varchar("last_name", 50).nullable()
     val username = varchar("username", 50).nullable()
