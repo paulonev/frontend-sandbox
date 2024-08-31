@@ -24,6 +24,7 @@ import org.example.db.portfolio.PortfolioTable
 import org.example.db.users.UserDao
 import org.example.db.users.UsersTable
 import org.example.receive.PortfolioReceive
+import org.example.receive.UserReceive
 import org.example.respond.*
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
@@ -108,7 +109,12 @@ fun main(args: Array<String>){
                 call.respond(Gson().toJson(user))
             }
             post("api/users/create") {
-                call.respond(UserDao.create())
+                dbQuery {
+                    val requestBody = call.receiveText()
+                    val token = object : TypeToken<UserReceive>() {}.type
+                    val userReceive = Gson().fromJson<UserReceive>(requestBody, token)
+                    call.respond(UserDao.create(userReceive))
+                }
             }
             post("api/portfolio"){
                 dbQuery {
