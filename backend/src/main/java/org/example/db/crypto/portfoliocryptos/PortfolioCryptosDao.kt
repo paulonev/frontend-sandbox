@@ -13,4 +13,8 @@ object PortfolioCryptosDao {
             return@transaction HttpStatusCode.OK
         }
     }
+
+    fun getAll(portfolioId: Int): List<PortfolioCryptosEntity> {
+        return PortfolioCryptosEntity.find { PortfolioCryptosTable.portfolio eq portfolioId }.toList()
+    }
 }
