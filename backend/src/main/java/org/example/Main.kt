@@ -30,6 +30,7 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.example.livecoinwatch.request.Coins
+import org.example.livecoinwatch.response.CoinsSingle
 import org.jetbrains.kotlin.com.google.gson.Gson
 import org.jetbrains.kotlin.com.google.gson.reflect.TypeToken
 
@@ -162,6 +163,10 @@ fun main(args: Array<String>){
             get("api/coins/list"){
                 val coinslist = Coins().getCoinsList()
                 call.respond(coinslist!!)
+            }
+            get("api/coins/single") {
+                val coinsSingle = Coins().getCoinsSingle()
+                call.respond(Gson().toJson(coinsSingle!!))
             }
         }
     }.start(wait = true)
