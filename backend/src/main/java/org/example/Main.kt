@@ -29,6 +29,7 @@ import org.example.respond.*
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.example.livecoinwatch.request.Coins
 import org.jetbrains.kotlin.com.google.gson.Gson
 import org.jetbrains.kotlin.com.google.gson.reflect.TypeToken
 
@@ -157,6 +158,10 @@ fun main(args: Array<String>){
                     )
                     call.respond(Gson().toJson(mainPageRespond))
                 }
+            }
+            get("api/coins/list"){
+                val coinslist = Coins().getCoinsList()
+                call.respond(coinslist!!)
             }
         }
     }.start(wait = true)

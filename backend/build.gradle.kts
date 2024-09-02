@@ -6,7 +6,7 @@ val exposedVersion = "0.53.0"
 
 plugins {
     kotlin("jvm") version "2.0.0"
-//    kotlin("plugin.serialization") version "2.0.0"
+    kotlin("plugin.serialization") version "2.0.0"
     id("io.ktor.plugin") version "2.3.12"
     application
     java
@@ -45,6 +45,11 @@ dependencies {
         exclude(group = "org.slf4j", module = "slf4j-log4j12")
     }
 //    implementation("io.ktor:ktor-gson:$ktorVersion")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("org.slf4j:slf4j-api:1.7.30")
+    implementation("org.slf4j:slf4j-simple:1.7.30")
+    implementation("io.ktor:ktor-client-serialization:1.6.4")
 }
 
 tasks.test {
