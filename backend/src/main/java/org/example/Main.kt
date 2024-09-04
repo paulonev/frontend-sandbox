@@ -8,6 +8,8 @@ import io.ktor.server.routing.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.request.*
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.example.*
@@ -35,9 +37,11 @@ import org.example.livecoinwatch.response.CoinsSingle
 import org.jetbrains.kotlin.com.google.gson.Gson
 import org.jetbrains.kotlin.com.google.gson.reflect.TypeToken
 
-fun main(args: Array<String>){
+object CryptoPriceCacheHolder{
+    val cryptoPriceCache: CryptoPriceCache = CryptoPriceCache()
+}
 
-    val cryptoPriceCache = CryptoPriceCache()
+fun main(args: Array<String>){
 
     DBConnect.connect()
 
@@ -153,8 +157,21 @@ fun main(args: Array<String>){
                         )
                         portfolioStatistics
                     }
-                    val purchaseAmount = portfolioStatisticsDataList.sumByDouble { it.purchaseAmount }
-                    val currentAmount = portfolioStatisticsDataList.sumByDouble { it.currentAmount }
+
+                    var purchaseAmount = 0.0
+                    var currentAmount = 0.0
+
+                    coroutineScope {
+                        val purchaseAmountAsync = async {
+                                portfolioStatisticsDataList.sumByDouble { it.purchaseAmount }
+                        }
+                        val currentAmountAsync = async {
+                            portfolioStatisticsDataList.sumByDouble { it.currentAmount }
+                        }
+
+                        purchaseAmount = purchaseAmountAsync.await()
+                        currentAmount = currentAmountAsync.await()
+                    }
 
                     mainPageRespond.meta = Meta(
                         Utils.round(2, currentAmount),
@@ -169,7 +186,7 @@ fun main(args: Array<String>){
             }
             get("api/coins/single") {
                 val coinsSingle = Coins().getCoinsSingle()
-                call.respond(Gson().toJson(coinsSingle!!))
+                call.respond(Gson().toJson(coinsSingle))
             }
         }
     }.start(wait = true)

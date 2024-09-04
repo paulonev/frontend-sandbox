@@ -1,5 +1,6 @@
 package org.example.livecoinwatch.request
 
+import org.example.ResourceNotFoundException
 import org.example.livecoinwatch.Api
 import org.example.livecoinwatch.RetrofitClient
 import org.example.livecoinwatch.response.CoinsList
@@ -20,11 +21,12 @@ class Coins {
     }
 
     fun getCoinsSingle(
-        currency: String = "USD",
         code: String = "BTC",
+        currency: String = "USD",
         meta: Boolean = false
-    ): CoinsSingle? {
+    ): CoinsSingle {
         return api.getCoinsSingle(CoinsSingleRequest(currency, code, meta)).execute().body()
+            ?: throw ResourceNotFoundException("Coin", "Coin with ticker = $code not found")
     }
 
     data class CoinsListRequest(

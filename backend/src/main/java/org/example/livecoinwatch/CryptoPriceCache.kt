@@ -3,7 +3,7 @@ package org.example.livecoinwatch
 import java.time.Duration
 import java.util.concurrent.ConcurrentHashMap
 
-class CryptoPriceCache(private val expirationDuration: Duration = Duration.ofSeconds(50)) {
+class CryptoPriceCache(private val expirationDuration: Duration = Duration.ofSeconds(60)) {
 
     private val cache = ConcurrentHashMap<String, CachedValue<Double>>()
 
