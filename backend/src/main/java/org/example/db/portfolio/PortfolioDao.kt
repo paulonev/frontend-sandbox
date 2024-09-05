@@ -13,6 +13,11 @@ object PortfolioDao {
     fun create(portfolioReceive: PortfolioReceive, userId: Int): HttpStatusCode {
         val userEntity = UserDao.get(userId)
         if (isExist(portfolioReceive.name, userEntity)) throw ResourceAlreadyExistsException("Portfolio", "Portfolio with name ${portfolioReceive.name} already exists")
+        if (portfolioReceive.isMainPortfolio) {
+            getMainPortfolio(userEntity.id.value)?.apply {
+                this.isMain = false
+            }
+        }
         PortfolioEntity.new {
             name = portfolioReceive.name
             portfolioType = PortfolioType.valueOf(portfolioReceive.portfolioType).name
@@ -32,5 +37,9 @@ object PortfolioDao {
 
     private fun isExist(name: String, userEntity: UserEntity): Boolean {
         return PortfolioEntity.find { (PortfolioTable.user eq userEntity.id.value) and (PortfolioTable.name eq name) }.singleOrNull() != null
+    }
+
+    private fun getMainPortfolio(userId: Int): PortfolioEntity? {
+        return PortfolioEntity.find { (PortfolioTable.user eq userId) and (PortfolioTable.isMain eq true) }.singleOrNull()
     }
 }
