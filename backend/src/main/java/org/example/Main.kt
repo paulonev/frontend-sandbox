@@ -54,6 +54,10 @@ fun main(args: Array<String>){
         SchemaUtils.createMissingTablesAndColumns(CurrenciesTable)
         SchemaUtils.createMissingTablesAndColumns(PortfolioCurrenciesTable)
         SchemaUtils.createMissingTablesAndColumns(TransactionsCurrenciesTable)
+
+        exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_telegram_id ON users (telegram_id)")
+        exec("CREATE INDEX IF NOT EXISTS idx_portfolio_cryptos_portfolio_id ON portfolio_cryptos (portfolio)")
+        exec("CREATE INDEX IF NOT EXISTS idx_portfolio_currencies_portfolio_id ON portfolio_currencies (portfolio)")
     }
 
     embeddedServer(Netty, 4444){
