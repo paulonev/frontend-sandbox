@@ -17,6 +17,7 @@ import org.example.calculate.PortfolioStatistics
 import org.example.db.DBConnect
 import org.example.db.crypto.cryptocurrencies.CryptoCurrenciesTable
 import org.example.db.crypto.portfoliocryptos.PortfolioCryptosTable
+import org.example.db.crypto.transactions.TransactionsCryptosDao
 import org.example.db.crypto.transactions.TransactionsCryptosTable
 import org.example.db.currency.currencies.CurrenciesTable
 import org.example.db.currency.portfoliocurrencies.PortfolioCurrenciesTable
@@ -34,6 +35,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.example.livecoinwatch.CryptoPriceCache
 import org.example.livecoinwatch.request.Coins
 import org.example.livecoinwatch.response.CoinsSingle
+import org.example.receive.CryptoTransaction
 import org.jetbrains.kotlin.com.google.gson.Gson
 import org.jetbrains.kotlin.com.google.gson.reflect.TypeToken
 
@@ -191,6 +193,14 @@ fun main(args: Array<String>){
             get("api/coins/single") {
                 val coinsSingle = Coins().getCoinsSingle()
                 call.respond(Gson().toJson(coinsSingle))
+            }
+            post("api/portfolio/{portfolio_id}/transactions") {
+                dbQuery {
+                    val portfolioId = call.parameters["portfolio_id"]?.toInt() ?: throw ResourceNotFoundException("Portfolio", "Portfolio id not found in url")
+                    val token = object : TypeToken<CryptoTransaction>(){}.type
+                    val cryptoTransaction = Gson().fromJson<CryptoTransaction>(call.receiveText(), token)
+                    call.respond(TransactionsCryptosDao.create(cryptoTransaction, portfolioId))
+                }
             }
         }
     }.start(wait = true)

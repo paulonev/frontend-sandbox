@@ -1,13 +1,14 @@
 package org.example.livecoinwatch
 
+import java.math.BigDecimal
 import java.time.Duration
 import java.util.concurrent.ConcurrentHashMap
 
 class CryptoPriceCache(private val expirationDuration: Duration = Duration.ofSeconds(60)) {
 
-    private val cache = ConcurrentHashMap<String, CachedValue<Double>>()
+    private val cache = ConcurrentHashMap<String, CachedValue<BigDecimal>>()
 
-    fun get(key: String): Double? {
+    fun get(key: String): BigDecimal? {
         val cachedValue = cache[key]
         return if (cachedValue != null && (System.currentTimeMillis() - cachedValue.timestamp) < expirationDuration.toMillis()) {
             cachedValue.value
@@ -16,7 +17,7 @@ class CryptoPriceCache(private val expirationDuration: Duration = Duration.ofSec
         }
     }
 
-    fun put(key: String, value: Double) {
+    fun put(key: String, value: BigDecimal) {
         cache[key] = CachedValue(value, System.currentTimeMillis())
     }
 }

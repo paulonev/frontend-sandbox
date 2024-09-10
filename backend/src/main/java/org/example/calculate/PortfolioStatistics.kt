@@ -7,13 +7,14 @@ import org.example.db.crypto.portfoliocryptos.PortfolioCryptosEntity
 import org.example.db.currency.portfoliocurrencies.PortfolioCurrenciesDao
 import org.example.db.currency.portfoliocurrencies.PortfolioCurrenciesEntity
 import org.example.livecoinwatch.request.Coins
+import java.math.BigDecimal
 
 class PortfolioStatistics {
 
     suspend fun getPortfolioStatistics(portfolioId: Int): PortfolioStatisticsData = coroutineScope {
         val portfolioCryptos: List<PortfolioCryptosEntity> = PortfolioCryptosDao.getAll(portfolioId)
-        val portfolioCurrencies: PortfolioCurrenciesEntity? = PortfolioCurrenciesDao.get(portfolioId)
-        val balance = portfolioCurrencies?.balance ?: 0.0
+        val portfolioCurrencies: PortfolioCurrenciesEntity = PortfolioCurrenciesDao.get(portfolioId)
+        val balance = portfolioCurrencies.balance
 
         val priceRequest = portfolioCryptos.map { crypto ->
             async {
@@ -26,12 +27,12 @@ class PortfolioStatistics {
 
         val purchaseAmountAsync = async {
             priceResults.sumByDouble { (amount, _, averagePrice, commission) ->
-                amount * averagePrice + commission
+                (amount * averagePrice).toDouble() + commission
             }
         }
         val currentAmountAsync = async {
             priceResults.sumByDouble { (amount, currentPrice, _, _) ->
-                amount * currentPrice
+                (amount * currentPrice).toDouble()
             }
         }
 
@@ -44,7 +45,7 @@ class PortfolioStatistics {
             (currentAmount - purchaseAmount) / purchaseAmount * 100)
     }
 
-    private suspend fun getCurrentCoinPrice(ticker: String): Double = withContext(Dispatchers.IO) {
+    private suspend fun getCurrentCoinPrice(ticker: String): BigDecimal = withContext(Dispatchers.IO) {
         val cache = CryptoPriceCacheHolder.cryptoPriceCache.get(ticker)
         return@withContext if (cache == null){
             val currentPrice = Coins().getCoinsSingle(ticker).rate
@@ -56,9 +57,9 @@ class PortfolioStatistics {
     }
 
     data class Data(
-        val amount: Double,
-        val currentPrice: Double,
-        val averagePrice: Double,
+        val amount: BigDecimal,
+        val currentPrice: BigDecimal,
+        val averagePrice: BigDecimal,
         val commission: Double
     )
 
