@@ -1,12 +1,5 @@
 import { PortfolioColorScheme } from "../Common/colors";
-
-export type DifferenceType = "gain" | "loss";
-
-export type PortfolioDifference = {
-    readonly type: DifferenceType;
-    readonly inVolume: number;
-    readonly inPercentage: number;
-}
+import { PortfolioDifference, DifferenceType } from "../Entities/Portfolio/types";
 
 export type PortfoliosMeta = {
     readonly overallVolume: number;
@@ -36,6 +29,7 @@ export type PortfolioCardColorTheme = {
 }
 
 export type PortfolioItem = {
+    readonly id: number;
     readonly meta: PortfolioMeta;
     readonly isMain: boolean;
     readonly name: string;

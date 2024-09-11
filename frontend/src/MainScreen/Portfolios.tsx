@@ -10,20 +10,21 @@ import { MainScreen } from "./vocabulary";
 
 interface IPortfoliosProps {
     readonly items: PortfolioItem[];
+    readonly selectPortfolio: (id: number) => void;
 }
 
-export const Portfolios = ({ items }: IPortfoliosProps) => {
+export const Portfolios = ({ items, selectPortfolio }: IPortfoliosProps) => {
     return (
         <ContainerStyled>
             <HeaderStyled>{MainScreen.MainPortfolioRu}</HeaderStyled>
             <ThemeProvider theme={PortfolioCardTheme}>
                 {/* TODO: one portfolio is always main */}
                 <ProvidePortfolioCardType value={{ type: "large" }}>
-                    <PortfolioCardWide item={items.find(p => p.isMain)} />
+                    <PortfolioCardWide item={items.find(p => p.isMain)} onClick={(item) => selectPortfolio(item.id)}/>
                 </ProvidePortfolioCardType>
                 <SecondaryHeaderStyled>{MainScreen.OtherPortfoliosRu}</SecondaryHeaderStyled>
                 <ProvidePortfolioCardType value={{ type: "small" }}>
-                    <PortfolioCarousel items={items.filter(p => !p.isMain)} />
+                    <PortfolioCarousel items={items.filter(p => !p.isMain)} selectPortfolio={(item) => selectPortfolio(item.id)} />
                 </ProvidePortfolioCardType>
             </ThemeProvider>
         </ContainerStyled>
