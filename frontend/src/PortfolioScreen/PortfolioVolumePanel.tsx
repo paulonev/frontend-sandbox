@@ -29,7 +29,7 @@ export const PortfolioVolumePanel = ({ data, currency = AppGlobalCurrencyCode }:
 
 // [== STYLES ==]
 const MainParagraphStyled = styled.p`
-    margin-top: 10px;
+    margin-top: 0;
     margin-bottom: 0;
     font-weight: 600;
     font-size: 40px;

@@ -10,7 +10,6 @@ interface IPortfolioAssetRecordProps {
     readonly data: PortfolioAsset;
 }
 
-//TODO: test imageContainer with bigger images: how they fit
 export const PortfolioAssetRecord = ({ data }: IPortfolioAssetRecordProps): JSX.Element => {
     return (
         <ContainerStyled>
@@ -39,6 +38,10 @@ const ContainerStyled = styled.div`
     grid-column-gap: 0px;
     grid-row-gap: 0px;
     color: ${Black};
+
+    @media screen and (min-width: 768px) {
+        grid-template-columns: 50px repeat(2, 0.5fr);
+    }
 `;
 
 const Div1Styled = styled.div`
