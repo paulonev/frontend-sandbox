@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { PortfoliosData } from './types';
-import { PortfolioScreenQueryKey } from '../constants';
+import { MainScreenQueryKey } from '../constants';
 
 const MOCK_PORTFOLIOS: PortfoliosData = {
     meta: {
@@ -13,6 +13,7 @@ const MOCK_PORTFOLIOS: PortfoliosData = {
     },
     items: [
         {
+            id: 1,
             meta: {
                 volume: 5672,
                 gainLoss: {
@@ -27,6 +28,7 @@ const MOCK_PORTFOLIOS: PortfoliosData = {
             colorScheme: "main"
         },
         {
+            id: 2,
             meta: {
                 volume: 5672,
                 gainLoss: {
@@ -41,6 +43,7 @@ const MOCK_PORTFOLIOS: PortfoliosData = {
             colorScheme: "pattensBlue"
         },
         {
+            id: 3,
             meta: {
                 volume: 5672,
                 gainLoss: {
@@ -55,6 +58,7 @@ const MOCK_PORTFOLIOS: PortfoliosData = {
             colorScheme: "springSun"
         },
         {
+            id: 4,
             meta: {
                 volume: 5672,
                 gainLoss: {
@@ -73,7 +77,7 @@ const MOCK_PORTFOLIOS: PortfoliosData = {
 
 export const usePortfoliosQuery = () => {
     return useQuery<PortfoliosData>({
-        queryKey: [PortfolioScreenQueryKey],
+        queryKey: [MainScreenQueryKey],
         queryFn: () => {
             //simulate network delay
             return new Promise(res => setTimeout(() => {

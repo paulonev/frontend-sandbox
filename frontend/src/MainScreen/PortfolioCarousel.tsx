@@ -2,13 +2,14 @@ import styled from "styled-components";
 import { PortfolioItem } from "./types";
 import { PortfolioCard } from "./PortfolioCard";
 import { useModalState } from "../Common/ModalStateProvider";
-import { AddPortfolioButton } from "../Common/components/AddPortfolioButton";
+import { AddButton } from "../Common/components/AddButtonSvg";
 
 interface IPortfolioCarouselProps {
     readonly items: PortfolioItem[];
+    readonly selectPortfolio: (item: PortfolioItem) => void;
 }
 
-export const PortfolioCarousel = ({ items }: IPortfolioCarouselProps) => {
+export const PortfolioCarousel = ({ items, selectPortfolio }: IPortfolioCarouselProps) => {
     const modalState = useModalState("createPortfolio");
 
     const handleClickAddPortfolio = () => {
@@ -21,10 +22,10 @@ export const PortfolioCarousel = ({ items }: IPortfolioCarouselProps) => {
     return (
         <CarouselContainerStyled>
             <CarouselStyled>
-                {items.length ? items.map((x, index) => <PortfolioCard key={index} item={x} />) : null}
+                {items.length ? items.map((x, index) => <PortfolioCard key={index} item={x} onClick={selectPortfolio} />) : null}
                 <AddButtonCardStyled>
                     <button onClick={handleClickAddPortfolio}>
-                        <AddPortfolioButton />
+                        <AddButton />
                     </button>
                 </AddButtonCardStyled>
             </CarouselStyled>

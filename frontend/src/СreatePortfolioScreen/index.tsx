@@ -4,15 +4,14 @@ import { NameInput } from "./NameInput";
 import { TypeSelect } from "./TypeSelect";
 import { MainPortfolioSwitch } from "./MainPortfolioSwitch";
 import { ColorCircles } from "./ColorCircles";
-import { White } from "../Common/colors";
 import { Vocab } from "./vocabulary";
-import styled from "styled-components";
-import { PortfolioCardTheme } from "../MainScreen/PortfolioCardTheme";
 import { PortfolioApi } from "../Api/PortfolioApi";
 import { useModalState } from "../Common/ModalStateProvider";
 import { Spinner } from "reactstrap";
 import { AxiosError } from "axios";
 import { telegram_showAlert } from "../Telegram/utils";
+import { PrimaryButton } from "../Common/components/PrimaryButton";
+import styled from "styled-components";
 
 const CreatePortfolioScreen = (): JSX.Element => {
     const modalState = useModalState("createPortfolio");
@@ -50,11 +49,13 @@ const CreatePortfolioScreen = (): JSX.Element => {
             <MainPortfolioSwitch control={control} />
             {!watchIsMainPortfolio && <ColorCircles control={control} />}
             
-            <ButtonStyled type="submit" disabled={!isValid || isSubmitting}>
-                {isSubmitting && <Spinner size="sm">{''}</Spinner>}
-                {' '}
-                {Vocab.SubmitButtonRu}
-            </ButtonStyled>
+            <ButtonContainerStyled>
+                <PrimaryButton type="submit" disabled={!isValid || isSubmitting}>
+                    {isSubmitting && <Spinner size="sm">{''}</Spinner>}
+                    {' '}
+                    {Vocab.SubmitButtonRu}
+                </PrimaryButton>
+            </ButtonContainerStyled>
         </form>
     )
 }
@@ -62,20 +63,7 @@ const CreatePortfolioScreen = (): JSX.Element => {
 export default CreatePortfolioScreen;
 
 // [== STYLES ==]
-const ButtonStyled = styled.button`
-    background-color: ${PortfolioCardTheme.main.bgColor};
-    color: ${White};
-
+const ButtonContainerStyled = styled.div`
     position: absolute;
     bottom: 20px;
-    width: 91.5vw;
-
-    border-radius: 12.13px;
-    height: 40px;
-    text-align: center;
-    box-sizing: border-box;
-
-    &:disabled {
-        background-color: rgba(66, 106, 249, 0.4);
-    }
 `;

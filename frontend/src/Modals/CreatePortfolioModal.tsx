@@ -5,18 +5,18 @@ import { Vocab } from "../СreatePortfolioScreen/vocabulary";
 import CreatePortfolioScreen from "../СreatePortfolioScreen";
 import { ArrowLeft } from "../Common/components/ArrowLeft";
 import { useQueryClient } from "@tanstack/react-query";
-import { PortfolioScreenQueryKey } from "../constants";
+import { MainScreenQueryKey } from "../constants";
 
 export const CreatePortfolioModal = () => {
     const queryClient = useQueryClient();
     const modalState = useModalState("createPortfolio");
 
-    //reset PortfolioScreen query to its pre-loaded (null in our case) state, and refetch the query since it's active
+    //reset MainScreen query to its pre-loaded (null in our case) state, and refetch the query since it's active
     const resetPortfolioScreenQuery = () =>
-        queryClient.resetQueries({ queryKey: [PortfolioScreenQueryKey], exact: true });
+        queryClient.resetQueries({ queryKey: [MainScreenQueryKey], exact: true });
 
     return (
-        // data for portfolioScreenQuery will be refetched once modal is closed
+        // data for MainScreen query will be refetched once modal is closed
         <Modal fullscreen={true} isOpen={modalState?.open} fade={false} onClosed={resetPortfolioScreenQuery}>
 			<GoBackButtonStyled onClick={() => modalState?.setOpen(false)}>
 				<ArrowLeft />

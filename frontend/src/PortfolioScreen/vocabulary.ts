@@ -1,0 +1,17 @@
+export const PortfolioScreen = {
+    HourShortLabelRu: "ч",
+    AllTimeRu: "За все время",
+    BestAssetRu: "Лучшая",
+    WorstAssetRu: "Худшая",
+    BalanceRu: "Баланс",
+    TokenAssetsRu: "Монеты",
+    AddTransactionRu: "Добавить транзакцию",
+    BalanceTooltipHeaderRu: "Как рассчитывается баланс",
+    BalanceTooltipBodyLine1Ru: "Баланс = Сумма пополнений",
+    BalanceTooltipBodyLine2Ru: "- Сумма выводов",
+    BalanceTooltipBodyLine3Ru: "- Сумма покупок ценных бумаг (с такой же валютой)",
+    BalanceTooltipBodyLine4Ru: "+ Сумма дивидендов (с такой же валютой)",
+    BalanceTooltipBodyLine5Ru: "- Комиссии брокера",
+    BalanceTooltipBodyLine6Ru: "- Прочие расходы",
+    BalanceTooltipBodyLine7Ru: "На данный момент в балансе не учитываются налоги",
+}
