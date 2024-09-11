@@ -20,7 +20,7 @@ export const PortfolioBalancePanel = ({ data }: IPortfolioBalancePanelProps): JS
                     <EiQuestionSvg />
                 </ButtonStyled>
                 <UncontrolledPopover
-                    placement="top"
+                    placement="bottom-start"
                     target="MoreInfoBtn"
                     trigger="focus"
                 >
@@ -53,6 +53,7 @@ const ContainerStyled = styled.div`
 const SectionStyled = styled.div`
     display: flex;
     align-items: center;
+    margin-bottom: 0.5em;
 `;
 
 const SectionTitleStyled = styled.p`
@@ -60,6 +61,7 @@ const SectionTitleStyled = styled.p`
     font-weight: 500;
     font-size: 14px;
     color: ${Black};
+    margin: 0;
     margin-right: 10px;
 `;
 
@@ -71,6 +73,7 @@ const ButtonStyled = styled.button`
 	font: inherit;
 	cursor: pointer;
 	outline: inherit;
+    display: flex;
 `;
 
 const TextStyled = styled.span`

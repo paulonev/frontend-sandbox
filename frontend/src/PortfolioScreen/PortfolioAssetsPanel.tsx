@@ -45,5 +45,7 @@ const PortfolioAssetListStyled = styled.div`
     gap: 20px;
 `
 const ButtonContainerStyled = styled.div`
-    margin-top: 25px;
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
 `; 

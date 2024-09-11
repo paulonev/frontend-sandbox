@@ -40,7 +40,8 @@ export const PortfolioProfitCard = ({ data: { gainLoss, fullName, logoUrl }, pro
             containerStyles={{
                 cursor: "none",
                 padding: 15,
-                paddingBottom: 5
+                paddingBottom: 5,
+                width: "31.8%"
             }}
         />
     );
