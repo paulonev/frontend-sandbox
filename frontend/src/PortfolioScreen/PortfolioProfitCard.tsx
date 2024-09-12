@@ -16,7 +16,7 @@ export const PortfolioProfitCard = ({ data: { gainLoss, fullName, logoUrl }, pro
         <ItemCard
             title={profitType}
             titleStyles={{
-                fontSize: 10,
+                fontSize: 12,
                 color: Black
             }}
             renderPrimaryText={() => (
@@ -30,18 +30,20 @@ export const PortfolioProfitCard = ({ data: { gainLoss, fullName, logoUrl }, pro
                 fontSize: 14,
                 color: Black,
                 marginTop: 8,
+                fontWeight: 500
             }}
             secondaryParagraphStyles={{
-                fontSize: 8,
+                fontSize: 9,
                 color: isGain(gainLoss.type) 
                 ? Green 
                 : Red
             }}
             containerStyles={{
-                cursor: "none",
-                padding: 15,
+                cursor: "unset",
+                padding: 10,
                 paddingBottom: 5,
-                width: "31.8%"
+                width: "31.8%",
+                backgroundColor: "#fff"
             }}
         />
     );

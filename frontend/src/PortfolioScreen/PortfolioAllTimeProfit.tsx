@@ -15,27 +15,28 @@ export const PortfolioAllTimeProfit = ({ data }: IPortfolioAllTimeProfitProps): 
         <ItemCard
             title={PortfolioScreen.AllTimeRu}
             titleStyles={{
-                fontSize: 10,
+                fontSize: 12,
                 color: Black
             }}
             renderPrimaryText={() => formatGainLoss(data.inVolume, AppGlobalCurrencyCode, data.type)}
             renderSecondaryText={() => formatPercentage(data.inPercentage)}
             primaryParagraphStyles={{
-                marginTop: 15,
-                fontSize: 14,
+                marginTop: 11,
+                fontSize: 16,
                 color: isGain(data.type) 
                         ? Green 
                         : Red
             }}
             secondaryParagraphStyles={{
-                fontSize: 8,
+                fontSize: 9,
                 color: "#575757"
             }}
             containerStyles={{
-                cursor: "none",
-                padding: 15,
+                cursor: "unset",
+                padding: 10,
                 paddingBottom: 5,
-                width: "31.8%"
+                width: "31.8%",
+                backgroundColor: "#fff"
             }}
 
         />

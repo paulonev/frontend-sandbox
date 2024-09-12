@@ -6,6 +6,7 @@ import CreatePortfolioScreen from "../СreatePortfolioScreen";
 import { ArrowLeft } from "../Common/components/ArrowLeft";
 import { useQueryClient } from "@tanstack/react-query";
 import { MainScreenQueryKey } from "../constants";
+import { BodyBackgroundColor } from "../Common/colors";
 
 export const CreatePortfolioModal = () => {
     const queryClient = useQueryClient();
@@ -18,20 +19,29 @@ export const CreatePortfolioModal = () => {
     return (
         // data for MainScreen query will be refetched once modal is closed
         <Modal fullscreen={true} isOpen={modalState?.open} fade={false} onClosed={resetPortfolioScreenQuery}>
-			<GoBackButtonStyled onClick={() => modalState?.setOpen(false)}>
-				<ArrowLeft />
-			</GoBackButtonStyled>
-            <ModalHeader style={{ borderBottom: "none", justifyContent: "center", paddingTop: 0, marginBottom: 20 }}>
-				<HeaderStyled>{Vocab.CreatePortfolioRu}</HeaderStyled>
-			</ModalHeader>
-            <ModalBody>
-                <CreatePortfolioScreen />
-            </ModalBody>
+			<ContainerStyled>
+                <GoBackButtonStyled onClick={() => modalState?.setOpen(false)}>
+                    <ArrowLeft />
+                </GoBackButtonStyled>
+                <ModalHeader style={{ borderBottom: "none", justifyContent: "center", paddingTop: 0, marginBottom: 20 }}>
+                    <HeaderStyled>{Vocab.CreatePortfolioRu}</HeaderStyled>
+                </ModalHeader>
+                <ModalBody>
+                    <CreatePortfolioScreen />
+                </ModalBody>
+            </ContainerStyled>
         </Modal>
     );
 }
 
 // [== STYLES ==]
+const ContainerStyled = styled.div`
+    background-color: ${BodyBackgroundColor};
+    height: inherit;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+`;
 const GoBackButtonStyled = styled.button`
 	position: absolute;
 	top: 25px;
@@ -39,6 +49,7 @@ const GoBackButtonStyled = styled.button`
 	border: none;
 	padding: 0;
 	cursor: pointer;
+    background-color: inherit;
 `;
 
 const HeaderStyled = styled.div`
