@@ -25,20 +25,30 @@ export const PortfolioViewModal = (props: IPortfolioViewModalProps) => {
 
     return (
         <Modal fullscreen={true} isOpen={modalState?.open} fade={false}>
-			<GoBackButtonStyled onClick={onGoBackClick}>
-				<ArrowLeft />
-			</GoBackButtonStyled>
-            <ModalHeader style={{ borderBottom: "none", paddingTop: 25, paddingLeft: 50 }} tag={"span"}>
-				<HeaderStyled>{props.selectedPortfolio.name}</HeaderStyled>
-			</ModalHeader>
-            <ModalBody style={{ paddingTop: 0, color: BodyBackgroundColor }}>
-                <PortfolioScreen id={props.selectedPortfolio.id} />
-            </ModalBody>
+            <ContainerStyled>
+                <GoBackButtonStyled onClick={onGoBackClick}>
+                    <ArrowLeft />
+                </GoBackButtonStyled>
+                <ModalHeader style={{ borderBottom: "none", paddingTop: 25, paddingLeft: 50 }} tag={"span"}>
+                    <HeaderStyled>{props.selectedPortfolio.name}</HeaderStyled>
+                </ModalHeader>
+                <ModalBody style={{ paddingTop: 0 }}>
+                    <PortfolioScreen id={props.selectedPortfolio.id} />
+                </ModalBody>
+            </ContainerStyled>
         </Modal>
     );
 }
 
 // [== STYLES ==]
+const ContainerStyled = styled.div`
+    background-color: ${BodyBackgroundColor};
+    height: inherit;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+`;
+
 const GoBackButtonStyled = styled.button`
 	position: absolute;
 	top: 25px;
@@ -46,6 +56,7 @@ const GoBackButtonStyled = styled.button`
 	border: none;
 	padding: 0;
 	cursor: pointer;
+    background-color: inherit;
 `;
 
 const HeaderStyled = styled.div`

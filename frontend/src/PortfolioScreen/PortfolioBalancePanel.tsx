@@ -32,10 +32,7 @@ export const PortfolioBalancePanel = ({ data }: IPortfolioBalancePanelProps): JS
                             {PortfolioScreen.BalanceTooltipBodyLine1Ru}<br/>
                             {PortfolioScreen.BalanceTooltipBodyLine2Ru}<br/>
                             {PortfolioScreen.BalanceTooltipBodyLine3Ru}<br/>
-                            {PortfolioScreen.BalanceTooltipBodyLine4Ru}<br/>
-                            {PortfolioScreen.BalanceTooltipBodyLine5Ru}<br/>
-                            {PortfolioScreen.BalanceTooltipBodyLine6Ru}<br/><br/>
-                            {PortfolioScreen.BalanceTooltipBodyLine7Ru}
+                            {PortfolioScreen.BalanceTooltipBodyLine4Ru}
                         </TextStyled>
                     </PopoverBody>
                 </UncontrolledPopover>
