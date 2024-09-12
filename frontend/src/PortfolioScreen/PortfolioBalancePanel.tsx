@@ -16,13 +16,13 @@ export const PortfolioBalancePanel = ({ data }: IPortfolioBalancePanelProps): JS
         <ContainerStyled>
             <SectionStyled>
                 <SectionTitleStyled>{PortfolioScreen.BalanceRu}</SectionTitleStyled>
-                <ButtonStyled id="MoreInfoBtn">
+                <ButtonStyled id="MoreInfoBtn" onClick={() => void 0}>
                     <EiQuestionSvg />
                 </ButtonStyled>
                 <UncontrolledPopover
                     placement="bottom-start"
                     target="MoreInfoBtn"
-                    trigger="focus"
+                    trigger="click"
                 >
                     <PopoverBody>
                         <TooltipHeaderStyled>{PortfolioScreen.BalanceTooltipHeaderRu}</TooltipHeaderStyled>
