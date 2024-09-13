@@ -26,21 +26,25 @@ import org.example.db.portfolio.PortfolioDao
 import org.example.db.portfolio.PortfolioTable
 import org.example.db.users.UserDao
 import org.example.db.users.UsersTable
+import org.example.livecoinwatch.cache.CoinsListCache
 import org.example.receive.PortfolioReceive
 import org.example.receive.UserReceive
 import org.example.respond.*
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.example.livecoinwatch.CryptoPriceCache
+import org.example.livecoinwatch.cache.CryptoPriceCache
 import org.example.livecoinwatch.request.Coins
-import org.example.livecoinwatch.response.CoinsSingle
 import org.example.receive.CryptoTransaction
 import org.jetbrains.kotlin.com.google.gson.Gson
 import org.jetbrains.kotlin.com.google.gson.reflect.TypeToken
 
 object CryptoPriceCacheHolder{
     val cryptoPriceCache: CryptoPriceCache = CryptoPriceCache()
+}
+
+object CoinsListCacheHolder{
+    val coinsListCache: CoinsListCache = CoinsListCache()
 }
 
 fun main(args: Array<String>){
@@ -187,8 +191,26 @@ fun main(args: Array<String>){
                 }
             }
             get("api/coins/list"){
-                val coinslist = Coins().getCoinsList()
-                call.respond(coinslist!!)
+                val search = call.request.queryParameters["q"]
+                val limit = call.request.queryParameters["count"]?.toInt() ?: 10
+                val coinsListCache = CoinsListCacheHolder.coinsListCache
+                if (!coinsListCache.isCurrentData()){
+                    val coinsListRespond = Coins().getCoinsList().map {
+                        CoinsListRespond(
+                            it.name,
+                            it.code,
+                            Utils.round(it.rate, 2),
+                            it.webp64
+                        )
+                    }
+                    coinsListCache.put(coinsListRespond)
+                }
+                val results = if (search != null){
+                    coinsListCache.search(search)
+                } else{
+                    coinsListCache.get(limit)
+                }
+                call.respond(Gson().toJson(results))
             }
             get("api/coins/single") {
                 val coinsSingle = Coins().getCoinsSingle()

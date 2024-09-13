@@ -1,4 +1,4 @@
-package org.example.livecoinwatch
+package org.example.livecoinwatch.cache
 
 import java.math.BigDecimal
 import java.time.Duration

@@ -1,15 +1,19 @@
 package org.example.livecoinwatch.response
 
 import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
+import java.math.BigDecimal
 
 @Serializable
 data class CoinsList(
+    @SerializedName("name") val name: String,
     @SerializedName("code") val code: String,
-    @SerializedName("rate") val rate: Double,
+    @Contextual val rate: BigDecimal,
     @SerializedName("volume") val volume: Long,
     @SerializedName("cap") val cap: Long,
-    @SerializedName("delta") val delta: Delta
+    @SerializedName("delta") val delta: Delta,
+    @SerializedName("webp64") val webp64: String
 )
 
 @Serializable

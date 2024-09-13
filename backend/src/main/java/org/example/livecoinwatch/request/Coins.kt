@@ -14,10 +14,10 @@ class Coins {
                      sort: String = "rank",
                      order: String = "ascending",
                      offset: Int = 0,
-                     limit: Int = 50,
-                     meta: Boolean = true): ArrayList<CoinsList>? {
-        val response = api.getCoins(CoinsListRequest(currency, sort, order, offset, limit, meta)).execute().body()
-        return response
+                     limit: Int = 500,
+                     meta: Boolean = true): ArrayList<CoinsList> {
+        return api.getCoins(CoinsListRequest(currency, sort, order, offset, limit, meta)).execute().body()
+            ?: throw ResourceNotFoundException("Coins", "Coins not found")
     }
 
     fun getCoinsSingle(

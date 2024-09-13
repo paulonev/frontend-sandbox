@@ -6,4 +6,6 @@ import java.math.RoundingMode
 object Utils {
 
     fun round(number: Int, expr: Double) = BigDecimal(expr).setScale(number, RoundingMode.HALF_EVEN).toDouble()
+
+    fun round(expr: BigDecimal, number: Int) = expr.setScale(number, RoundingMode.HALF_EVEN)
 }
