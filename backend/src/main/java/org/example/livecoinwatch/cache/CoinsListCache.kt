@@ -26,7 +26,7 @@ class CoinsListCache(private val expirationDuration: Duration = Duration.ofDays(
 
     fun search(searchText: String): MutableList<CoinsListRespond>? {
         return cache[key]?.value?.parallelStream()?.filter {
-            it.coinName.toLowerCase().startsWith(searchText.toLowerCase()) || it.coinTicker.toLowerCase().startsWith(searchText.toLowerCase())
+            it.coinName.toLowerCase().contains(searchText.toLowerCase()) || it.coinTicker.toLowerCase().contains(searchText.toLowerCase())
         }?.collect(Collectors.toList())
     }
 }
