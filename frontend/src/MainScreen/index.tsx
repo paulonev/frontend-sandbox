@@ -5,22 +5,58 @@ import { Portfolios } from "./Portfolios";
 import { PortfolioApi } from "../Api/PortfolioApi";
 import PortfoliosSummary_s from "./Skeletoned/PortfoliosSummary_skeletoned";
 import Portfolios_s from './Skeletoned/Portfolios_skeletoned';
+import { useMemo, useState } from "react";
+import { PortfolioViewModal } from "../Modals/PortfolioViewModal";
+import { useModalState } from "../Common/ModalStateProvider";
 
 const MainScreen = () => {
-    const { data, isLoading, isRefetching } = usePortfoliosQuery();
+    const modalState = useModalState("specificPortfolio");
+    const { data, isLoading, isRefetching, refetch } = usePortfoliosQuery();
+    const [portfolioId, setPortfolioId] = useState<number | null>(null);
+
+    const selectedPortfolio = useMemo(() => {
+        if (!portfolioId || !data) {
+            return null;
+        }
+
+        return data.items.find(x => x.id === portfolioId) ?? null;
+    }, [data, portfolioId]);
+
+    const selectPortfolio = (id: number | null) => {
+        if (Number.isSafeInteger(id)) {
+            modalState?.setOpen(true);
+        }
+
+        setPortfolioId(id);
+    }
+
+    const closePortfolio = () => {
+        setPortfolioId(null);
+        refetch();
+    }
 
     useFakeFetch();
 
-    return (
+    return !portfolioId && (isLoading || isRefetching) ? (
         <>
             <Section>
-                {isLoading || isRefetching ? <PortfoliosSummary_s /> : <PortfoliosSummary totalAmount={data!.meta.overallVolume} difference={data!.meta.gainLoss} />}
+                <PortfoliosSummary_s />
             </Section>
             <Section enableDelimiter={false}>
-                {isLoading || isRefetching ? <Portfolios_s /> : <Portfolios items={data!.items} />}
+               <Portfolios_s />
             </Section>
         </>
-    )
+    ) : (
+        <>
+            <PortfolioViewModal selectedPortfolio={selectedPortfolio} onClose={closePortfolio} />
+            <Section>
+                <PortfoliosSummary totalAmount={data!.meta.overallVolume} difference={data!.meta.gainLoss} /> 
+            </Section>
+            <Section enableDelimiter={false}>
+                <Portfolios items={data!.items} selectPortfolio={selectPortfolio} />
+            </Section>
+        </>
+    );
 }
 
 const useFakeFetch = async () => {

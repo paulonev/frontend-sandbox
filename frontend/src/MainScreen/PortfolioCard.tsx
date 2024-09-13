@@ -1,39 +1,46 @@
-import styled, { DefaultTheme, useTheme } from "styled-components";
-import { PortfolioItem } from "./types";
-import { PortfolioCardName } from "./PortfolioCardName";
-import { PortfolioCardCurrentMetrics } from "./PortfolioCardCurrentMetrics";
+import { useTheme } from "styled-components";
+import { isGain, PortfolioItem } from "./types";
+import { ItemCard } from "../Common/components/ItemCard";
+import { formatPrice, formatGainLossWithPercentage } from "../Common/formatter";
+import { AppGlobalCurrencyCode } from "../constants";
+import { usePortfolioCardType } from "./PortfolioCardTypeProvider";
 
 interface IPortfolioCardProps {
     readonly item: PortfolioItem | undefined;
+    readonly onClick: (item: PortfolioItem) => void;
 }
 
-export const PortfolioCard = ({ item }: IPortfolioCardProps) => {
+export const PortfolioCard = ({ item, onClick }: IPortfolioCardProps) => {
     const theme = useTheme();
+    const { type } = usePortfolioCardType();
 
     if (!item)
         return <></>;
     
     return (
-        <PortfolioCardStyled colorScheme={item.colorScheme} theme={theme}>
-            <div>
-                <PortfolioCardName value={item?.name} colorScheme={item.colorScheme} />
-                <PortfolioCardCurrentMetrics gainLoss={item?.meta.gainLoss} totalAmount={item?.meta.volume} colorScheme={item.colorScheme} />
-            </div>
-        </PortfolioCardStyled>
+        <ItemCard
+            title={item.name}
+            onBoxClick={() => onClick(item)}
+            containerStyles={{
+                minWidth: 160,
+                color: item.colorScheme ? theme[item.colorScheme].textColor : theme.card_default.textColor,
+                backgroundColor: item.colorScheme ? theme[item.colorScheme].bgColor : theme.card_default.bgColor
+            }}
+            titleStyles={{
+                color: item.colorScheme ? theme[item.colorScheme].textColor : theme.card_default.textColor,
+            }}
+            primaryParagraphStyles={{
+                fontSize: type === "small" ? "22px" : "30px",
+                color: item.colorScheme ? theme[item.colorScheme].textColor : theme.card_default.textColor
+            }}
+            secondaryParagraphStyles={{
+                fontSize: type === "small" ? "12px" : "14px",
+                color: isGain(item.meta.gainLoss.type) 
+                        ? item.colorScheme ? theme[item.colorScheme].gainColor : theme.card_default.gainColor 
+                        : item.colorScheme ? theme[item.colorScheme].lossColor : theme.card_default.lossColor
+            }}
+            renderPrimaryText={() => formatPrice(item.meta?.volume, AppGlobalCurrencyCode)}
+            renderSecondaryText={() => formatGainLossWithPercentage(item.meta?.gainLoss?.inVolume, AppGlobalCurrencyCode, item.meta?.gainLoss?.inPercentage, item.meta?.gainLoss?.type)}
+        />
     );
 }
-
-// [== STYLES ==]
-const PortfolioCardStyled = styled.div<{ colorScheme?: string; theme: DefaultTheme }>`
-    background-color: ${props => props.colorScheme ? props.theme[props.colorScheme].bgColor : props.theme.card_default.bgColor};
-    color: ${props => props.colorScheme ? props.theme[props.colorScheme].textColor : props.theme.card_default.textColor};
-
-    border-radius: 10px;
-    padding: 20px;
-    text-align: left;
-    min-width: 160px;
-    flex: none;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
-    scroll-snap-align: start;
-    box-sizing: border-box;
-`;

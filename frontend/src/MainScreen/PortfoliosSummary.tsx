@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { MainScreen } from './vocabulary';
-import { formatGainLoss, formatPrice } from '../Common/formatter';
+import { formatGainLossWithPercentage, formatPrice } from '../Common/formatter';
 import styled from 'styled-components';
 import { Green, Red, SecondaryHeaderColor } from '../Common/colors';
-import { DifferenceType, isGain, PortfolioDifference } from './types';
+import { isGain } from './types';
 import { AppGlobalCurrencyCode } from '../constants';
+import { PortfolioDifference, DifferenceType } from '../Entities/Portfolio/types';
 
 interface IPortfoliosSummary {
     readonly totalAmount: number;
@@ -23,7 +24,7 @@ export const PortfoliosSummary = ({
             <ContentStyled>
                 <TotalAmountStyled>{formatPrice(totalAmount, currency)}</TotalAmountStyled>
                 <GainLossAmountStyled $type={difference.type}>
-                    {formatGainLoss(difference.inVolume, currency, difference.inPercentage, difference.type)}
+                    {formatGainLossWithPercentage(difference.inVolume, currency, difference.inPercentage, difference.type)}
                 </GainLossAmountStyled>
             </ContentStyled>
         </SectionStyled>

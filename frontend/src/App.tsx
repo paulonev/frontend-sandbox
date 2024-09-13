@@ -11,7 +11,7 @@ import { PortfolioCardTheme } from './MainScreen/PortfolioCardTheme';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      notifyOnChangeProps: ['data', 'error'], //by default 'tracked', https://tkdodo.eu/blog/react-query-render-optimizations#tracked-queries
+      notifyOnChangeProps: ['data', 'error', 'fetchStatus'], //by default 'tracked', https://tkdodo.eu/blog/react-query-render-optimizations#tracked-queries
     },
   },
 });
@@ -19,12 +19,14 @@ const queryClient = new QueryClient({
 // 1. screen-overlay routing - CreatePortfolioScreen screen over MainScreen, not as separate urls like /home, /new
 function App() {
   const [createPortfolioModalOpen, setCreatePortfolioModalOpen] = useState(false);
+  const [specificPortfolioModalOpen, setSpecificPortfolioModalOpen] = useState(false);
 
   return (
       <ThemeProvider theme={{...defaultTheme, ...PortfolioCardTheme}}>
-        <ProvideModalState value={
-            { createPortfolio: { open: createPortfolioModalOpen, setOpen: setCreatePortfolioModalOpen } }
-        }>
+        <ProvideModalState value={{ 
+              createPortfolio: { open: createPortfolioModalOpen, setOpen: setCreatePortfolioModalOpen },
+              specificPortfolio: { open: specificPortfolioModalOpen, setOpen: setSpecificPortfolioModalOpen }
+        }}>
             <QueryClientProvider client={queryClient}>
                 <QueryErrorResetBoundary>
                   {({ reset }) => (

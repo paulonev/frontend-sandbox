@@ -1,4 +1,5 @@
 //TODO: currency in React.Context
 export const AppGlobalCurrencyCode: string = "USD";
 
-export const PortfolioScreenQueryKey: string = 'portfoliosScreen';
+export const MainScreenQueryKey: string = 'mainScreen';
+export const PortfolioScreenQueryKey: string = 'portfolioScreen';
