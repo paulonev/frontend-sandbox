@@ -2,10 +2,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val kotlinVersion = "1.8.0"
 val ktorVersion = "2.3.12"
+val exposedVersion = "0.53.0"
 
 plugins {
     kotlin("jvm") version "2.0.0"
-//    kotlin("plugin.serialization") version "2.0.0"
+    kotlin("plugin.serialization") version "2.0.0"
     id("io.ktor.plugin") version "2.3.12"
     application
     java
@@ -24,12 +25,32 @@ dependencies {
 
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
+    implementation("io.ktor:ktor-server-status-pages:$ktorVersion")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
 //    implementation("io.ktor:ktor-jackson:$ktorVersion")
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+    implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
+    implementation("org.postgresql:postgresql:42.7.3")
     testImplementation("junit:junit:4.13.2")
+
+    implementation("ch.qos.logback:logback-classic:1.4.11")
+    implementation("org.slf4j:slf4j-api:2.0.9")
+    configurations.all {
+        exclude(group = "org.slf4j", module = "slf4j-simple")
+        exclude(group = "org.slf4j", module = "log4j-slf4j-impl")
+        exclude(group = "org.slf4j", module = "slf4j-log4j12")
+    }
 //    implementation("io.ktor:ktor-gson:$ktorVersion")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("org.slf4j:slf4j-api:1.7.30")
+    implementation("org.slf4j:slf4j-simple:1.7.30")
+    implementation("io.ktor:ktor-client-serialization:1.6.4")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
 }
 
 tasks.test {

@@ -5,6 +5,8 @@
 .gradle/
 .DS_Store
 gradle/
+backend/.gradle/
+backend/local.properties
 
 .idea/
 
