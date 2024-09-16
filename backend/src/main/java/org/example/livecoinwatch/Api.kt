@@ -20,4 +20,9 @@ interface Api {
     fun getCoinsSingle(
         @Body coinsRequest: Coins.CoinsSingleRequest
     ) : Call<CoinsSingle>
+
+    @POST("coins/map")
+    fun getCoinsMap(
+        @Body coinsRequest: Coins.CoinsMapRequest
+    ) : Call<ArrayList<CoinsList>>
 }
