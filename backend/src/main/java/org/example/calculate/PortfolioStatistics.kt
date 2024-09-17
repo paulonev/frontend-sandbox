@@ -2,6 +2,7 @@ package org.example.calculate
 
 import CryptoPriceCacheHolder
 import kotlinx.coroutines.*
+import org.example.ResourceNotFoundException
 import org.example.db.crypto.portfoliocryptos.PortfolioCryptosDao
 import org.example.db.crypto.portfoliocryptos.PortfolioCryptosEntity
 import org.example.db.currency.portfoliocurrencies.PortfolioCurrenciesDao
@@ -16,14 +17,34 @@ class PortfolioStatistics {
         val portfolioCurrencies: PortfolioCurrenciesEntity = PortfolioCurrenciesDao.get(portfolioId)
         val balance = portfolioCurrencies.balance
 
-        val priceRequest = portfolioCryptos.map { crypto ->
-            async {
-                val currentPrice = getCurrentCoinPrice(crypto.cryptoCurrencies.ticker)
-                Data(crypto.amount, currentPrice, crypto.averagePrice, crypto.commission ?: 0.0)
+        val cryptoPriceCache = CryptoPriceCacheHolder.cryptoPriceCache
+        val (needUpdateCryptos, cryptosFromCache) = portfolioCryptos.partition {
+            cryptoPriceCache.getWithCheck(it.cryptoCurrencies.ticker) == null
+        }
+        val priceResults = mutableListOf<Data>()
+
+        if (needUpdateCryptos.isNotEmpty()){
+            val priceResultApi = async {
+                val coins = Coins().getCoinsMap(needUpdateCryptos.map { it.cryptoCurrencies.ticker })
+                coins.forEach {
+                    cryptoPriceCache.put(it.code, it.rate)
+                }
+                needUpdateCryptos.map { crypto ->
+                    val currentPrice = coins.find { it.code == crypto.cryptoCurrencies.ticker }?.rate
+                        ?: throw ResourceNotFoundException("Coin", "Coin with ticker = ${crypto.cryptoCurrencies.ticker} not found")
+                    Data(crypto.amount, currentPrice,
+                        crypto.averagePrice, crypto.commission ?: 0.0)
+                }
             }
+            priceResults.addAll(priceResultApi.await())
         }
 
-        val priceResults = priceRequest.awaitAll()
+        val priceResultCache = cryptosFromCache.map { crypto ->
+            Data(crypto.amount, cryptoPriceCache.get(crypto.cryptoCurrencies.ticker)!!,
+                crypto.averagePrice, crypto.commission ?: 0.0)
+        }
+
+        priceResults.addAll(priceResultCache)
 
         val purchaseAmountAsync = async {
             priceResults.sumByDouble { (amount, _, averagePrice, commission) ->
@@ -43,17 +64,6 @@ class PortfolioStatistics {
             purchaseAmount + balance,
             currentAmount - purchaseAmount,
             (currentAmount - purchaseAmount) / purchaseAmount * 100)
-    }
-
-    private suspend fun getCurrentCoinPrice(ticker: String): BigDecimal = withContext(Dispatchers.IO) {
-        val cache = CryptoPriceCacheHolder.cryptoPriceCache.get(ticker)
-        return@withContext if (cache == null){
-            val currentPrice = Coins().getCoinsSingle(ticker).rate
-            CryptoPriceCacheHolder.cryptoPriceCache.put(ticker, currentPrice)
-            currentPrice
-        } else{
-            cache
-        }
     }
 
     data class Data(

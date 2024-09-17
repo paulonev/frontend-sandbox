@@ -29,7 +29,7 @@ class Coins {
             ?: throw ResourceNotFoundException("Coin", "Coin with ticker = $code not found")
     }
 
-    fun getCoinsMap(codes: ArrayList<String>,
+    fun getCoinsMap(codes: List<String>,
                     currency: String = "USD",
                      sort: String = "rank",
                      order: String = "ascending",
@@ -57,7 +57,7 @@ class Coins {
 
     data class CoinsMapRequest(
         val currency: String,
-        val codes: ArrayList<String>,
+        val codes: List<String>,
         val sort: String,
         val order: String,
         val offset: Int,

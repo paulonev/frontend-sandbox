@@ -8,13 +8,17 @@ class CryptoPriceCache(private val expirationDuration: Duration = Duration.ofSec
 
     private val cache = ConcurrentHashMap<String, CachedValue<BigDecimal>>()
 
-    fun get(key: String): BigDecimal? {
+    fun getWithCheck(key: String): BigDecimal? {
         val cachedValue = cache[key]
         return if (cachedValue != null && (System.currentTimeMillis() - cachedValue.timestamp) < expirationDuration.toMillis()) {
             cachedValue.value
         } else {
             null
         }
+    }
+
+    fun get(key: String): BigDecimal? {
+        return cache[key]?.value
     }
 
     fun put(key: String, value: BigDecimal) {
