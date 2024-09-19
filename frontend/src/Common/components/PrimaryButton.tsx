@@ -1,15 +1,17 @@
 import styled from "styled-components";
 import { PortfolioCardTheme } from "../../MainScreen/PortfolioCardTheme";
 import { White } from "../colors";
+import React from "react";
 
 type ButtonType = "submit" | "reset" | "button" | undefined;
 interface IPrimaryButtonProps {
     readonly type?: ButtonType;
     readonly disabled: boolean;
+    readonly onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
 }
 
 export const PrimaryButton = (props: IPrimaryButtonProps & React.PropsWithChildren): JSX.Element => {
-    return <ButtonStyled type={props.type ?? "button"} disabled={props.disabled}>{props.children}</ButtonStyled>;
+    return <ButtonStyled type={props.type ?? "button"} disabled={props.disabled} onClick={props.onClick}>{props.children}</ButtonStyled>;
 }
 
 // [== STYLES ==]
