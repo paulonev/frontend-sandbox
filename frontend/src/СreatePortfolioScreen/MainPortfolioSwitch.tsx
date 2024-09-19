@@ -2,7 +2,7 @@ import { Control, Controller } from "react-hook-form";
 import { NewPortfolioFormData } from "./types";
 import { FormGroup, Input, Label } from "reactstrap";
 import { Vocab } from "./vocabulary";
-import { FormFieldStyled } from "./styles";
+import { FormFieldStyled } from "../Common/forms/styles";
 
 interface IMainPortfolioSwitchProps {
     readonly control: Control<NewPortfolioFormData>;

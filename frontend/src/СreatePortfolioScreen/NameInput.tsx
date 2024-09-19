@@ -1,7 +1,7 @@
 import { Vocab } from "./vocabulary";
 import { FieldError, UseFormRegister } from "react-hook-form";
 import { NewPortfolioFormData } from "./types";
-import { FormFieldStyled, InputStyled, LabelStyled } from "./styles";
+import { FormFieldStyled, InputStyled, LabelStyled } from "../Common/forms/styles";
 import { Red } from "../Common/colors";
 import styled from "styled-components";
 

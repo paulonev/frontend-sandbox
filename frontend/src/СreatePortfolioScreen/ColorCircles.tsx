@@ -3,7 +3,7 @@ import { PortfolioSecondaryColorScheme } from "../Common/colors";
 import { Control, Controller } from "react-hook-form";
 import { NewPortfolioFormData } from "./types";
 import { CSSProperties } from "react";
-import { FormFieldStyled, LabelStyled } from "./styles";
+import { FormFieldStyled, LabelStyled } from "../Common/forms/styles";
 import { Vocab } from "./vocabulary";
 import { PortfolioCardTheme } from "../MainScreen/PortfolioCardTheme";
 import { CustomCircle } from "./CustomCircle";

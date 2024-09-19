@@ -4,12 +4,22 @@ import { Black } from "../Common/colors";
 import { PortfolioScreen } from "./vocabulary";
 import { PortfolioAssetRecord } from "./PortfolioAssetRecord";
 import { PrimaryButton } from "../Common/components/PrimaryButton";
+import { useModalState } from "../Common/ModalStateProvider";
 
 interface IPortfolioAssetsPanelProps {
     readonly data: PortfolioAssets;
 }
 
 export const PortfolioAssetsPanel = ({ data: { items }}: IPortfolioAssetsPanelProps): JSX.Element => {
+    const modalState = useModalState("addTransaction");
+
+    const handleClickAddTransaction = () => {
+        if (modalState) {
+            const { open, setOpen } = modalState;
+            setOpen(!open);
+        }
+    }
+    
     return (
         <ContainerStyled>
             <SectionTitleStyled>{PortfolioScreen.TokenAssetsRu}</SectionTitleStyled>
@@ -19,7 +29,7 @@ export const PortfolioAssetsPanel = ({ data: { items }}: IPortfolioAssetsPanelPr
                 </PortfolioAssetListStyled>
             ) : null}
             <ButtonContainerStyled>
-                <PrimaryButton disabled={false}>
+                <PrimaryButton disabled={false} onClick={handleClickAddTransaction}>
                     {PortfolioScreen.AddTransactionRu}
                 </PrimaryButton>
             </ButtonContainerStyled>

@@ -1,6 +1,8 @@
 import { createContext, useContext } from 'react';
 
-export type Modals = "createPortfolio" | "specificPortfolio";
+export type Modals = "createPortfolio" 
+    | "specificPortfolio" 
+    | "addTransaction";
 
 export type ModalStates = {
     [key in Modals]: IModalState;
