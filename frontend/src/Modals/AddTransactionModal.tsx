@@ -9,7 +9,7 @@ import { PortfolioScreenQueryKey } from "../constants";
 import { BodyBackgroundColor } from "../Common/colors";
 import { useForm } from "react-hook-form";
 import { AddTransactionFormData, defaultValues } from "../AddTransactionScreen/types";
-import { telegram_showConfirm } from "../Telegram/utils";
+import { telegram_showConfirm, telegram_isVersionAtLeast, telegram_isClientEnabled } from "../Telegram/utils";
 
 export const AddTransactionModal = () => {
     const queryClient = useQueryClient();
@@ -18,21 +18,21 @@ export const AddTransactionModal = () => {
     const form = useForm<AddTransactionFormData>({ defaultValues });
 
     const onCloseClicked = () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const w: any = window;
-        
         // initParams are initialized only within telegram client, where showConfirm should run
         // otherwise tgWebVersion is 6.0 and showConfirm is not available, so just closing the modal and clearing the form
-        if (!Object.keys(w.Telegram?.WebView?.initParams).includes("tgWebVersion")) {
-            modalState?.setOpen(false);
-        }
-        else if (Object.entries(form.formState.dirtyFields).length > 0) {
-            telegram_showConfirm(Vocab.RemovingUnsavedChangesWarningRu, () => modalState?.setOpen(false));
+        if (telegram_isClientEnabled() && telegram_isVersionAtLeast("6.2"))  {
+            if (Object.entries(form.formState.dirtyFields).length > 0) {
+                telegram_showConfirm(Vocab.RemovingUnsavedChangesWarningRu, (confirmed: boolean) => {
+                    if (confirmed) {
+                        modalState?.setOpen(false);
+                        form.reset();
+                    }
+                });
+            }
         } else {
-            modalState?.setOpen(false)
+            modalState?.setOpen(false);
+            form.reset();
         }
-
-        form.reset();
     }
 
     //reset PortfolioScreen query to its pre-loaded (null in our case) state, and refetch the query since it's active
