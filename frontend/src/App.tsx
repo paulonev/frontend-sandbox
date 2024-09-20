@@ -2,7 +2,6 @@ import { QueryClient, QueryClientProvider, QueryErrorResetBoundary } from '@tans
 import MainScreen from './MainScreen';
 import { useState } from 'react';
 import { ProvideModalState } from './Common/ModalStateProvider';
-import { CreatePortfolioModal } from './Modals/CreatePortfolioModal';
 import { GlobalErrorBoundary } from './GlobalErrorBoundary';
 import { DefaultTheme, ThemeProvider } from 'styled-components';
 import { Black, Green, Red } from './Common/colors';
@@ -32,7 +31,6 @@ function App() {
                   {({ reset }) => (
                       <GlobalErrorBoundary reset={reset}>
                           <MainScreen />
-                          <CreatePortfolioModal />
                       </GlobalErrorBoundary>
                   )}
                 </QueryErrorResetBoundary>

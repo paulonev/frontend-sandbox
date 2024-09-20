@@ -9,6 +9,7 @@ export const Vocab = {
     StocksSelectOptionRu: "Акции",
 
     MainPortfolioSwitchRu: "Основной портфель",
+    FirstPortfolioShouldBeMainWarningRu: "Ваш первый портфель будет основным по умолчанию",
 
     ChoosePortfolioColorRu: "Выбрать цвет портфеля",
 

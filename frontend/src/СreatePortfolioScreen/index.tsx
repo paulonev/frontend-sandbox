@@ -13,7 +13,7 @@ import { telegram_showAlert } from "../Telegram/utils";
 import { PrimaryButton } from "../Common/components/PrimaryButton";
 import styled from "styled-components";
 
-const CreatePortfolioScreen = (): JSX.Element => {
+const CreatePortfolioScreen = ({ hasPortfolios }: { readonly hasPortfolios: boolean; }): JSX.Element => {
     const modalState = useModalState("createPortfolio");
 
     const { 
@@ -23,7 +23,7 @@ const CreatePortfolioScreen = (): JSX.Element => {
         handleSubmit,
         setError,
         formState: { errors, isSubmitting, isValid } 
-    } = useForm<NewPortfolioFormData>({ defaultValues });
+    } = useForm<NewPortfolioFormData>({ defaultValues: {...defaultValues, isMainPortfolio: !hasPortfolios } });
     const watchIsMainPortfolio = watch("isMainPortfolio", defaultValues.isMainPortfolio);
 
     const onFormSubmit: SubmitHandler<NewPortfolioFormData> = async (data) => {
@@ -46,7 +46,7 @@ const CreatePortfolioScreen = (): JSX.Element => {
         <form onSubmit={handleSubmit(onFormSubmit)}>
             <NameInput register={register} errors={errors.name} />
             <TypeSelect control={control} />
-            <MainPortfolioSwitch control={control} />
+            <MainPortfolioSwitch control={control} disabled={!hasPortfolios} />
             {!watchIsMainPortfolio && <ColorCircles control={control} />}
             
             <ButtonContainerStyled>

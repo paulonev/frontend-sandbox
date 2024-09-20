@@ -8,6 +8,7 @@ import Portfolios_s from './Skeletoned/Portfolios_skeletoned';
 import { useMemo, useState } from "react";
 import { PortfolioViewModal } from "../Modals/PortfolioViewModal";
 import { useModalState } from "../Common/ModalStateProvider";
+import { CreatePortfolioModal } from "../Modals/CreatePortfolioModal";
 
 const MainScreen = () => {
     const modalState = useModalState("specificPortfolio");
@@ -49,6 +50,7 @@ const MainScreen = () => {
     ) : (
         <>
             <PortfolioViewModal selectedPortfolio={selectedPortfolio} onClose={closePortfolio} />
+            <CreatePortfolioModal hasPortfolios={!!data?.items.length} />
             <Section>
                 <PortfoliosSummary totalAmount={data!.meta.overallVolume} difference={data!.meta.gainLoss} /> 
             </Section>
