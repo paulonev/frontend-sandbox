@@ -151,7 +151,7 @@ fun main(args: Array<String>){
 
                     val portfolios = PortfolioDao.getAll(userId)
                     val portfolioStatisticsDataList = portfolios.map {
-                        val portfolioStatistics = PortfolioStatistics().getPortfolioStatistics(it.id.value)
+                        val portfolioStatistics = PortfolioStatistics(it.id.value).getPortfolioStatistics()
                         mainPageRespond.items.add(
                             Item(
                                 it.id.value,
@@ -194,17 +194,7 @@ fun main(args: Array<String>){
                 val search = call.request.queryParameters["q"]
                 val limit = call.request.queryParameters["count"]?.toInt() ?: 10
                 val coinsListCache = CoinsListCacheHolder.coinsListCache
-                if (!coinsListCache.isCurrentData()){
-                    val coinsListRespond = Coins().getCoinsList().map {
-                        CoinsListRespond(
-                            it.name,
-                            it.code,
-                            Utils.round(it.rate, 2),
-                            it.webp64
-                        )
-                    }
-                    coinsListCache.put(coinsListRespond)
-                }
+                coinsListCache.updateIfNeeded()
                 val results = if (search != null){
                     coinsListCache.search(search)
                 } else{
@@ -222,6 +212,12 @@ fun main(args: Array<String>){
                     val token = object : TypeToken<CryptoTransaction>(){}.type
                     val cryptoTransaction = Gson().fromJson<CryptoTransaction>(call.receiveText(), token)
                     call.respond(TransactionsCryptosDao.create(cryptoTransaction, portfolioId))
+                }
+            }
+            get("api/portfolio/{id}") {
+                dbQuery {
+                    val portfolioId = call.parameters["id"]?.toInt() ?: throw ResourceNotFoundException("Portfolio", "Portfolio id not found in url")
+                    call.respond(Gson().toJson(PortfolioStatistics(portfolioId).getAllPortfolioData()))
                 }
             }
         }

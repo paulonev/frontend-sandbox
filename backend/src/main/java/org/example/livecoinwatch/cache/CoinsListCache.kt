@@ -1,5 +1,7 @@
 package org.example.livecoinwatch.cache
 
+import org.example.Utils
+import org.example.livecoinwatch.request.Coins
 import org.example.respond.CoinsListRespond
 import java.time.Duration
 import java.util.concurrent.ConcurrentHashMap
@@ -28,5 +30,25 @@ class CoinsListCache(private val expirationDuration: Duration = Duration.ofDays(
         return cache[key]?.value?.parallelStream()?.filter {
             it.coinName.toLowerCase().contains(searchText.toLowerCase()) || it.coinTicker.toLowerCase().contains(searchText.toLowerCase())
         }?.collect(Collectors.toList())
+    }
+
+    fun getWebp64(ticker: String): String {
+        return cache[key]?.value?.find {
+            it.coinTicker == ticker
+        }?.webp64 ?: ""
+    }
+
+    fun updateIfNeeded(){
+        if (!isCurrentData()) {
+            val coinsListRespond = Coins().getCoinsList().map {
+                CoinsListRespond(
+                    it.name,
+                    it.code,
+                    Utils.round(it.rate, 2),
+                    it.webp64
+                )
+            }
+            put(coinsListRespond)
+        }
     }
 }
