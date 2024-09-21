@@ -1,5 +1,9 @@
 import WebApp from "@twa-dev/sdk";
 
+export function telegram_ready() {
+    if (WebApp.ready) WebApp.ready();
+}
+
 export const telegram_isClientEnabled = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const w: any = window;
@@ -18,4 +22,8 @@ export const telegram_showConfirm = (message: string, callback?: (confirmed: boo
 
 export function telegram_isVersionAtLeast(version: string) {
     if (WebApp.isVersionAtLeast) return WebApp.isVersionAtLeast(version);
+}
+
+export function telegram_expand() {
+    if (WebApp.expand) WebApp.expand();
 }
