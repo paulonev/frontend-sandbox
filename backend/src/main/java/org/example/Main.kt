@@ -1,3 +1,9 @@
+import io.github.smiley4.ktorswaggerui.SwaggerUI
+import io.github.smiley4.ktorswaggerui.dsl.routing.get
+import io.github.smiley4.ktorswaggerui.dsl.routing.post
+import io.github.smiley4.ktorswaggerui.dsl.routing.route
+import io.github.smiley4.ktorswaggerui.routing.openApiSpec
+import io.github.smiley4.ktorswaggerui.routing.swaggerUI
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
@@ -118,108 +124,138 @@ fun main(args: Array<String>){
             }
         }
 
+        install(SwaggerUI) {
+            swagger {}
+            info {
+                title = "CapitalView API"
+                version = "3.4.0"
+                description = "CapitalView API for testing and demonstration purposes."
+            }
+            server {
+                url = "http://localhost:4444"
+                description = "Development Server"
+            }
+        }
+
         routing {
-            get("") {
-                call.respond("I'm alive!")
+            route("api.json"){
+                openApiSpec()
             }
-            get("hello") {
-                call.respond(HttpStatusCode.Accepted, "Hello Test")
+            route("swagger"){
+                swaggerUI("/api.json")
             }
-            get("gson"){
-                val user = mapOf("name" to "John Doe", "age" to 50, "email" to "john.doe@example.com")
-                call.respond(Gson().toJson(user))
-            }
-            post("api/users/create") {
-                dbQuery {
-                    val userReceive = call.receive<UserReceive>()
-                    call.respond(UserDao.create(userReceive))
+            route("api", {
+                description = "api route"
+            }) {
+                post("/users/create", {
+                    Swagger(this).usersCreate()
+                }) {
+                    dbQuery {
+                        val userReceive = call.receive<UserReceive>()
+                        call.respond(UserDao.create(userReceive))
+                    }
                 }
-            }
-            post("api/portfolio"){
-                dbQuery {
-                    val portfolioReceive = call.receive<PortfolioReceive>()
-                    val userId = 1
-                    call.respond(PortfolioDao.create(portfolioReceive, userId))
+                post("/portfolio", {
+                    Swagger(this).portfolioPost()
+                }) {
+                    dbQuery {
+                        val portfolioReceive = call.receive<PortfolioReceive>()
+                        val userId = 1
+                        call.respond(PortfolioDao.create(portfolioReceive, userId))
+                    }
                 }
-            }
-            get("api/portfolio") {
-                dbQuery {
-                    val userId = 1
-                    val mainPageRespond = MainPageRespond(Meta(0.0, GainLoss("gain", 0.0, 0.0)), ArrayList())
+                get("/portfolio", {
+                    Swagger(this).allPortfoliosGet()
+                }) {
+                    dbQuery {
+                        val userId = 1
+                        val mainPageRespond = MainPageRespond(Meta(0.0, GainLoss("gain", 0.0, 0.0)), ArrayList())
 
-                    val portfolios = PortfolioDao.getAll(userId)
-                    val portfolioStatisticsDataList = portfolios.map {
-                        val portfolioStatistics = PortfolioStatistics(it.id.value).getPortfolioStatistics()
-                        mainPageRespond.items.add(
-                            Item(
-                                it.id.value,
-                                ItemMeta(
-                                    Utils.round(2, portfolioStatistics.currentAmountWithBalance),
-                                    Calculate.calculateGainLoss(portfolioStatistics.currentAmount, portfolioStatistics.purchaseAmount)
-                                ),
-                                it.isMain,
-                                it.name,
-                                listOf(it.portfolioType),
-                                it.color ?: "main"
+                        val portfolios = PortfolioDao.getAll(userId)
+                        val portfolioStatisticsDataList = portfolios.map {
+                            val portfolioStatistics = PortfolioStatistics(it.id.value).getPortfolioStatistics()
+                            mainPageRespond.items.add(
+                                Item(
+                                    it.id.value,
+                                    ItemMeta(
+                                        Utils.round(2, portfolioStatistics.currentAmountWithBalance),
+                                        Calculate.calculateGainLoss(
+                                            portfolioStatistics.currentAmount,
+                                            portfolioStatistics.purchaseAmount
+                                        )
+                                    ),
+                                    it.isMain,
+                                    it.name,
+                                    listOf(it.portfolioType),
+                                    it.color ?: "main"
+                                )
                             )
-                        )
-                        portfolioStatistics
-                    }
+                            portfolioStatistics
+                        }
 
-                    var purchaseAmount = 0.0
-                    var currentAmount = 0.0
-                    var currentAmountWithBalance = 0.0
+                        var purchaseAmount = 0.0
+                        var currentAmount = 0.0
+                        var currentAmountWithBalance = 0.0
 
-                    coroutineScope {
-                        val purchaseAmountAsync = async {
+                        coroutineScope {
+                            val purchaseAmountAsync = async {
                                 portfolioStatisticsDataList.sumByDouble { it.purchaseAmount }
-                        }
-                        val currentAmountAsync = async {
-                            portfolioStatisticsDataList.sumByDouble { it.currentAmount }
-                        }
-                        val currentAmountWithBalanceAsync = async {
-                            portfolioStatisticsDataList.sumByDouble { it.currentAmountWithBalance }
+                            }
+                            val currentAmountAsync = async {
+                                portfolioStatisticsDataList.sumByDouble { it.currentAmount }
+                            }
+                            val currentAmountWithBalanceAsync = async {
+                                portfolioStatisticsDataList.sumByDouble { it.currentAmountWithBalance }
+                            }
+
+                            purchaseAmount = purchaseAmountAsync.await()
+                            currentAmount = currentAmountAsync.await()
+                            currentAmountWithBalance = currentAmountWithBalanceAsync.await()
                         }
 
-                        purchaseAmount = purchaseAmountAsync.await()
-                        currentAmount = currentAmountAsync.await()
-                        currentAmountWithBalance = currentAmountWithBalanceAsync.await()
+                        mainPageRespond.meta = Meta(
+                            Utils.round(2, currentAmountWithBalance),
+                            Calculate.calculateGainLoss(currentAmount, purchaseAmount)
+                        )
+                        call.respond(mainPageRespond)
                     }
-
-                    mainPageRespond.meta = Meta(
-                        Utils.round(2, currentAmountWithBalance),
-                        Calculate.calculateGainLoss(currentAmount, purchaseAmount)
-                    )
-                    call.respond(mainPageRespond)
                 }
-            }
-            get("api/coins/list"){
-                val search = call.request.queryParameters["q"]
-                val limit = call.request.queryParameters["count"]?.toInt() ?: 10
-                val coinsListCache = CoinsListCacheHolder.coinsListCache
-                coinsListCache.updateIfNeeded()
-                val results = if (search != null){
-                    coinsListCache.search(search)
-                } else{
-                    coinsListCache.get(limit)
+                get("/coins/list", {
+                    Swagger(this).coinsList()
+                }) {
+                    val search = call.request.queryParameters["q"]
+                    val limit = call.request.queryParameters["count"]?.toInt() ?: 10
+                    val coinsListCache = CoinsListCacheHolder.coinsListCache
+                    coinsListCache.updateIfNeeded()
+                    val results = if (search != null) {
+                        coinsListCache.search(search)
+                    } else {
+                        coinsListCache.get(limit)
+                    }
+                    call.respond(results!!)
                 }
-                call.respond(results!!)
-            }
-            get("api/coins/single") {
-                val coinsSingle = Coins().getCoinsSingle()
-                call.respond(coinsSingle)
-            }
-            post("api/portfolio/{portfolio_id}/transactions") {
-                dbQuery {
-                    val portfolioId = call.parameters["portfolio_id"]?.toInt() ?: throw ResourceNotFoundException("Portfolio", "Portfolio id not found in url")
-                    val cryptoTransaction = call.receive<CryptoTransaction>()
-                    call.respond(TransactionsCryptosDao.create(cryptoTransaction, portfolioId))
+                post("/portfolio/{portfolio_id}/transactions", {
+                    Swagger(this).cryptoTransactionPost()
+                }) {
+                    dbQuery {
+                        val portfolioId = call.parameters["portfolio_id"]?.toInt() ?: throw ResourceNotFoundException(
+                            "Portfolio",
+                            "Portfolio id not found in url"
+                        )
+                        val cryptoTransaction = call.receive<CryptoTransaction>()
+                        call.respond(TransactionsCryptosDao.create(cryptoTransaction, portfolioId))
+                    }
                 }
-            }
-            get("api/portfolio/{id}") {
-                dbQuery {
-                    val portfolioId = call.parameters["id"]?.toInt() ?: throw ResourceNotFoundException("Portfolio", "Portfolio id not found in url")
-                    call.respond(PortfolioStatistics(portfolioId).getAllPortfolioData())
+                get("/portfolio/{id}", {
+                    Swagger(this).allPortfolioDataGet()
+                }) {
+                    dbQuery {
+                        val portfolioId = call.parameters["id"]?.toInt() ?: throw ResourceNotFoundException(
+                            "Portfolio",
+                            "Portfolio id not found in url"
+                        )
+                        call.respond(PortfolioStatistics(portfolioId).getAllPortfolioData())
+                    }
                 }
             }
         }
