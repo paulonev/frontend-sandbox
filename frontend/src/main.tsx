@@ -3,10 +3,10 @@ import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import { GlobalStyle } from './globalStyle';
 import 'react-loading-skeleton/dist/skeleton.css';
+import { telegram_expand, telegram_ready } from './Telegram/utils.ts';
 
-import WebApp from '@twa-dev/sdk'
-
-WebApp.ready();
+telegram_ready();
+telegram_expand();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>

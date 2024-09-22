@@ -1,5 +1,29 @@
 import WebApp from "@twa-dev/sdk";
 
+export function telegram_ready() {
+    if (WebApp.ready) WebApp.ready();
+}
+
+export const telegram_isClientEnabled = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const w: any = window;
+    const tgWebAppVersion = Object.entries(w.Telegram?.WebView?.initParams).find(([k, ]) => k === "tgWebAppVersion")?.[1] as string | null | undefined;
+    
+    return tgWebAppVersion !== null && tgWebAppVersion !== undefined; 
+}
+
 export const telegram_showAlert = (message: string, callback?: () => unknown) => {
-    WebApp.showAlert(message, callback);
+    if (WebApp.showAlert) WebApp.showAlert(message, callback);
+}
+
+export const telegram_showConfirm = (message: string, callback?: (confirmed: boolean) => unknown) => {
+    if (WebApp.showConfirm) WebApp.showConfirm(message, callback);
+}
+
+export function telegram_isVersionAtLeast(version: string) {
+    if (WebApp.isVersionAtLeast) return WebApp.isVersionAtLeast(version);
+}
+
+export function telegram_expand() {
+    if (WebApp.expand) WebApp.expand();
 }

@@ -1,25 +1,25 @@
 import { Control, Controller } from "react-hook-form";
-import { NewPortfolioFormData } from "./types";
 import { FormFieldStyled, LabelStyleRules } from "../Common/forms/styles";
-import { Vocab } from "./vocabulary";
 import { FormGroup, Input, Label } from "reactstrap";
 import { CSSProperties } from "react";
 import { Black } from "../Common/colors";
+import { AddTransactionFormData } from "./types";
+import { Vocab } from "./vocabulary";
 
 interface ITypeSelectProps {
-    readonly control: Control<NewPortfolioFormData>;
+    readonly control: Control<AddTransactionFormData>;
 }
 
 export const TypeSelect = ({ control }: ITypeSelectProps) => {
     return (
         <Controller 
-            name="portfolioType"
+            name="type"
             control={control}
             render={({ field: { onChange, onBlur, name, value, ref }}) => (
                 <FormFieldStyled>
                     <FormGroup>
-                        <Label htmlFor="portfolioType" style={LabelStyleRules}>
-                            {Vocab.PortfolioTypeRu}
+                        <Label htmlFor="type" style={LabelStyleRules}>
+                            {Vocab.TransactionTypeRu}
                         </Label>
                         <Input
                             type="select"
@@ -30,10 +30,8 @@ export const TypeSelect = ({ control }: ITypeSelectProps) => {
                             value={value}
                             innerRef={ref}
                         >
-                            <option value="crypto">{Vocab.CryptoSelectOptionRu}</option>
-                            <option value="stocks" disabled={true} aria-disabled={true}>
-                                {Vocab.StocksSelectOptionRu} ({Vocab.SoonRu})
-                            </option>
+                            <option value="Buy">{Vocab.TransactionTypeBuyRu}</option>
+                            <option value="Sell">{Vocab.TransactionTypeSellRu}</option>
                         </Input>
                     </FormGroup>
                 </FormFieldStyled>

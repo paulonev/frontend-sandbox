@@ -8,10 +8,13 @@ import Portfolios_s from './Skeletoned/Portfolios_skeletoned';
 import { useMemo, useState } from "react";
 import { PortfolioViewModal } from "../Modals/PortfolioViewModal";
 import { useModalState } from "../Common/ModalStateProvider";
+import { useCoinsQuery } from "../AddTransactionScreen/useCoinsQuery";
+import { ProvidePopularCoins } from "../AddTransactionScreen/PopularCoinsProvider";
 
 const MainScreen = () => {
     const modalState = useModalState("specificPortfolio");
     const { data, isLoading, isRefetching, refetch } = usePortfoliosQuery();
+    const { data: coins } = useCoinsQuery();
     const [portfolioId, setPortfolioId] = useState<number | null>(null);
 
     const selectedPortfolio = useMemo(() => {
@@ -47,7 +50,7 @@ const MainScreen = () => {
             </Section>
         </>
     ) : (
-        <>
+        <ProvidePopularCoins value={coins}>
             <PortfolioViewModal selectedPortfolio={selectedPortfolio} onClose={closePortfolio} />
             <Section>
                 <PortfoliosSummary totalAmount={data!.meta.overallVolume} difference={data!.meta.gainLoss} /> 
@@ -55,7 +58,7 @@ const MainScreen = () => {
             <Section enableDelimiter={false}>
                 <Portfolios items={data!.items} selectPortfolio={selectPortfolio} />
             </Section>
-        </>
+        </ProvidePopularCoins>
     );
 }
 

@@ -7,6 +7,8 @@ import { GlobalErrorBoundary } from './GlobalErrorBoundary';
 import { DefaultTheme, ThemeProvider } from 'styled-components';
 import { Black, Green, Red } from './Common/colors';
 import { PortfolioCardTheme } from './MainScreen/PortfolioCardTheme';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -20,24 +22,28 @@ const queryClient = new QueryClient({
 function App() {
   const [createPortfolioModalOpen, setCreatePortfolioModalOpen] = useState(false);
   const [specificPortfolioModalOpen, setSpecificPortfolioModalOpen] = useState(false);
+  const [addTransactionModalOpen, setAddTransactionModalOpen] = useState(false);
 
   return (
       <ThemeProvider theme={{...defaultTheme, ...PortfolioCardTheme}}>
-        <ProvideModalState value={{ 
-              createPortfolio: { open: createPortfolioModalOpen, setOpen: setCreatePortfolioModalOpen },
-              specificPortfolio: { open: specificPortfolioModalOpen, setOpen: setSpecificPortfolioModalOpen }
-        }}>
-            <QueryClientProvider client={queryClient}>
-                <QueryErrorResetBoundary>
-                  {({ reset }) => (
-                      <GlobalErrorBoundary reset={reset}>
-                          <MainScreen />
-                          <CreatePortfolioModal />
-                      </GlobalErrorBoundary>
-                  )}
-                </QueryErrorResetBoundary>
-            </QueryClientProvider>
-        </ProvideModalState>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <ProvideModalState value={{ 
+                createPortfolio: { open: createPortfolioModalOpen, setOpen: setCreatePortfolioModalOpen },
+                specificPortfolio: { open: specificPortfolioModalOpen, setOpen: setSpecificPortfolioModalOpen },
+                addTransaction: { open: addTransactionModalOpen, setOpen: setAddTransactionModalOpen }
+          }}>
+              <QueryClientProvider client={queryClient}>
+                  <QueryErrorResetBoundary>
+                    {({ reset }) => (
+                        <GlobalErrorBoundary reset={reset}>
+                            <MainScreen />
+                            <CreatePortfolioModal />
+                        </GlobalErrorBoundary>
+                    )}
+                  </QueryErrorResetBoundary>
+              </QueryClientProvider>
+          </ProvideModalState>
+        </LocalizationProvider>
       </ThemeProvider>
   )
 }
