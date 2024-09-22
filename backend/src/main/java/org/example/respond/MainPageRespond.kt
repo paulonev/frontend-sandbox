@@ -2,11 +2,13 @@ package org.example.respond
 
 import kotlinx.serialization.Serializable
 
+@Serializable
 data class MainPageRespond(
     var meta: Meta,
     val items: ArrayList<Item>
 )
 
+@Serializable
 data class Meta(
     var overallVolume: Double,
     var gainLoss: GainLoss
@@ -19,6 +21,7 @@ data class GainLoss(
     var inPercentage: Double
 )
 
+@Serializable
 data class Item(
     val id: Int,
     val meta: ItemMeta,
@@ -28,6 +31,7 @@ data class Item(
     val colorScheme: String
 )
 
+@Serializable
 data class ItemMeta(
     val volume: Double,
     val gainLoss: GainLoss

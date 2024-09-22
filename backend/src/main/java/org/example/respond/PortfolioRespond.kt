@@ -1,8 +1,8 @@
 package org.example.respond
 
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.example.serializers.BigDecimalSerializer
 import java.math.BigDecimal
 
 @Serializable
@@ -55,6 +55,6 @@ data class Asset(
 
 @Serializable
 data class Volume(
-    @Contextual val inAmount: BigDecimal,
+    @Serializable(with = BigDecimalSerializer::class) val inAmount: BigDecimal,
     @SerialName("inFiat") val inFiat: Double
 )

@@ -66,8 +66,9 @@ class PortfolioStatistics(val portfolioId: Int) {
         val purchaseAmount = purchaseAmountAsync.await()
         val currentAmount = currentAmountAsync.await()
 
-        return@coroutineScope PortfolioStatisticsData(currentAmount + balance,
-            purchaseAmount + balance,
+        return@coroutineScope PortfolioStatisticsData(currentAmount,
+            currentAmount + balance,
+            purchaseAmount,
             currentAmount - purchaseAmount,
             (currentAmount - purchaseAmount) / purchaseAmount * 100)
     }
@@ -154,7 +155,7 @@ class PortfolioStatistics(val portfolioId: Int) {
         return@coroutineScope PortfolioRespond(
             portfolioId,
             portfolio.name,
-            Utils.round(2, currentAmount),
+            Utils.round(2, currentAmount + portfolioCurrencies.balance),
             gainLossDayAsync.await(),
             gainLossAllTimeAsync.await(),
             balanceAsync.await(),
@@ -199,6 +200,7 @@ class PortfolioStatistics(val portfolioId: Int) {
 
     data class PortfolioStatisticsData(
         val currentAmount: Double,
+        val currentAmountWithBalance: Double,
         val purchaseAmount: Double,
         val profitUSD: Double,
         val profitPercent: Double

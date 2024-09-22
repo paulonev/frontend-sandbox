@@ -71,6 +71,8 @@ fun main(args: Array<String>){
         install(ContentNegotiation){
             json(Json {
                 prettyPrint = true
+                isLenient = true
+                ignoreUnknownKeys = true
             })
         }
 
@@ -129,17 +131,13 @@ fun main(args: Array<String>){
             }
             post("api/users/create") {
                 dbQuery {
-                    val requestBody = call.receiveText()
-                    val token = object : TypeToken<UserReceive>() {}.type
-                    val userReceive = Gson().fromJson<UserReceive>(requestBody, token)
+                    val userReceive = call.receive<UserReceive>()
                     call.respond(UserDao.create(userReceive))
                 }
             }
             post("api/portfolio"){
                 dbQuery {
-                    val requestBody = call.receiveText()
-                    val token = object : TypeToken<PortfolioReceive>() {}.type
-                    val portfolioReceive = Gson().fromJson<PortfolioReceive>(requestBody, token)
+                    val portfolioReceive = call.receive<PortfolioReceive>()
                     val userId = 1
                     call.respond(PortfolioDao.create(portfolioReceive, userId))
                 }
@@ -156,7 +154,7 @@ fun main(args: Array<String>){
                             Item(
                                 it.id.value,
                                 ItemMeta(
-                                    Utils.round(2, portfolioStatistics.currentAmount),
+                                    Utils.round(2, portfolioStatistics.currentAmountWithBalance),
                                     Calculate.calculateGainLoss(portfolioStatistics.currentAmount, portfolioStatistics.purchaseAmount)
                                 ),
                                 it.isMain,
@@ -170,6 +168,7 @@ fun main(args: Array<String>){
 
                     var purchaseAmount = 0.0
                     var currentAmount = 0.0
+                    var currentAmountWithBalance = 0.0
 
                     coroutineScope {
                         val purchaseAmountAsync = async {
@@ -178,16 +177,20 @@ fun main(args: Array<String>){
                         val currentAmountAsync = async {
                             portfolioStatisticsDataList.sumByDouble { it.currentAmount }
                         }
+                        val currentAmountWithBalanceAsync = async {
+                            portfolioStatisticsDataList.sumByDouble { it.currentAmountWithBalance }
+                        }
 
                         purchaseAmount = purchaseAmountAsync.await()
                         currentAmount = currentAmountAsync.await()
+                        currentAmountWithBalance = currentAmountWithBalanceAsync.await()
                     }
 
                     mainPageRespond.meta = Meta(
-                        Utils.round(2, currentAmount),
+                        Utils.round(2, currentAmountWithBalance),
                         Calculate.calculateGainLoss(currentAmount, purchaseAmount)
                     )
-                    call.respond(Gson().toJson(mainPageRespond))
+                    call.respond(mainPageRespond)
                 }
             }
             get("api/coins/list"){
@@ -200,24 +203,23 @@ fun main(args: Array<String>){
                 } else{
                     coinsListCache.get(limit)
                 }
-                call.respond(Gson().toJson(results))
+                call.respond(results!!)
             }
             get("api/coins/single") {
                 val coinsSingle = Coins().getCoinsSingle()
-                call.respond(Gson().toJson(coinsSingle))
+                call.respond(coinsSingle)
             }
             post("api/portfolio/{portfolio_id}/transactions") {
                 dbQuery {
                     val portfolioId = call.parameters["portfolio_id"]?.toInt() ?: throw ResourceNotFoundException("Portfolio", "Portfolio id not found in url")
-                    val token = object : TypeToken<CryptoTransaction>(){}.type
-                    val cryptoTransaction = Gson().fromJson<CryptoTransaction>(call.receiveText(), token)
+                    val cryptoTransaction = call.receive<CryptoTransaction>()
                     call.respond(TransactionsCryptosDao.create(cryptoTransaction, portfolioId))
                 }
             }
             get("api/portfolio/{id}") {
                 dbQuery {
                     val portfolioId = call.parameters["id"]?.toInt() ?: throw ResourceNotFoundException("Portfolio", "Portfolio id not found in url")
-                    call.respond(Gson().toJson(PortfolioStatistics(portfolioId).getAllPortfolioData()))
+                    call.respond(PortfolioStatistics(portfolioId).getAllPortfolioData())
                 }
             }
         }
