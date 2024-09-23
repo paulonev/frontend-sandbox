@@ -51,6 +51,7 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:1.7.30")
     implementation("io.ktor:ktor-client-serialization:1.6.4")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+    implementation("io.github.smiley4:ktor-swagger-ui:3.4.0")
 }
 
 tasks.test {
