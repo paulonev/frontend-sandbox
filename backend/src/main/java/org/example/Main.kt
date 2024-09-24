@@ -70,6 +70,10 @@ fun main(args: Array<String>){
         exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_telegram_id ON users (telegram_id)")
         exec("CREATE INDEX IF NOT EXISTS idx_portfolio_cryptos_portfolio_id ON portfolio_cryptos (portfolio)")
         exec("CREATE INDEX IF NOT EXISTS idx_portfolio_currencies_portfolio_id ON portfolio_currencies (portfolio)")
+        exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_crypto_currencies_ticker ON crypto_currencies (ticker)")
+        exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_currencies_name ON currencies (name)")
+        exec("CREATE INDEX IF NOT EXISTS idx_transactions_cryptos_portfolio_cryptos ON transactions_cryptos (portfolio_cryptos)")
+        exec("CREATE INDEX IF NOT EXISTS idx_transactions_cryptos_transactions_crypto_type ON transactions_cryptos (transactions_crypto_type)")
     }
 
     embeddedServer(Netty, 4444){
