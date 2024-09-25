@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 object UserDao {
 
     fun create(userReceive: UserReceive){
-        if (isExists(userReceive.telegramId)) throw ResourceAlreadyExistsException("User", "User with telegramId = ${userReceive.telegramId} is already exists")
+        if (isExists(userReceive.telegramId)) throw ResourceAlreadyExistsException("User", "User is already exists")
         UserEntity.new {
             firstName = userReceive.firstName
             lastName = userReceive.lastName
@@ -19,9 +19,9 @@ object UserDao {
         }
     }
 
-    fun get(telegramId: Long) = UserEntity.find { UsersTable.telegramId eq telegramId }.singleOrNull() ?: throw ResourceNotFoundException("User", "User with telegramId = $telegramId not found")
+    fun get(telegramId: Long) = UserEntity.find { UsersTable.telegramId eq telegramId }.singleOrNull() ?: throw ResourceNotFoundException("User", "User not found")
 
-    fun get(userId: Int) = UserEntity.find { UsersTable.id eq userId }.singleOrNull() ?: throw ResourceNotFoundException("User", "User with userId = $userId not found")
+    fun get(userId: Int) = UserEntity.find { UsersTable.id eq userId }.singleOrNull() ?: throw ResourceNotFoundException("User", "User not found")
 
     fun isExists(telegramId: Long) = UserEntity.find { UsersTable.telegramId eq telegramId }.singleOrNull() != null
 }

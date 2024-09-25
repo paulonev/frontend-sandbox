@@ -42,8 +42,6 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.example.livecoinwatch.cache.CryptoPriceCache
 import org.example.livecoinwatch.request.Coins
 import org.example.receive.CryptoTransaction
-import org.jetbrains.kotlin.com.google.gson.Gson
-import org.jetbrains.kotlin.com.google.gson.reflect.TypeToken
 
 object CryptoPriceCacheHolder{
     val cryptoPriceCache: CryptoPriceCache = CryptoPriceCache()
@@ -91,14 +89,12 @@ fun main(args: Array<String>){
                 val title = "${cause.resourceType} Not Found"
                 call.respond(
                     HttpStatusCode.NotFound,
-                    Gson().toJson(
                         ErrorResponse(
                             title = title,
                             status = HttpStatusCode.NotFound.value,
                             detail = cause.message ?: title,
                             instance = call.request.uri
                         )
-                    )
                 )
             }
             exception<Throwable> { call, cause ->
@@ -116,14 +112,12 @@ fun main(args: Array<String>){
                 val title = "${cause.resourceType} Already Exists"
                 call.respond(
                     HttpStatusCode.Conflict,
-                    Gson().toJson(
                         ErrorResponse(
                             title = title,
                             status = HttpStatusCode.Conflict.value,
                             detail = cause.message ?: title,
                             instance = call.request.uri
                         )
-                    )
                 )
             }
         }
@@ -228,11 +222,11 @@ fun main(args: Array<String>){
                     Swagger(this).coinsList()
                 }) {
                     val search = call.request.queryParameters["q"]
-                    val limit = call.request.queryParameters["count"]?.toInt() ?: 10
+                    val limit = call.request.queryParameters["count"]?.toLong() ?: 10
                     val coinsListCache = CoinsListCacheHolder.coinsListCache
                     coinsListCache.updateIfNeeded()
                     val results = if (search != null) {
-                        coinsListCache.search(search)
+                        coinsListCache.search(search, limit)
                     } else {
                         coinsListCache.get(limit)
                     }

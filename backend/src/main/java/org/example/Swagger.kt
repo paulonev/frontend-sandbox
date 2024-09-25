@@ -50,7 +50,7 @@ class Swagger(val openApiRoute: OpenApiRoute) {
                 body<UserReceive>()
             }
             successResponse()
-            conflictResponse("User with telegramId = {telegramId} is already exists")
+            conflictResponse("User is already exists")
         }
     }
 
@@ -60,7 +60,13 @@ class Swagger(val openApiRoute: OpenApiRoute) {
             request {
                 body<PortfolioReceive>()
             }
-            successResponse()
+            response {
+                HttpStatusCode.OK to {
+                    body<Int>{
+                        description = "portfolio id"
+                    }
+                }
+            }
             conflictResponse("Portfolio with name {name} already exists")
         }
     }
