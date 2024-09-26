@@ -41,7 +41,7 @@ export const PortfolioCard = ({ item, onClick }: IPortfolioCardProps) => {
                         : item.colorScheme ? theme[item.colorScheme].lossColor : theme.card_default.lossColor
             }}
             renderPrimaryText={() => formatPrice(item.meta?.volume, AppGlobalCurrencyCode)}
-            renderSecondaryText={() => formatGainLossWithPercentage(item.meta?.gainLoss?.inVolume, AppGlobalCurrencyCode, item.meta?.gainLoss?.inPercentage, item.meta?.gainLoss?.type)}
+            renderSecondaryText={() => formatGainLossWithPercentage(item.meta?.gainLoss?.inVolume, AppGlobalCurrencyCode, item.meta?.gainLoss?.inPercentage)}
         />
     );
 }

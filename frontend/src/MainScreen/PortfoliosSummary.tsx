@@ -24,7 +24,7 @@ export const PortfoliosSummary = ({
             <ContentStyled>
                 <TotalAmountStyled>{formatPrice(totalAmount, currency)}</TotalAmountStyled>
                 <GainLossAmountStyled $type={difference.type}>
-                    {formatGainLossWithPercentage(difference.inVolume, currency, difference.inPercentage, difference.type)}
+                    {formatGainLossWithPercentage(difference.inVolume, currency, difference.inPercentage)}
                 </GainLossAmountStyled>
             </ContentStyled>
         </SectionStyled>

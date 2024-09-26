@@ -18,7 +18,7 @@ export const PortfolioAllTimeProfit = ({ data }: IPortfolioAllTimeProfitProps): 
                 fontSize: 12,
                 color: Black
             }}
-            renderPrimaryText={() => formatGainLoss(data.inVolume, AppGlobalCurrencyCode, data.type)}
+            renderPrimaryText={() => formatGainLoss(data.inVolume, AppGlobalCurrencyCode)}
             renderSecondaryText={() => formatPercentage(data.inPercentage)}
             primaryParagraphStyles={{
                 marginTop: 11,

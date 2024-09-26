@@ -21,7 +21,7 @@ export const PortfolioVolumePanel = ({ data, currency = AppGlobalCurrencyCode }:
                 {formatPrice(data.volume, currency)}
             </MainParagraphStyled>
             <SecondaryParagraphStyled isGain={isGain(data.periodProfit.type)}>
-                {formatGainLossWithPercentage(data.periodProfit.inVolume, currency, data.periodProfit.inPercentage, data.periodProfit.type)} - 24{PortfolioScreen.HourShortLabelRu}
+                {formatGainLossWithPercentage(data.periodProfit.inVolume, currency, data.periodProfit.inPercentage)} - 24{PortfolioScreen.HourShortLabelRu}
             </SecondaryParagraphStyled>
         </>
     )

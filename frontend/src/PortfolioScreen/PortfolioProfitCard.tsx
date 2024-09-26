@@ -25,7 +25,7 @@ export const PortfolioProfitCard = ({ data: { gainLoss, fullName, logoUrl }, pro
                     <span>{fullName}</span>
                 </ContainerStyled>
             )}
-            renderSecondaryText={() => formatGainLossWithPercentage(gainLoss.inVolume, AppGlobalCurrencyCode, gainLoss.inPercentage, gainLoss.type)}
+            renderSecondaryText={() => formatGainLossWithPercentage(gainLoss.inVolume, AppGlobalCurrencyCode, gainLoss.inPercentage)}
             primaryParagraphStyles={{
                 fontSize: 14,
                 color: Black,
