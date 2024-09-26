@@ -10,6 +10,9 @@ import { PortfolioViewModal } from "../Modals/PortfolioViewModal";
 import { useModalState } from "../Common/ModalStateProvider";
 import { useCoinsQuery } from "../AddTransactionScreen/useCoinsQuery";
 import { ProvidePopularCoins } from "../AddTransactionScreen/PopularCoinsProvider";
+import { QueryErrorResetBoundary } from "@tanstack/react-query";
+import { CustomQueryErrorBoundary } from "../CustomQueryErrorBoundary";
+import { FallbackWithGoBackButton } from "../Common/components/FallbackWithGoBack";
 
 const MainScreen = () => {
     const modalState = useModalState("specificPortfolio");
@@ -51,7 +54,13 @@ const MainScreen = () => {
         </>
     ) : (
         <ProvidePopularCoins value={coins}>
-            <PortfolioViewModal selectedPortfolio={selectedPortfolio} onClose={closePortfolio} />
+            <QueryErrorResetBoundary>
+                {({ reset }) => (
+                    <CustomQueryErrorBoundary reset={reset} Footer={<FallbackWithGoBackButton onClick={() => closePortfolio()} />}>
+                        <PortfolioViewModal selectedPortfolio={selectedPortfolio} onClose={closePortfolio} />
+                    </CustomQueryErrorBoundary>
+                )}
+            </QueryErrorResetBoundary>
             <Section>
                 <PortfoliosSummary totalAmount={data!.meta.overallVolume} difference={data!.meta.gainLoss} /> 
             </Section>

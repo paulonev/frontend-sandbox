@@ -1,9 +1,10 @@
 import { useTheme } from "styled-components";
-import { isGain, PortfolioItem } from "./types";
+import { isGain } from "./types";
 import { ItemCard } from "../Common/components/ItemCard";
 import { formatPrice, formatGainLossWithPercentage } from "../Common/formatter";
 import { AppGlobalCurrencyCode } from "../constants";
 import { usePortfolioCardType } from "./PortfolioCardTypeProvider";
+import { PortfolioItem } from "../Api/portfolios.schema";
 
 interface IPortfolioCardProps {
     readonly item: PortfolioItem | undefined;

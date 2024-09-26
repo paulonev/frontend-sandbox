@@ -1,5 +1,16 @@
-import { Black, Green, Red, White } from "../Common/colors";
-import { PortfolioCardColorTheme } from "./types";
+import { Black, Green, PortfolioColorScheme, Red, White } from "../Common/colors";
+
+export type CardSchemeStyles = {
+    readonly bgColor: string;
+    readonly textColor: string;
+    readonly tagsBgColor: string;
+    readonly gainColor: string;
+    readonly lossColor: string;
+}
+
+export type PortfolioCardColorTheme = {
+    [key in PortfolioColorScheme]: CardSchemeStyles;
+}
 
 export const PortfolioCardTheme: PortfolioCardColorTheme = {
     main: {

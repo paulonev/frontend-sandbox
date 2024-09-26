@@ -1,8 +1,8 @@
 import styled from "styled-components";
-import { PortfolioItem } from "./types";
 import { PortfolioCard } from "./PortfolioCard";
 import { useModalState } from "../Common/ModalStateProvider";
 import { AddButton } from "../Common/components/AddButtonSvg";
+import { PortfolioItem } from "../Api/portfolios.schema";
 
 interface IPortfolioCarouselProps {
     readonly items: PortfolioItem[];

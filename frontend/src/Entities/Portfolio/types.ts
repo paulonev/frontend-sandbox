@@ -1,7 +1,4 @@
-export type DifferenceType = "gain" | "loss";
+import { DifferenceType, PortfolioDifference } from "../../Api/portfolios.schema";
 
-export type PortfolioDifference = {
-    readonly type: DifferenceType;
-    readonly inVolume: number;
-    readonly inPercentage: number;
-}
+export type { DifferenceType };
+export type { PortfolioDifference };

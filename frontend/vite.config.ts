@@ -12,5 +12,10 @@ export default defineConfig({
   base: './',
   envDir: 'root',
   envPrefix: 'VITE_',
-  appType: 'spa'
+  appType: 'spa',
+  server: {
+    proxy: {
+      '/api': 'http://localhost:80'
+    }
+  }
 });

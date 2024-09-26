@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import styled, { ThemeProvider } from "styled-components";
-import { PortfolioItem } from "./types"
 import { PrimaryHeaderColor } from "../Common/colors";
 import { PortfolioCardWide } from "./PortfolioCardWide";
 import { PortfolioCardTheme } from "./PortfolioCardTheme";
 import { PortfolioCarousel } from "./PortfolioCarousel";
 import { ProvidePortfolioCardType } from "./PortfolioCardTypeProvider";
 import { MainScreen } from "./vocabulary";
+import { PortfolioItem } from "../Api/portfolios.schema";
 
 interface IPortfoliosProps {
     readonly items: PortfolioItem[];

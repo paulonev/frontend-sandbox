@@ -32,7 +32,8 @@
     "react-hook-form": "^7.52.1",
     "react-loading-skeleton": "^3.4.0",
     "reactstrap": "^9.2.2",
-    "styled-components": "^6.1.12"
+    "styled-components": "^6.1.12",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.51.10",

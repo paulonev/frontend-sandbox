@@ -3,8 +3,8 @@ import { useModalState } from "../Common/ModalStateProvider";
 import styled from "styled-components";
 import { ArrowLeft } from "../Common/components/ArrowLeft";
 import PortfolioScreen from "../PortfolioScreen";
-import { PortfolioItem } from "../MainScreen/types";
 import { BodyBackgroundColor } from "../Common/colors";
+import { PortfolioItem } from "../Api/portfolios.schema";
 
 interface IPortfolioViewModalProps {
     readonly selectedPortfolio: PortfolioItem | null;
