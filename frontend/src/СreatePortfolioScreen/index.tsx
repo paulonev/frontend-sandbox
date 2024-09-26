@@ -9,9 +9,11 @@ import { PortfolioApi } from "../Api/PortfolioApi";
 import { useModalState } from "../Common/ModalStateProvider";
 import { Spinner } from "reactstrap";
 import { AxiosError } from "axios";
-import { telegram_showAlert } from "../Telegram/utils";
 import { PrimaryButton } from "../Common/components/PrimaryButton";
 import styled from "styled-components";
+import { useEffect } from "react";
+import { AxiosErrorResponse } from "../Api/api.extensions";
+import { telegram_isClientEnabled, telegram_isVersionAtLeast, telegram_showAlert } from "../Telegram/utils";
 
 const CreatePortfolioScreen = (): JSX.Element => {
     const modalState = useModalState("createPortfolio");
@@ -22,25 +24,46 @@ const CreatePortfolioScreen = (): JSX.Element => {
         watch,
         handleSubmit,
         setError,
+        setValue,
+        clearErrors,
         formState: { errors, isSubmitting, isValid } 
     } = useForm<NewPortfolioFormData>({ defaultValues });
     const watchIsMainPortfolio = watch("isMainPortfolio", defaultValues.isMainPortfolio);
 
     const onFormSubmit: SubmitHandler<NewPortfolioFormData> = async (data) => {
         try {
+            clearErrors();
             await PortfolioApi.createPortfolio(data);
             modalState?.setOpen(false);
         }
         catch (ex) {
-            const axiosError = ex as AxiosError;
-            setError("root.serverError", {
-                type: axiosError.code,
-                message: axiosError.message
-            });
+            if (ex instanceof AxiosError) {
+                const responsePayload = ex.response?.data as AxiosErrorResponse;
+                if (responsePayload.status === 409) {
+                    setError("name", { type: "validate", message: Vocab.NameForPortfolioIsInUseRu })
+                } else {
+                    setError("root.serverError", {
+                        type: ex.code,
+                        message: ex.message
+                    });
 
-            telegram_showAlert(Vocab.ServerErrorRu);
+                    if (telegram_isClientEnabled() && telegram_isVersionAtLeast("6.0")) {
+                        telegram_showAlert(Vocab.ServerErrorRu);
+                    }
+                }
+            }
         }
     }
+
+    useEffect(() => {
+        const { unsubscribe } = watch((data) => {
+            if (!!data.isMainPortfolio && data.portfolioColor !== "main") {
+                setValue("portfolioColor", "main");
+            }
+        });
+
+        return () => unsubscribe();
+    }, [setValue, watch]);
 
     return (
         <form onSubmit={handleSubmit(onFormSubmit)}>

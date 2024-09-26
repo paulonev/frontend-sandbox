@@ -1,5 +1,6 @@
 import { PortfolioColorScheme } from "../Common/colors";
-import { PortfolioType } from "../MainScreen/types";
+
+export type PortfolioType = "Crypto" | "Stocks";
 
 export type NewPortfolioFormData = {
     name: string;

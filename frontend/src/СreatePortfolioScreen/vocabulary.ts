@@ -3,7 +3,8 @@ export const Vocab = {
     
     PortfolioNameRu: "Название портфеля",
     EmptyPortfolioNameErrorRu: "Поле не может быть пустым",
-    
+    NameForPortfolioIsInUseRu: "У вас уже есть портфель с данным названием",
+
     PortfolioTypeRu: "Тип портфеля",
     CryptoSelectOptionRu: "Криптовалюты",
     StocksSelectOptionRu: "Акции",

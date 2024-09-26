@@ -8,7 +8,17 @@ import { ApiError } from "../Entities/Errors/ApiError";
 
 export class PortfolioApi {
     public static async createPortfolio(data: NewPortfolioFormData): Promise<void> {
-        return HttpClient.post(`api/portfolio`, data);
+        try {
+            await HttpClient.post(`api/portfolio`, data);
+        } catch (error) {
+            if (error instanceof AxiosError) {
+                ApiExtensions.processAxiosError(error, this.createPortfolio.name);
+            } else {
+                console.error(`Unhandled error in ${this.createPortfolio.name}`);
+            }
+
+            throw error;
+        }
     }
 
     public static async getPortfolios(): Promise<PortfoliosData> {
