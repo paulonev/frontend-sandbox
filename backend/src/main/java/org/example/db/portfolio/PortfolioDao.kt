@@ -27,7 +27,7 @@ object PortfolioDao {
             color = portfolioReceive.portfolioColor
             user = userEntity
             createdAt = LocalDate.now()
-            isMain = true
+            isMain = portfolioReceive.isMainPortfolio
         }
         PortfolioCurrenciesDao.create(CurrencyDao.get() ?: CurrencyDao.create(), 0.0, portfolioEntity)
         return portfolioEntity.id.value
