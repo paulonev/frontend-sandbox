@@ -1,5 +1,7 @@
 package org.example.livecoinwatch.cache
 
+import org.example.Utils
+import org.example.livecoinwatch.request.Coins
 import org.example.respond.CoinsListRespond
 import java.time.Duration
 import java.util.concurrent.ConcurrentHashMap
@@ -19,14 +21,40 @@ class CoinsListCache(private val expirationDuration: Duration = Duration.ofDays(
         return cachedValue != null && (System.currentTimeMillis() - cachedValue.timestamp) < expirationDuration.toMillis()
     }
 
-    fun get(limit: Int): MutableList<CoinsListRespond>? {
+    fun get(limit: Long): MutableList<CoinsListRespond>? {
         val cachedValue = cache[key]
-        return cachedValue?.value?.stream()?.limit(limit.toLong())?.collect(Collectors.toList())
+        return cachedValue?.value?.stream()?.limit(limit)?.collect(Collectors.toList())
     }
 
-    fun search(searchText: String): MutableList<CoinsListRespond>? {
+    fun search(searchText: String, limit: Long?): MutableList<CoinsListRespond>? {
         return cache[key]?.value?.parallelStream()?.filter {
             it.coinName.toLowerCase().contains(searchText.toLowerCase()) || it.coinTicker.toLowerCase().contains(searchText.toLowerCase())
+        }?.let { stream ->
+            if (limit != null){
+                stream.limit(limit)
+            } else{
+                stream
+            }
         }?.collect(Collectors.toList())
+    }
+
+    fun getWebp64(ticker: String): String {
+        return cache[key]?.value?.find {
+            it.coinTicker == ticker
+        }?.webp64 ?: ""
+    }
+
+    fun updateIfNeeded(){
+        if (!isCurrentData()) {
+            val coinsListRespond = Coins().getCoinsList().map {
+                CoinsListRespond(
+                    it.name,
+                    it.code,
+                    Utils.round(it.rate, 2),
+                    it.webp64
+                )
+            }
+            put(coinsListRespond)
+        }
     }
 }

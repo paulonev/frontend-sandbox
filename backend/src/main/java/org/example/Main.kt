@@ -1,3 +1,9 @@
+import io.github.smiley4.ktorswaggerui.SwaggerUI
+import io.github.smiley4.ktorswaggerui.dsl.routing.get
+import io.github.smiley4.ktorswaggerui.dsl.routing.post
+import io.github.smiley4.ktorswaggerui.dsl.routing.route
+import io.github.smiley4.ktorswaggerui.routing.openApiSpec
+import io.github.smiley4.ktorswaggerui.routing.swaggerUI
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
@@ -36,8 +42,6 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.example.livecoinwatch.cache.CryptoPriceCache
 import org.example.livecoinwatch.request.Coins
 import org.example.receive.CryptoTransaction
-import org.jetbrains.kotlin.com.google.gson.Gson
-import org.jetbrains.kotlin.com.google.gson.reflect.TypeToken
 
 object CryptoPriceCacheHolder{
     val cryptoPriceCache: CryptoPriceCache = CryptoPriceCache()
@@ -64,6 +68,10 @@ fun main(args: Array<String>){
         exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_telegram_id ON users (telegram_id)")
         exec("CREATE INDEX IF NOT EXISTS idx_portfolio_cryptos_portfolio_id ON portfolio_cryptos (portfolio)")
         exec("CREATE INDEX IF NOT EXISTS idx_portfolio_currencies_portfolio_id ON portfolio_currencies (portfolio)")
+        exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_crypto_currencies_ticker ON crypto_currencies (ticker)")
+        exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_currencies_name ON currencies (name)")
+        exec("CREATE INDEX IF NOT EXISTS idx_transactions_cryptos_portfolio_cryptos ON transactions_cryptos (portfolio_cryptos)")
+        exec("CREATE INDEX IF NOT EXISTS idx_transactions_cryptos_transactions_crypto_type ON transactions_cryptos (transactions_crypto_type)")
     }
 
     embeddedServer(Netty, 4444){
@@ -71,6 +79,8 @@ fun main(args: Array<String>){
         install(ContentNegotiation){
             json(Json {
                 prettyPrint = true
+                isLenient = true
+                ignoreUnknownKeys = true
             })
         }
 
@@ -79,14 +89,12 @@ fun main(args: Array<String>){
                 val title = "${cause.resourceType} Not Found"
                 call.respond(
                     HttpStatusCode.NotFound,
-                    Gson().toJson(
                         ErrorResponse(
                             title = title,
                             status = HttpStatusCode.NotFound.value,
                             detail = cause.message ?: title,
                             instance = call.request.uri
                         )
-                    )
                 )
             }
             exception<Throwable> { call, cause ->
@@ -104,124 +112,148 @@ fun main(args: Array<String>){
                 val title = "${cause.resourceType} Already Exists"
                 call.respond(
                     HttpStatusCode.Conflict,
-                    Gson().toJson(
                         ErrorResponse(
                             title = title,
                             status = HttpStatusCode.Conflict.value,
                             detail = cause.message ?: title,
                             instance = call.request.uri
                         )
-                    )
                 )
             }
         }
 
+        install(SwaggerUI) {
+            swagger {}
+            info {
+                title = "CapitalView API"
+                version = "3.4.0"
+                description = "CapitalView API for testing and demonstration purposes."
+            }
+            server {
+                url = "http://localhost:4444"
+                description = "Development Server"
+            }
+        }
+
         routing {
-            get("") {
-                call.respond("I'm alive!")
+            route("api.json"){
+                openApiSpec()
             }
-            get("hello") {
-                call.respond(HttpStatusCode.Accepted, "Hello Test")
+            route("swagger"){
+                swaggerUI("/api.json")
             }
-            get("gson"){
-                val user = mapOf("name" to "John Doe", "age" to 50, "email" to "john.doe@example.com")
-                call.respond(Gson().toJson(user))
-            }
-            post("api/users/create") {
-                dbQuery {
-                    val requestBody = call.receiveText()
-                    val token = object : TypeToken<UserReceive>() {}.type
-                    val userReceive = Gson().fromJson<UserReceive>(requestBody, token)
-                    call.respond(UserDao.create(userReceive))
+            route("api", {
+                description = "api route"
+            }) {
+                post("/users/create", {
+                    Swagger(this).usersCreate()
+                }) {
+                    dbQuery {
+                        val userReceive = call.receive<UserReceive>()
+                        call.respond(UserDao.create(userReceive))
+                    }
                 }
-            }
-            post("api/portfolio"){
-                dbQuery {
-                    val requestBody = call.receiveText()
-                    val token = object : TypeToken<PortfolioReceive>() {}.type
-                    val portfolioReceive = Gson().fromJson<PortfolioReceive>(requestBody, token)
-                    val userId = 1
-                    call.respond(PortfolioDao.create(portfolioReceive, userId))
+                post("/portfolio", {
+                    Swagger(this).portfolioPost()
+                }) {
+                    dbQuery {
+                        val portfolioReceive = call.receive<PortfolioReceive>()
+                        val userId = 1
+                        call.respond(PortfolioDao.create(portfolioReceive, userId))
+                    }
                 }
-            }
-            get("api/portfolio") {
-                dbQuery {
-                    val userId = 1
-                    val mainPageRespond = MainPageRespond(Meta(0.0, GainLoss("gain", 0.0, 0.0)), ArrayList())
+                get("/portfolio", {
+                    Swagger(this).allPortfoliosGet()
+                }) {
+                    dbQuery {
+                        val userId = 1
+                        val mainPageRespond = MainPageRespond(Meta(0.0, GainLoss("gain", 0.0, 0.0)), ArrayList())
 
-                    val portfolios = PortfolioDao.getAll(userId)
-                    val portfolioStatisticsDataList = portfolios.map {
-                        val portfolioStatistics = PortfolioStatistics().getPortfolioStatistics(it.id.value)
-                        mainPageRespond.items.add(
-                            Item(
-                                it.id.value,
-                                ItemMeta(
-                                    Utils.round(2, portfolioStatistics.currentAmount),
-                                    Calculate.calculateGainLoss(portfolioStatistics.currentAmount, portfolioStatistics.purchaseAmount)
-                                ),
-                                it.isMain,
-                                it.name,
-                                listOf(it.portfolioType),
-                                it.color ?: "main"
+                        val portfolios = PortfolioDao.getAll(userId)
+                        val portfolioStatisticsDataList = portfolios.map {
+                            val portfolioStatistics = PortfolioStatistics(it.id.value).getPortfolioStatistics()
+                            mainPageRespond.items.add(
+                                Item(
+                                    it.id.value,
+                                    ItemMeta(
+                                        Utils.round(2, portfolioStatistics.currentAmountWithBalance),
+                                        Calculate.calculateGainLoss(
+                                            portfolioStatistics.currentAmount,
+                                            portfolioStatistics.purchaseAmount
+                                        )
+                                    ),
+                                    it.isMain,
+                                    it.name,
+                                    listOf(it.portfolioType),
+                                    it.color ?: "main"
+                                )
                             )
-                        )
-                        portfolioStatistics
-                    }
+                            portfolioStatistics
+                        }
 
-                    var purchaseAmount = 0.0
-                    var currentAmount = 0.0
+                        var purchaseAmount = 0.0
+                        var currentAmount = 0.0
+                        var currentAmountWithBalance = 0.0
 
-                    coroutineScope {
-                        val purchaseAmountAsync = async {
+                        coroutineScope {
+                            val purchaseAmountAsync = async {
                                 portfolioStatisticsDataList.sumByDouble { it.purchaseAmount }
-                        }
-                        val currentAmountAsync = async {
-                            portfolioStatisticsDataList.sumByDouble { it.currentAmount }
+                            }
+                            val currentAmountAsync = async {
+                                portfolioStatisticsDataList.sumByDouble { it.currentAmount }
+                            }
+                            val currentAmountWithBalanceAsync = async {
+                                portfolioStatisticsDataList.sumByDouble { it.currentAmountWithBalance }
+                            }
+
+                            purchaseAmount = purchaseAmountAsync.await()
+                            currentAmount = currentAmountAsync.await()
+                            currentAmountWithBalance = currentAmountWithBalanceAsync.await()
                         }
 
-                        purchaseAmount = purchaseAmountAsync.await()
-                        currentAmount = currentAmountAsync.await()
-                    }
-
-                    mainPageRespond.meta = Meta(
-                        Utils.round(2, currentAmount),
-                        Calculate.calculateGainLoss(currentAmount, purchaseAmount)
-                    )
-                    call.respond(Gson().toJson(mainPageRespond))
-                }
-            }
-            get("api/coins/list"){
-                val search = call.request.queryParameters["q"]
-                val limit = call.request.queryParameters["count"]?.toInt() ?: 10
-                val coinsListCache = CoinsListCacheHolder.coinsListCache
-                if (!coinsListCache.isCurrentData()){
-                    val coinsListRespond = Coins().getCoinsList().map {
-                        CoinsListRespond(
-                            it.name,
-                            it.code,
-                            Utils.round(it.rate, 2),
-                            it.webp64
+                        mainPageRespond.meta = Meta(
+                            Utils.round(2, currentAmountWithBalance),
+                            Calculate.calculateGainLoss(currentAmount, purchaseAmount)
                         )
+                        call.respond(mainPageRespond)
                     }
-                    coinsListCache.put(coinsListRespond)
                 }
-                val results = if (search != null){
-                    coinsListCache.search(search)
-                } else{
-                    coinsListCache.get(limit)
+                get("/coins/list", {
+                    Swagger(this).coinsList()
+                }) {
+                    val search = call.request.queryParameters["q"]
+                    val limit = call.request.queryParameters["count"]?.toLong() ?: 10
+                    val coinsListCache = CoinsListCacheHolder.coinsListCache
+                    coinsListCache.updateIfNeeded()
+                    val results = if (search != null) {
+                        coinsListCache.search(search, limit)
+                    } else {
+                        coinsListCache.get(limit)
+                    }
+                    call.respond(results!!)
                 }
-                call.respond(Gson().toJson(results))
-            }
-            get("api/coins/single") {
-                val coinsSingle = Coins().getCoinsSingle()
-                call.respond(Gson().toJson(coinsSingle))
-            }
-            post("api/portfolio/{portfolio_id}/transactions") {
-                dbQuery {
-                    val portfolioId = call.parameters["portfolio_id"]?.toInt() ?: throw ResourceNotFoundException("Portfolio", "Portfolio id not found in url")
-                    val token = object : TypeToken<CryptoTransaction>(){}.type
-                    val cryptoTransaction = Gson().fromJson<CryptoTransaction>(call.receiveText(), token)
-                    call.respond(TransactionsCryptosDao.create(cryptoTransaction, portfolioId))
+                post("/portfolio/{portfolio_id}/transactions", {
+                    Swagger(this).cryptoTransactionPost()
+                }) {
+                    dbQuery {
+                        val portfolioId = call.parameters["portfolio_id"]?.toInt() ?: throw ResourceNotFoundException(
+                            "Portfolio",
+                            "Portfolio id not found in url"
+                        )
+                        val cryptoTransaction = call.receive<CryptoTransaction>()
+                        call.respond(TransactionsCryptosDao.create(cryptoTransaction, portfolioId))
+                    }
+                }
+                get("/portfolio/{id}", {
+                    Swagger(this).allPortfolioDataGet()
+                }) {
+                    dbQuery {
+                        val portfolioId = call.parameters["id"]?.toInt() ?: throw ResourceNotFoundException(
+                            "Portfolio",
+                            "Portfolio id not found in url"
+                        )
+                        call.respond(PortfolioStatistics(portfolioId).getAllPortfolioData())
+                    }
                 }
             }
         }

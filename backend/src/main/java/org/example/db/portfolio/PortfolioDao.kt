@@ -13,7 +13,7 @@ import java.time.LocalDate
 
 object PortfolioDao {
 
-    fun create(portfolioReceive: PortfolioReceive, userId: Int): HttpStatusCode {
+    fun create(portfolioReceive: PortfolioReceive, userId: Int): Int {
         val userEntity = UserDao.get(userId)
         if (isExist(portfolioReceive.name, userEntity)) throw ResourceAlreadyExistsException("Portfolio", "Portfolio with name ${portfolioReceive.name} already exists")
         if (portfolioReceive.isMainPortfolio) {
@@ -30,7 +30,7 @@ object PortfolioDao {
             isMain = true
         }
         PortfolioCurrenciesDao.create(CurrencyDao.get() ?: CurrencyDao.create(), 0.0, portfolioEntity)
-        return HttpStatusCode.Created
+        return portfolioEntity.id.value
     }
 
     fun getAll(userId: Int): List<PortfolioEntity> {

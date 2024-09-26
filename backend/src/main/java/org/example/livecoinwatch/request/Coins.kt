@@ -29,6 +29,17 @@ class Coins {
             ?: throw ResourceNotFoundException("Coin", "Coin with ticker = $code not found")
     }
 
+    fun getCoinsMap(codes: List<String>,
+                    currency: String = "USD",
+                     sort: String = "rank",
+                     order: String = "ascending",
+                     offset: Int = 0,
+                     limit: Int = 0,
+                     meta: Boolean = true): ArrayList<CoinsList> {
+        return api.getCoinsMap(CoinsMapRequest(currency, codes, sort, order, offset, limit, meta)).execute().body()
+            ?: throw ResourceNotFoundException("Coins", "Coins $codes not found")
+    }
+
     data class CoinsListRequest(
         val currency: String,
         val sort: String,
@@ -41,6 +52,16 @@ class Coins {
     data class CoinsSingleRequest(
         val currency: String,
         val code: String,
+        val meta: Boolean
+    )
+
+    data class CoinsMapRequest(
+        val currency: String,
+        val codes: List<String>,
+        val sort: String,
+        val order: String,
+        val offset: Int,
+        val limit: Int,
         val meta: Boolean
     )
 }
