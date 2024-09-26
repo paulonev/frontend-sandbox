@@ -2,7 +2,6 @@ import { PortfoliosSummary } from "./PortfoliosSummary";
 import { usePortfoliosQuery } from "./usePortfoliosQuery";
 import { Section } from "../Common/components/Section";
 import { Portfolios } from "./Portfolios";
-import { PortfolioApi } from "../Api/PortfolioApi";
 import PortfoliosSummary_s from "./Skeletoned/PortfoliosSummary_skeletoned";
 import Portfolios_s from './Skeletoned/Portfolios_skeletoned';
 import { useMemo, useState } from "react";
@@ -41,8 +40,6 @@ const MainScreen = () => {
         refetch();
     }
 
-    useFakeFetch();
-
     return !portfolioId && (isLoading || isRefetching) ? (
         <>
             <Section>
@@ -71,13 +68,4 @@ const MainScreen = () => {
     );
 }
 
-const useFakeFetch = async () => {
-    try {
-        const response = await PortfolioApi.getGson();
-        alert(`Backend data: ${JSON.stringify(response)}`);
-    } catch (error)
-    {
-        console.error(error);
-    }
-}
 export default MainScreen;

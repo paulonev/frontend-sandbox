@@ -42,8 +42,4 @@ export class PortfolioApi {
     public static async getPortfolio(id: number): Promise<PortfolioItem> {
         return HttpClient.get(`api/portfolio/${id}`);
     }
-
-    public static async getGson(): Promise<unknown> {
-        return HttpClient.get(`api/gson`);
-    }
 }
