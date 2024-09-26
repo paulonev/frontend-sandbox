@@ -62,7 +62,7 @@ class Swagger(val openApiRoute: OpenApiRoute) {
             }
             response {
                 HttpStatusCode.OK to {
-                    body<Int>{
+                    body<Any>{
                         description = "portfolio id"
                     }
                 }
