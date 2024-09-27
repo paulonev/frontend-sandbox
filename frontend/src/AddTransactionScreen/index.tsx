@@ -1,5 +1,5 @@
 import { SubmitHandler, UseFormReturn } from "react-hook-form";
-import { AddTransactionFormData, CoinOptions, AddTransactionRequest } from "./types";
+import { AddTransactionFormData, AddTransactionRequest } from "./types";
 import styled from "styled-components";
 import { PrimaryButton } from "../Common/components/PrimaryButton";
 import { Spinner } from "reactstrap";
@@ -13,6 +13,7 @@ import { CommissionPriceInput } from "./CommissionPriceInput";
 import { NotesInput } from "./NotesInput";
 import { OverallTransactionAmount } from "./OverallTransactionAmount";
 import dayjs from "dayjs";
+import { CoinOptions } from "../Api/coinSearch.schema";
 
 interface IAddTransactionScreenProps {
     form: UseFormReturn<AddTransactionFormData>;

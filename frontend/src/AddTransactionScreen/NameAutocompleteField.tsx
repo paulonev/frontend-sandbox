@@ -1,12 +1,13 @@
 import { FieldError } from "react-hook-form";
-import { CoinOptions } from "./types";
 import { useCallback, useEffect, useState } from "react";
 import debounce from "lodash.debounce";
 import { AutocompleteInput } from "./AutocompleteInput";
 import { usePopularCoins } from "./PopularCoinsProvider";
 import { Vocab } from "./vocabulary";
+import { CoinOptions } from "../Api/coinSearch.schema";
+import { CoinsApi } from "../Api/CoinsApi";
 
-const DefaultFetchCount: number = 100;
+const DefaultFetchCount: number = 50;
 
 export const requestDelayInMilliseconds: number = 500;
 
@@ -17,7 +18,8 @@ const fetchCoins = debounce(
         onRequestFailed: () => void
     ): Promise<void> => {
         try {
-            throw new Error(`fetch is missing, params { DefaultFetchCount: ${DefaultFetchCount}, inputValue: ${inputValue}, onRequestFulfilled: ${onRequestFulfilled} }`);
+            const response = await CoinsApi.search(inputValue, DefaultFetchCount);
+            onRequestFulfilled(response);
         } catch (error) {
             onRequestFailed();
             console.error(error);
