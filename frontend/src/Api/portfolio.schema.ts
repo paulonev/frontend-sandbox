@@ -2,7 +2,7 @@ import { z } from "zod";
 import { PortfolioDifferenceSchema } from "./portfolios.schema";
 
 const PortfolioAssetVolume = z.object({
-    inAmount: z.number(),
+    inAmount: z.string(),
     inFiat: z.number()
 });
 
