@@ -5,6 +5,7 @@ import { Black, Green, Red } from "../Common/colors";
 import { isGain } from "../MainScreen/types";
 import { DifferenceType } from "../Entities/Portfolio/types";
 import { PortfolioAsset } from "../Api/portfolio.schema";
+import Big from "big.js";
 
 interface IPortfolioAssetRecordProps {
     readonly data: PortfolioAsset;
@@ -15,7 +16,7 @@ export const PortfolioAssetRecord = ({ data }: IPortfolioAssetRecordProps): JSX.
         <ContainerStyled>
             <Div1Styled>{data.fullName}</Div1Styled>
             <Div2Styled>{formatPrice(data.volume.inFiat, AppGlobalCurrencyCode)}</Div2Styled>
-            <Div3Styled>{data.volume.inAmount} {data.shortName}</Div3Styled>
+            <Div3Styled>{new Big(data.volume.inAmount).toFixed(5).toString()} {data.shortName}</Div3Styled>
             <Div4Styled isGain={isGain(data.gainLoss.type)}>{getPercentageOutput(data.gainLoss.inPercentage, data.gainLoss.type)}</Div4Styled>
             <Div5Styled>
                 <ImageContainerStyled>
