@@ -14,20 +14,22 @@ interface ICustomQueryErrorBoundaryProps {
 function getFallbackRender({ Footer }: { Footer?: React.ReactNode }) {
     return ({ error, resetErrorBoundary }: FallbackProps) => {        
         return (
-            <ContainerStyled>
-                <span>{Vocab.GeneralErrorRu}</span>
-                {error instanceof ApiError && (
-                    <>
-                        <span>ErrorId: <b>{error.errorId ?? "undefined"}</b></span>
-                        {/* TODO: use openTelegramLink() for opening support chat*/}
-                        <span>{Vocab.ContactCustomerSupportRu}</span>
-                    </>
-                )}
-                {!Footer 
-                    ? <ButtonStyled onClick={() => resetErrorBoundary()}>{Vocab.TryAgainLaterRu}</ButtonStyled>
-                    : Footer
-                }
-            </ContainerStyled>
+            <ScreenStyled>
+                <ContainerStyled>
+                    <span>{Vocab.GeneralErrorRu}</span>
+                    {error instanceof ApiError ? (
+                        <>
+                            <span>ErrorId: <b>{error.errorId ?? "undefined"}</b></span>
+                            {/* TODO: use openTelegramLink() for opening support chat*/}
+                            <span>{Vocab.ContactCustomerSupportRu}</span>
+                        </>
+                    ) : null}
+                    {!Footer 
+                        ? <ButtonStyled onClick={() => resetErrorBoundary()}>{Vocab.TryAgainLaterRu}</ButtonStyled>
+                        : Footer
+                    }
+                </ContainerStyled>
+            </ScreenStyled>
         );
     }
 }
@@ -62,4 +64,12 @@ const ButtonStyled = styled.button`
     box-sizing: border-box;
 
     margin-top: 10px;
+`;
+
+const ScreenStyled = styled.div`
+    position: absolute;
+    background-color: ${White};
+    height: 100%;
+    width: 100%;
+    display: block;
 `;
