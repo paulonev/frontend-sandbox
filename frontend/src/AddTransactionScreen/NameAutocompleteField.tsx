@@ -43,7 +43,7 @@ export const NameAutocompleteField = ({ errors, handleOnChange }: INameAutocompl
     const noOptionsText = useCallback((): string => {
         if (searching) {
             return Vocab.SearchingRu;
-        } else if (coinOptions.length === 0 ?? inputValue) {
+        } else if (coinOptions.length === 0 && inputValue) {
             return Vocab.NothingFoundRu;
         } else return '';
     }, [searching, coinOptions.length, inputValue]);
