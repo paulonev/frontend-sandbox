@@ -9,22 +9,22 @@ export type PortfolioSecondaryColorScheme = z.infer<typeof PortfolioSecondaryCol
 const PortfolioColorScheme = z.literal("main").or(PortfolioSecondaryColorScheme);
 export type PortfolioColorScheme = z.infer<typeof PortfolioColorScheme>;
 
-const PortfolioDifference = z.object({
+export const PortfolioDifferenceSchema = z.object({
     type: DifferenceType,
     inVolume: z.number(),
     inPercentage: z.number(),
 });
-export type PortfolioDifference = z.infer<typeof PortfolioDifference>;
+export type PortfolioDifference = z.infer<typeof PortfolioDifferenceSchema>;
 
 const PortfoliosMeta = z.object({
     overallVolume: z.number(),
-    gainLoss: PortfolioDifference
+    gainLoss: PortfolioDifferenceSchema
 });
 export type PortfoliosMeta = z.infer<typeof PortfoliosMeta>;
 
 const PortfolioMeta = z.object({
     volume: z.number(),
-    gainLoss: PortfolioDifference
+    gainLoss: PortfolioDifferenceSchema
 });
 export type PortfolioMeta = z.infer<typeof PortfolioMeta>;
 

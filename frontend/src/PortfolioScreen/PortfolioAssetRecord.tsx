@@ -1,10 +1,10 @@
 import styled from "styled-components";
-import { PortfolioAsset } from "./types"
 import { formatPercentage, formatPrice } from "../Common/formatter";
 import { AppGlobalCurrencyCode } from "../constants";
 import { Black, Green, Red } from "../Common/colors";
 import { isGain } from "../MainScreen/types";
 import { DifferenceType } from "../Entities/Portfolio/types";
+import { PortfolioAsset } from "../Api/portfolio.schema";
 
 interface IPortfolioAssetRecordProps {
     readonly data: PortfolioAsset;

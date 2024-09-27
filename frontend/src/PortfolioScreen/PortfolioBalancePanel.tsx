@@ -1,10 +1,10 @@
 import styled from "styled-components";
-import { PortfolioBalance } from "./types"
 import { PortfolioScreen } from "./vocabulary";
 import { PortfolioBalanceRecord } from "./PortfolioBalanceRecord";
 import { Black } from "../Common/colors";
 import { EiQuestionSvg } from "../Common/EiQuestionSvg";
 import { PopoverBody, UncontrolledPopover } from "reactstrap";
+import { PortfolioBalance } from "../Api/portfolio.schema";
 
 interface IPortfolioBalancePanelProps {
     readonly data: PortfolioBalance; 

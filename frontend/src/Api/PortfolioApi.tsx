@@ -3,8 +3,9 @@ import { NewPortfolioFormData } from "../СreatePortfolioScreen/types";
 import HttpClient from "./HttpClient";
 import { AxiosError } from "axios";
 import { ApiExtensions } from "./api.extensions";
-import { PortfolioItem, PortfoliosData, PortfoliosDataSchema } from "./portfolios.schema";
+import { PortfoliosData, PortfoliosDataSchema } from "./portfolios.schema";
 import { ApiError } from "../Entities/Errors/ApiError";
+import { Portfolio, PortfolioSchema } from "./portfolio.schema";
 
 export class PortfolioApi {
     public static async createPortfolio(data: NewPortfolioFormData): Promise<void> {
@@ -30,8 +31,8 @@ export class PortfolioApi {
                 console.error(`Error [${this.getPortfolios.name}]: response does not match the validation schema. ${JSON.stringify(error.issues)}`);
                 throw error;
             } else if (error instanceof AxiosError) {
-                const errorId = ApiExtensions.processAxiosError(error, this.getPortfolios.name);
-                throw new ApiError(error, errorId);
+                const errorResponse = ApiExtensions.processAxiosError(error, this.getPortfolios.name);
+                throw new ApiError(error, errorResponse?.errorId);
             } else {
                 console.error(`Unhandled error in ${this.getPortfolios.name}`);
                 throw error; 
@@ -39,7 +40,25 @@ export class PortfolioApi {
         }
     }
 
-    public static async getPortfolio(id: number): Promise<PortfolioItem> {
-        return HttpClient.get(`api/portfolio/${id}`);
+    public static async getPortfolio(id: number): Promise<Portfolio | null> {
+        try {
+            const response = await HttpClient.get(`api/portfolio/${id}`);
+            return PortfolioSchema.parse(response);
+        } catch (error) {
+            if (error instanceof z.ZodError) {
+                console.error(`Error [${this.getPortfolio.name}]: response does not match the validation schema. ${JSON.stringify(error.issues)}`);
+                throw error;
+            } else if (error instanceof AxiosError) {
+                const errorResponse = ApiExtensions.processAxiosError(error, this.getPortfolio.name);
+                if (errorResponse?.status === 404 && errorResponse?.title?.includes("Portfolio Not Found")) {
+                    return Promise.resolve(null);
+                }
+
+                throw new ApiError(error, errorResponse?.errorId);
+            } else {
+                console.error(`Unhandled error in ${this.getPortfolio.name}`);
+                throw error; 
+            }
+        }
     }
 }
