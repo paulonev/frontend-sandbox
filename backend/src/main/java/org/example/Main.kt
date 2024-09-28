@@ -180,7 +180,7 @@ fun main(args: Array<String>){
                 }) {
                     dbQuery {
                         val userId = 1
-                        val mainPageRespond = MainPageRespond(Meta(0.0, GainLoss("gain", 0.0, 0.0)), ArrayList())
+                        val mainPageRespond = MainPageRespond(Meta(0.0, GainLoss(0.0, 0.0)), ArrayList())
 
                         val portfolios = PortfolioDao.getAll(userId)
                         val portfolioStatisticsDataList = portfolios.map {
