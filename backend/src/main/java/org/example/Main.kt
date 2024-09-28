@@ -12,6 +12,7 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.serialization.kotlinx.json.*
+import io.ktor.server.plugins.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.request.*
 import kotlinx.coroutines.async
@@ -118,6 +119,18 @@ fun main(args: Array<String>){
                             detail = cause.message ?: title,
                             instance = call.request.uri
                         )
+                )
+            }
+            exception<BadRequestException>{ call, cause ->
+                val title = "Bad request"
+                call.respond(
+                    HttpStatusCode.BadRequest,
+                    ErrorResponse(
+                        title = title,
+                        status = HttpStatusCode.BadRequest.value,
+                        detail = cause.message ?: title,
+                        instance = call.request.uri
+                    )
                 )
             }
         }
