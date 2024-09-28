@@ -18,7 +18,6 @@ export const Portfolios = ({ items, selectPortfolio }: IPortfoliosProps) => {
         <ContainerStyled>
             <HeaderStyled>{MainScreen.MainPortfolioRu}</HeaderStyled>
             <ThemeProvider theme={PortfolioCardTheme}>
-                {/* TODO: one portfolio is always main */}
                 <ProvidePortfolioCardType value={{ type: "large" }}>
                     <PortfolioCardWide item={items.find(p => p.isMain)} onClick={(item) => selectPortfolio(item.id)}/>
                 </ProvidePortfolioCardType>

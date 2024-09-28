@@ -57,8 +57,8 @@ const CreatePortfolioScreen = (): JSX.Element => {
 
     useEffect(() => {
         const { unsubscribe } = watch((data) => {
-            if (!!data.isMainPortfolio && data.portfolioColor !== "main") {
-                setValue("portfolioColor", "main");
+            if (!!data.isMainPortfolio && data.portfolioColor !== "pattensBlue") {
+                setValue("portfolioColor", "pattensBlue");
             }
         });
 
