@@ -1,4 +1,6 @@
-import { Black, Green, PortfolioColorScheme, Red, White } from "../Common/colors";
+import { Black, Green, PortfolioSecondaryColorScheme, Red, White } from "../Common/colors";
+
+export type PortfolioColorScheme = "main" | PortfolioSecondaryColorScheme;
 
 export type CardSchemeStyles = {
     readonly bgColor: string;
