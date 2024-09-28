@@ -1,4 +1,4 @@
-import { PortfolioColorScheme, PortfolioSecondaryColorScheme } from "../Api/portfolios.schema";
+import { PortfolioSecondaryColorScheme } from "../Api/portfolios.schema";
 
 export const SecondaryHeaderColor: string = "#A3A3A3";
 export const PrimaryHeaderColor: string = "#252525";
@@ -9,6 +9,5 @@ export const Red: string = "#F43F3F";
 export const Black: string = "#000";
 export const White: string = "#FFF";
 
-export type { PortfolioColorScheme }; 
 export type { PortfolioSecondaryColorScheme }; 
 

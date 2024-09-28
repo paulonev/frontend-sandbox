@@ -3,7 +3,7 @@ import { Black, Green, Red } from "../Common/colors";
 import { ItemCard } from "../Common/components/ItemCard";
 import { formatGainLossWithPercentage } from "../Common/formatter";
 import { AppGlobalCurrencyCode } from "../constants";
-import { isGain } from "../MainScreen/types";
+import { isPositiveNumber } from "../MainScreen/utils";
 import { PortfolioAssetShortView } from "../Api/portfolio.schema";
 
 interface IPortfolioProfitCardProps {
@@ -42,9 +42,9 @@ export const PortfolioProfitCard = ({ data, profitType }: IPortfolioProfitCardPr
             }}
             secondaryParagraphStyles={{
                 fontSize: 9,
-                color: isGain(gainLoss.type) 
-                ? Green 
-                : Red
+                color: isPositiveNumber(gainLoss.inPercentage) 
+                    ? Green 
+                    : Red
             }}
             containerStyles={{
                 cursor: "unset",

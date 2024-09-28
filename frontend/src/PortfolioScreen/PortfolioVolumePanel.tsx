@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { formatPrice, formatGainLossWithPercentage } from "../Common/formatter";
 import { PortfolioDifference } from "../Entities/Portfolio/types";
-import { isGain } from "../MainScreen/types";
+import { isPositiveNumber } from "../MainScreen/utils";
 import { Black, Green, Red } from "../Common/colors";
 import { AppGlobalCurrencyCode } from "../constants";
 import { PortfolioScreen } from "./vocabulary";
@@ -20,7 +20,7 @@ export const PortfolioVolumePanel = ({ data, currency = AppGlobalCurrencyCode }:
             <MainParagraphStyled>
                 {formatPrice(data.volume, currency)}
             </MainParagraphStyled>
-            <SecondaryParagraphStyled isGain={isGain(data.periodProfit.type)}>
+            <SecondaryParagraphStyled $isGain={isPositiveNumber(data.periodProfit.inVolume)}>
                 {formatGainLossWithPercentage(data.periodProfit.inVolume, currency, data.periodProfit.inPercentage)} - 24{PortfolioScreen.HourShortLabelRu}
             </SecondaryParagraphStyled>
         </>
@@ -37,11 +37,11 @@ const MainParagraphStyled = styled.p`
     text-align: center;
 `;
 
-const SecondaryParagraphStyled = styled.p<{isGain: boolean;}>`
+const SecondaryParagraphStyled = styled.p<{$isGain: boolean;}>`
     margin-top: 0;
     margin-bottom: 10px;
     font-weight: 500;
     font-size: 16px;
-    color: ${props => props.isGain ? Green : Red};
+    color: ${props => props.$isGain ? Green : Red};
     text-align: center;
 `;

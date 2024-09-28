@@ -1,5 +1,5 @@
 import { useTheme } from "styled-components";
-import { isGain } from "./types";
+import { isPositiveNumber } from "./utils";
 import { ItemCard } from "../Common/components/ItemCard";
 import { formatPrice, formatGainLossWithPercentage } from "../Common/formatter";
 import { AppGlobalCurrencyCode } from "../constants";
@@ -37,7 +37,7 @@ export const PortfolioCardWide = ({ item, onClick }: IPortfolioCardWideProps): J
             }}
             secondaryParagraphStyles={{
                 fontSize: type === "small" ? "12px" : "14px",
-                color: isGain(item.meta.gainLoss.type) 
+                color: isPositiveNumber(item.meta.gainLoss.inPercentage) 
                         ? theme.main.gainColor ?? theme.card_default.gainColor 
                         : theme.main.lossColor ?? theme.card_default.lossColor
             }}

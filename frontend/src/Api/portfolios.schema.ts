@@ -1,8 +1,5 @@
 import { z } from "zod";
 
-const DifferenceType = z.enum(["gain", "loss"] as const);
-export type DifferenceType = z.infer<typeof DifferenceType>;
-
 const PortfolioSecondaryColorScheme = z.enum(["pattensBlue", "bridalHeath", "pinkLace", "hintOfGreen", "springSun", "blueChalk"]);
 export type PortfolioSecondaryColorScheme = z.infer<typeof PortfolioSecondaryColorScheme>;
 
@@ -10,7 +7,6 @@ const PortfolioColorScheme = z.literal("main").or(PortfolioSecondaryColorScheme)
 export type PortfolioColorScheme = z.infer<typeof PortfolioColorScheme>;
 
 export const PortfolioDifferenceSchema = z.object({
-    type: DifferenceType,
     inVolume: z.number(),
     inPercentage: z.number(),
 });
