@@ -1,5 +1,6 @@
 package org.example.db.crypto.portfoliocryptos
 
+import io.ktor.server.plugins.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import org.example.db.crypto.cryptocurrencies.CryptoCurrenciesEntity
@@ -48,7 +49,7 @@ object PortfolioCryptosDao {
             }
             TransactionsCryptosType.Sell -> {
                 val newAmount = portfolioCryptosEntity.amount - amount
-                if (newAmount < BigDecimal.ZERO) throw IllegalArgumentException("You are trying to sell more than you have in your portfolio")
+                if (newAmount < BigDecimal.ZERO) throw BadRequestException("You can't sell more than ${portfolioCryptosEntity.amount.stripTrailingZeros()} ${portfolioCryptosEntity.cryptoCurrencies.name}")
                 val newAveragePriceAsync = async {
                     if (newAmount.stripTrailingZeros() != BigDecimal(0)) {
                         calculatingAveragePriceAfterSelling(portfolioCryptosEntity, newAmount)
