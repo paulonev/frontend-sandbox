@@ -15,7 +15,7 @@ export const PortfolioAssetRecord = ({ data }: IPortfolioAssetRecordProps): JSX.
         <ContainerStyled>
             <Div1Styled>{data.fullName}</Div1Styled>
             <Div2Styled>{formatPrice(data.volume.inFiat, AppGlobalCurrencyCode)}</Div2Styled>
-            <Div3Styled>{new Big(data.volume.inAmount).toFixed(5).toString()} {data.shortName}</Div3Styled>
+            <Div3Styled>{parseFloat(new Big(data.volume.inAmount).toFixed(5)).toString()} {data.shortName}</Div3Styled>
             <Div4Styled $isGain={isPositiveNumber(data.gainLoss.inPercentage)}>{formatPercentage(data.gainLoss.inPercentage)}</Div4Styled>
             <Div5Styled>
                 <ImageContainerStyled>
