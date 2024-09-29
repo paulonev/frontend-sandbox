@@ -62,4 +62,5 @@ const ContainerStyled = styled.div`
     display: flex;
     gap: 5px;
     margin-bottom: 5px;
+    overflow: hidden;
 `;
