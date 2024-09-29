@@ -11,6 +11,7 @@ interface IUnitPriceInputProps {
 export const UnitPriceInput = ({ register, errors }: IUnitPriceInputProps): JSX.Element => {
     return (
         <PositiveDecimalInput
+            key={"unit-price-input"}
             isRequired
             register={register} 
             errors={errors}
@@ -18,6 +19,7 @@ export const UnitPriceInput = ({ register, errors }: IUnitPriceInputProps): JSX.
             label={Vocab.PricePerUnitLabelRu}
             placeholder="0.0000001"
             autoComplete="off"
+            greaterZeroRequired
         />
     );
 }

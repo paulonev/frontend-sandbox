@@ -19,7 +19,7 @@ export const Vocab = {
 
     PricePerUnitLabelRu: "Цена за монету ($)",
     ValueIsNotValidDecimalRu: "Введено неверное число",
-    ValueIsNotPositiveRu: "Введено отрицательное число",
+    ValueIsNotPositiveRu: "Введено отрицательное число либо 0",
 
     QuantityLabelRu: "Количество",
 
@@ -32,5 +32,8 @@ export const Vocab = {
 
     NotesLabelRu: "Заметка",
 
-    TotalRu: "Всего:"
+    TotalRu: "Всего:",
+
+    //X - amount, Y - монета
+    SellAmountOverflowErrorRu: "Доступно X Y для продажи"
 }

@@ -22,6 +22,7 @@ const PortfolioScreen = (props: IPortfolioScreenProps): JSX.Element => {
 
     if (data === null) {
         // 404 - portfolio not found page { title: "Portfolio Not Found" }
+        // TODO: add portfolio not found page
         return <div>Portfolio Not Found</div>;
     }
     
@@ -34,7 +35,7 @@ const PortfolioScreen = (props: IPortfolioScreenProps): JSX.Element => {
         </>
     ) : (
         <>
-            <AddTransactionModal />
+            <AddTransactionModal portfolioId={props.id} />
             <PortfolioStatisticsPanel data={data!} />
             <PortfolioBalancePanel data={data!.balance} />
             <PortfolioAssetsPanel data={data!.assets} />

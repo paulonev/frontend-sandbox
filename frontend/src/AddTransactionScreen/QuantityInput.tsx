@@ -10,7 +10,8 @@ interface IQuantityInputProps {
 
 export const QuantityInput = ({ register, errors }: IQuantityInputProps): JSX.Element => {
     return (
-        <PositiveDecimalInput 
+        <PositiveDecimalInput
+            key={"quantity-input"} 
             isRequired
             register={register} 
             errors={errors}
@@ -18,6 +19,7 @@ export const QuantityInput = ({ register, errors }: IQuantityInputProps): JSX.El
             label={Vocab.QuantityLabelRu}
             placeholder="100"
             autoComplete="off"
+            greaterZeroRequired
         />
     );
 }
