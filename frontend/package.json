@@ -16,7 +16,7 @@
     "@types/bootstrap": "^5.2.10",
     "@uiw/react-color-circle": "^2.3.0",
     "@vitejs/plugin-basic-ssl": "^1.1.0",
-    "axios": "^1.7.2",
+    "axios": "^1.7.4",
     "bootstrap": "^5.3.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
