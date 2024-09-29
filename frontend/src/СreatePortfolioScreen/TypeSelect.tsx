@@ -5,6 +5,7 @@ import { Vocab } from "./vocabulary";
 import { FormGroup, Input, Label } from "reactstrap";
 import { CSSProperties } from "react";
 import { Black } from "../Common/colors";
+import { Vocab as GlobalVocab } from "../vocabulary";
 
 interface ITypeSelectProps {
     readonly control: Control<NewPortfolioFormData>;
@@ -32,7 +33,7 @@ export const TypeSelect = ({ control }: ITypeSelectProps) => {
                         >
                             <option value="crypto">{Vocab.CryptoSelectOptionRu}</option>
                             <option value="stocks" disabled={true} aria-disabled={true}>
-                                {Vocab.StocksSelectOptionRu} ({Vocab.SoonRu})
+                                {Vocab.StocksSelectOptionRu} ({GlobalVocab.SoonRu})
                             </option>
                         </Input>
                     </FormGroup>

@@ -14,10 +14,4 @@ export const Vocab = {
     ChoosePortfolioColorRu: "Выбрать цвет портфеля",
 
     SubmitButtonRu: "Создать",
-
-    ServerErrorRu: "Ошибка сервера. Попробуйте позже",
-    SoonRu: "скоро",
-
-    GeneralErrorRu: "Что-то пошло не так",
-    TryAgainButtonTextRu: "Попробовать снова",
 }

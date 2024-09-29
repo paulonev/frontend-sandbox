@@ -14,6 +14,7 @@ import styled from "styled-components";
 import { useEffect } from "react";
 import { AxiosErrorResponse } from "../Api/api.extensions";
 import { telegram_isClientEnabled, telegram_isVersionAtLeast, telegram_showAlert } from "../Telegram/utils";
+import { Vocab as GlobalVocab } from "../vocabulary";
 
 const CreatePortfolioScreen = (): JSX.Element => {
     const modalState = useModalState("createPortfolio");
@@ -48,7 +49,7 @@ const CreatePortfolioScreen = (): JSX.Element => {
                     });
 
                     if (telegram_isClientEnabled() && telegram_isVersionAtLeast("6.0")) {
-                        telegram_showAlert(Vocab.ServerErrorRu);
+                        telegram_showAlert(GlobalVocab.ServerErrorRu);
                     }
                 }
             }
