@@ -63,4 +63,5 @@ const ContainerStyled = styled.div`
     gap: 5px;
     margin-bottom: 5px;
     overflow: hidden;
+    max-height: 40px;
 `;
