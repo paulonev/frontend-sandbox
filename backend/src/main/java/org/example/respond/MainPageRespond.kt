@@ -16,7 +16,6 @@ data class Meta(
 
 @Serializable
 data class GainLoss(
-    var type: String,
     var inVolume: Double,
     var inPercentage: Double
 )

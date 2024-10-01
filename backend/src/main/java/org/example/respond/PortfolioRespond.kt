@@ -21,8 +21,8 @@ data class PortfolioRespond(
                 portfolioId,
                 name,
                 0.0,
-                GainLoss("gain", 0.0, 0.0),
-                GainLoss("gain", 0.0, 0.0),
+                GainLoss(0.0, 0.0),
+                GainLoss(0.0, 0.0),
                 balance,
                 Assets(null, null, listOf())
             )

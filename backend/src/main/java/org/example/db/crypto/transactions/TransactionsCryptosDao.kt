@@ -1,5 +1,6 @@
 package org.example.db.crypto.transactions
 
+import CoinsListCacheHolder
 import org.example.db.crypto.cryptocurrencies.CryptoCurrenciesDao
 import org.example.db.crypto.portfoliocryptos.PortfolioCryptosDao
 import org.example.db.portfolio.PortfolioDao
@@ -11,8 +12,12 @@ import java.time.LocalDate
 object TransactionsCryptosDao {
 
     suspend fun create(cryptoTransaction: CryptoTransaction, portfolioId: Int){
+        CoinsListCacheHolder.coinsListCache.updateIfNeeded()
         val cryptoCurrenciesEntity = CryptoCurrenciesDao.get(cryptoTransaction.coinTicker)
-            ?: CryptoCurrenciesDao.create(cryptoTransaction.coinName, cryptoTransaction.coinTicker)
+            ?: CryptoCurrenciesDao.create(
+                cryptoTransaction.coinName,
+                cryptoTransaction.coinTicker,
+                CoinsListCacheHolder.coinsListCache.getWebp64(cryptoTransaction.coinTicker))
         val portfolioCryptosEntity = PortfolioCryptosDao.get(portfolioId, cryptoCurrenciesEntity.id.value)
             ?: PortfolioCryptosDao.create(PortfolioDao.get(portfolioId), cryptoCurrenciesEntity)
 
