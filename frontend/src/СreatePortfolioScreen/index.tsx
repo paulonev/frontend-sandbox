@@ -16,7 +16,7 @@ import { AxiosErrorResponse } from "../Api/api.extensions";
 import { telegram_isClientEnabled, telegram_isVersionAtLeast, telegram_showAlert } from "../Telegram/utils";
 import { Vocab as GlobalVocab } from "../vocabulary";
 
-const CreatePortfolioScreen = (): JSX.Element => {
+const CreatePortfolioScreen = ({ hasPortfolios }: { readonly hasPortfolios: boolean; }): JSX.Element => {
     const modalState = useModalState("createPortfolio");
 
     const { 
@@ -28,7 +28,7 @@ const CreatePortfolioScreen = (): JSX.Element => {
         setValue,
         clearErrors,
         formState: { errors, isSubmitting, isValid } 
-    } = useForm<NewPortfolioFormData>({ defaultValues });
+    } = useForm<NewPortfolioFormData>({ defaultValues: {...defaultValues, isMainPortfolio: !hasPortfolios } });
     const watchIsMainPortfolio = watch("isMainPortfolio", defaultValues.isMainPortfolio);
 
     const onFormSubmit: SubmitHandler<NewPortfolioFormData> = async (data) => {
@@ -70,8 +70,8 @@ const CreatePortfolioScreen = (): JSX.Element => {
         <form onSubmit={handleSubmit(onFormSubmit)}>
             <NameInput register={register} errors={errors.name} />
             <TypeSelect control={control} />
-            <MainPortfolioSwitch control={control} />
-            {!watchIsMainPortfolio && <ColorCircles control={control} />}
+            <MainPortfolioSwitch control={control} disabled={!hasPortfolios} />
+            {hasPortfolios && !watchIsMainPortfolio && <ColorCircles control={control} />}
             
             <ButtonContainerStyled>
                 <PrimaryButton type="submit" disabled={!isValid || isSubmitting}>

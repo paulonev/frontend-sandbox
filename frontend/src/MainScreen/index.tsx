@@ -7,6 +7,7 @@ import Portfolios_s from './Skeletoned/Portfolios_skeletoned';
 import { useMemo, useState } from "react";
 import { PortfolioViewModal } from "../Modals/PortfolioViewModal";
 import { useModalState } from "../Common/ModalStateProvider";
+import { CreatePortfolioModal } from "../Modals/CreatePortfolioModal";
 import { useCoinsQuery } from "../AddTransactionScreen/useCoinsQuery";
 import { ProvidePopularCoins } from "../AddTransactionScreen/PopularCoinsProvider";
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
@@ -55,6 +56,7 @@ const MainScreen = () => {
                 {({ reset }) => (
                     <CustomQueryErrorBoundary reset={reset} Footer={<FallbackWithGoBackButton onClick={() => closePortfolio()} />}>
                         <PortfolioViewModal selectedPortfolio={selectedPortfolio} onClose={closePortfolio} />
+                        <CreatePortfolioModal hasPortfolios={!!data?.items.length} />
                     </CustomQueryErrorBoundary>
                 )}
             </QueryErrorResetBoundary>
