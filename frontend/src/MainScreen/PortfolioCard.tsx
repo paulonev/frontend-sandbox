@@ -1,9 +1,10 @@
 import { useTheme } from "styled-components";
-import { isGain, PortfolioItem } from "./types";
+import { isPositiveNumber } from "./utils";
 import { ItemCard } from "../Common/components/ItemCard";
 import { formatPrice, formatGainLossWithPercentage } from "../Common/formatter";
 import { AppGlobalCurrencyCode } from "../constants";
 import { usePortfolioCardType } from "./PortfolioCardTypeProvider";
+import { PortfolioItem } from "../Api/portfolios.schema";
 
 interface IPortfolioCardProps {
     readonly item: PortfolioItem | undefined;
@@ -35,12 +36,12 @@ export const PortfolioCard = ({ item, onClick }: IPortfolioCardProps) => {
             }}
             secondaryParagraphStyles={{
                 fontSize: type === "small" ? "12px" : "14px",
-                color: isGain(item.meta.gainLoss.type) 
+                color: isPositiveNumber(item.meta.gainLoss.inPercentage) 
                         ? item.colorScheme ? theme[item.colorScheme].gainColor : theme.card_default.gainColor 
                         : item.colorScheme ? theme[item.colorScheme].lossColor : theme.card_default.lossColor
             }}
             renderPrimaryText={() => formatPrice(item.meta?.volume, AppGlobalCurrencyCode)}
-            renderSecondaryText={() => formatGainLossWithPercentage(item.meta?.gainLoss?.inVolume, AppGlobalCurrencyCode, item.meta?.gainLoss?.inPercentage, item.meta?.gainLoss?.type)}
+            renderSecondaryText={() => formatGainLossWithPercentage(item.meta?.gainLoss?.inVolume, AppGlobalCurrencyCode, item.meta?.gainLoss?.inPercentage)}
         />
     );
 }

@@ -2,14 +2,17 @@ import { PortfoliosSummary } from "./PortfoliosSummary";
 import { usePortfoliosQuery } from "./usePortfoliosQuery";
 import { Section } from "../Common/components/Section";
 import { Portfolios } from "./Portfolios";
-import { PortfolioApi } from "../Api/PortfolioApi";
 import PortfoliosSummary_s from "./Skeletoned/PortfoliosSummary_skeletoned";
 import Portfolios_s from './Skeletoned/Portfolios_skeletoned';
 import { useMemo, useState } from "react";
 import { PortfolioViewModal } from "../Modals/PortfolioViewModal";
 import { useModalState } from "../Common/ModalStateProvider";
+import { CreatePortfolioModal } from "../Modals/CreatePortfolioModal";
 import { useCoinsQuery } from "../AddTransactionScreen/useCoinsQuery";
 import { ProvidePopularCoins } from "../AddTransactionScreen/PopularCoinsProvider";
+import { QueryErrorResetBoundary } from "@tanstack/react-query";
+import { CustomQueryErrorBoundary } from "../CustomQueryErrorBoundary";
+import { FallbackWithGoBackButton } from "../Common/components/FallbackWithGoBack";
 
 const MainScreen = () => {
     const modalState = useModalState("specificPortfolio");
@@ -38,8 +41,6 @@ const MainScreen = () => {
         refetch();
     }
 
-    useFakeFetch();
-
     return !portfolioId && (isLoading || isRefetching) ? (
         <>
             <Section>
@@ -51,7 +52,14 @@ const MainScreen = () => {
         </>
     ) : (
         <ProvidePopularCoins value={coins}>
-            <PortfolioViewModal selectedPortfolio={selectedPortfolio} onClose={closePortfolio} />
+            <QueryErrorResetBoundary>
+                {({ reset }) => (
+                    <CustomQueryErrorBoundary reset={reset} Footer={<FallbackWithGoBackButton onClick={() => closePortfolio()} />}>
+                        <PortfolioViewModal selectedPortfolio={selectedPortfolio} onClose={closePortfolio} />
+                        <CreatePortfolioModal hasPortfolios={!!data?.items.length} />
+                    </CustomQueryErrorBoundary>
+                )}
+            </QueryErrorResetBoundary>
             <Section>
                 <PortfoliosSummary totalAmount={data!.meta.overallVolume} difference={data!.meta.gainLoss} /> 
             </Section>
@@ -62,13 +70,4 @@ const MainScreen = () => {
     );
 }
 
-const useFakeFetch = async () => {
-    try {
-        const response = await PortfolioApi.getGson();
-        alert(`Backend data: ${JSON.stringify(response)}`);
-    } catch (error)
-    {
-        console.error(error);
-    }
-}
 export default MainScreen;

@@ -1,10 +1,10 @@
 import styled from "styled-components";
-import { PortfolioAssets } from "./types"
 import { Black } from "../Common/colors";
 import { PortfolioScreen } from "./vocabulary";
 import { PortfolioAssetRecord } from "./PortfolioAssetRecord";
 import { PrimaryButton } from "../Common/components/PrimaryButton";
 import { useModalState } from "../Common/ModalStateProvider";
+import { PortfolioAssets } from "../Api/portfolio.schema";
 
 interface IPortfolioAssetsPanelProps {
     readonly data: PortfolioAssets;

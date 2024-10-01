@@ -1,9 +1,9 @@
-import { PortfolioAssetShortView } from "./types"
 import { PortfolioScreen } from "./vocabulary";
 import { PortfolioProfitCard } from "./PortfolioProfitCard";
+import { PortfolioAssetShortView } from "../Api/portfolio.schema";
 
 interface IPortfolioBestProfitProps {
-    readonly data: PortfolioAssetShortView;
+    readonly data: PortfolioAssetShortView | null;
 }
 
 export const PortfolioBestProfit = ({ data }: IPortfolioBestProfitProps): JSX.Element => {

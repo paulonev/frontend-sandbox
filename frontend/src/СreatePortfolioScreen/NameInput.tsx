@@ -18,6 +18,9 @@ export const NameInput = ({ register, errors }: INameInputProps): JSX.Element =>
             {errors?.type === "required" && (
                 <ErrorTextStyled role="alert">{Vocab.EmptyPortfolioNameErrorRu}</ErrorTextStyled>
             )}
+            {errors?.type === "validate" && (
+                <ErrorTextStyled role="alert">{errors?.message}</ErrorTextStyled>
+            )}
         </FormFieldStyled>
     )
 }

@@ -1,11 +1,12 @@
-import { PortfolioColorScheme } from "../Common/colors";
-import { PortfolioType } from "../MainScreen/types";
+import { PortfolioSecondaryColorScheme } from "../Common/colors";
+
+export type PortfolioType = "Crypto" | "Stocks";
 
 export type NewPortfolioFormData = {
     name: string;
     portfolioType: PortfolioType;
     isMainPortfolio: boolean;
-    portfolioColor: PortfolioColorScheme | "";
+    portfolioColor: PortfolioSecondaryColorScheme | "";
 };
 
 export const defaultValues: NewPortfolioFormData = {
