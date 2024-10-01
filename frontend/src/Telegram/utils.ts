@@ -27,3 +27,7 @@ export function telegram_isVersionAtLeast(version: string) {
 export function telegram_expand() {
     if (WebApp.expand) WebApp.expand();
 }
+
+export function telegram_disableVerticalSwipes() {
+    if (telegram_isVersionAtLeast("7.7") && WebApp.disableVerticalSwipes) WebApp.disableVerticalSwipes();
+}
