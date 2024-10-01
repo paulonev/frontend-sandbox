@@ -1,6 +1,5 @@
 package org.example.calculate
 
-import CoinsListCacheHolder
 import CryptoPriceCacheHolder
 import kotlinx.coroutines.*
 import org.example.Calculate
@@ -79,7 +78,6 @@ class PortfolioStatistics(val portfolioId: Int) {
         val portfolioCurrencies: PortfolioCurrenciesEntity = PortfolioCurrenciesDao.get(portfolioId)
 
         val cryptoPriceCache = CryptoPriceCacheHolder.cryptoPriceCache
-        val coinsListCache = CoinsListCacheHolder.coinsListCache
 
         val (needUpdateCryptos, cryptosFromCache) = portfolioCryptos.partition {
             cryptoPriceCache.getWithCheck(it.cryptoCurrencies.ticker) == null
@@ -101,12 +99,10 @@ class PortfolioStatistics(val portfolioId: Int) {
             priceResults.addAll(priceResultApi.await())
         }
 
-        coinsListCache.updateIfNeeded()
-
         val priceResultCache = cryptosFromCache.map { crypto ->
             AllCoinInfo(
                 crypto, cryptoPriceCache.getWithCheck(crypto.cryptoCurrencies.ticker)!!,
-                coinsListCache.getWebp64(crypto.cryptoCurrencies.ticker)
+                crypto.cryptoCurrencies.webp64
             )
         }
 
