@@ -12,6 +12,7 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.serialization.kotlinx.json.*
+import io.ktor.server.plugins.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.request.*
 import kotlinx.coroutines.async
@@ -120,6 +121,18 @@ fun main(args: Array<String>){
                         )
                 )
             }
+            exception<BadRequestException>{ call, cause ->
+                val title = "Bad request"
+                call.respond(
+                    HttpStatusCode.BadRequest,
+                    ErrorResponse(
+                        title = title,
+                        status = HttpStatusCode.BadRequest.value,
+                        detail = cause.message ?: title,
+                        instance = call.request.uri
+                    )
+                )
+            }
         }
 
         install(SwaggerUI) {
@@ -167,7 +180,7 @@ fun main(args: Array<String>){
                 }) {
                     dbQuery {
                         val userId = 1
-                        val mainPageRespond = MainPageRespond(Meta(0.0, GainLoss("gain", 0.0, 0.0)), ArrayList())
+                        val mainPageRespond = MainPageRespond(Meta(0.0, GainLoss(0.0, 0.0)), ArrayList())
 
                         val portfolios = PortfolioDao.getAll(userId)
                         val portfolioStatisticsDataList = portfolios.map {

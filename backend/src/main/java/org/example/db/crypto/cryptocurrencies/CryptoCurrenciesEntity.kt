@@ -8,6 +8,7 @@ class CryptoCurrenciesEntity(id: EntityID<Int>) : IntEntity(id) {
 
     var name by CryptoCurrenciesTable.name
     var ticker by CryptoCurrenciesTable.ticker
+    var webp64 by CryptoCurrenciesTable.webp64
 
     companion object : IntEntityClass<CryptoCurrenciesEntity>(CryptoCurrenciesTable)
 }

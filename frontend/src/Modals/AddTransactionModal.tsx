@@ -11,7 +11,7 @@ import { useForm } from "react-hook-form";
 import { AddTransactionFormData, defaultValues } from "../AddTransactionScreen/types";
 import { telegram_showConfirm, telegram_isVersionAtLeast, telegram_isClientEnabled } from "../Telegram/utils";
 
-export const AddTransactionModal = () => {
+export const AddTransactionModal = ({ portfolioId }: { portfolioId: number }) => {
     const queryClient = useQueryClient();
     const modalState = useModalState("addTransaction");
 
@@ -55,7 +55,7 @@ export const AddTransactionModal = () => {
                     <HeaderStyled>{Vocab.AddTransactionRu}</HeaderStyled>
                 </ModalHeader>
                 <ModalBody>
-                    <AddTransactionScreen form={form} />
+                    <AddTransactionScreen form={form} portfolioId={portfolioId}/>
                 </ModalBody>
             </ContainerStyled>
         </Modal>

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { PortfolioVolumePanel } from "./PortfolioVolumePanel";
-import { Portfolio } from "./types"
 import { PortfolioProfitsPanel } from "./PortfolioProfitsPanel";
+import { Portfolio } from "../Api/portfolio.schema";
 
 interface IPortfolioStatisticsPanelProps {
     readonly data: Portfolio;

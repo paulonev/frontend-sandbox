@@ -1,15 +1,15 @@
 import styled from "styled-components";
 import { PortfolioDifference } from "../Entities/Portfolio/types"
-import { PortfolioAssetShortView } from "./types";
 import { PortfolioAllTimeProfit } from "./PortfolioAllTimeProfit";
 import { PortfolioBestProfit } from "./PortfolioBestProfit";
 import { PortfolioWorstProfit } from "./PortfolioWorstProfit";
+import { PortfolioAssetShortView } from "../Api/portfolio.schema";
 
 interface IPortfolioProfitsPanelProps {
     data: {
         readonly allTimeProfit: PortfolioDifference;
-        readonly bestProfit: PortfolioAssetShortView;
-        readonly worstProfit: PortfolioAssetShortView;
+        readonly bestProfit: PortfolioAssetShortView | null;
+        readonly worstProfit: PortfolioAssetShortView | null;
     }
 }
 

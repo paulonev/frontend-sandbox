@@ -2,13 +2,12 @@ import { QueryClient, QueryClientProvider, QueryErrorResetBoundary } from '@tans
 import MainScreen from './MainScreen';
 import { useState } from 'react';
 import { ProvideModalState } from './Common/ModalStateProvider';
-import { CreatePortfolioModal } from './Modals/CreatePortfolioModal';
-import { GlobalErrorBoundary } from './GlobalErrorBoundary';
 import { DefaultTheme, ThemeProvider } from 'styled-components';
 import { Black, Green, Red } from './Common/colors';
 import { PortfolioCardTheme } from './MainScreen/PortfolioCardTheme';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
+import { CustomQueryErrorBoundary } from './CustomQueryErrorBoundary';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -35,10 +34,9 @@ function App() {
               <QueryClientProvider client={queryClient}>
                   <QueryErrorResetBoundary>
                     {({ reset }) => (
-                        <GlobalErrorBoundary reset={reset}>
+                        <CustomQueryErrorBoundary reset={reset}>
                             <MainScreen />
-                            <CreatePortfolioModal />
-                        </GlobalErrorBoundary>
+                        </CustomQueryErrorBoundary>
                     )}
                   </QueryErrorResetBoundary>
               </QueryClientProvider>

@@ -1,5 +1,5 @@
 import { SubmitHandler, UseFormReturn } from "react-hook-form";
-import { AddTransactionFormData, CoinOptions, AddTransactionRequest } from "./types";
+import { AddTransactionFormData, AddTransactionRequest } from "./types";
 import styled from "styled-components";
 import { PrimaryButton } from "../Common/components/PrimaryButton";
 import { Spinner } from "reactstrap";
@@ -13,12 +13,34 @@ import { CommissionPriceInput } from "./CommissionPriceInput";
 import { NotesInput } from "./NotesInput";
 import { OverallTransactionAmount } from "./OverallTransactionAmount";
 import dayjs from "dayjs";
+import { CoinOptions } from "../Api/coinSearch.schema";
+import { PortfolioApi } from "../Api/PortfolioApi";
+import { AxiosError } from "axios";
+import { AxiosErrorResponse } from "../Api/api.extensions";
+import { telegram_isClientEnabled, telegram_isVersionAtLeast, telegram_showAlert } from "../Telegram/utils";
+import { useModalState } from "../Common/ModalStateProvider";
+import { Vocab as GlobalVocab } from "../vocabulary";
+
+function generateSellOverflowErrorMessage(detail: string | undefined): string {
+    if (detail !== undefined && detail !== null) {
+        const thanIndex = detail.indexOf("than");
+        if (thanIndex > -1) {
+            const [limit, coinName] = detail.substring(thanIndex + "than".length).trim().split(" ", 2);
+            return Vocab.SellAmountOverflowErrorRu.replace("X", limit).replace("Y", coinName).toString();
+        }
+    }
+
+    return "";
+}
 
 interface IAddTransactionScreenProps {
     form: UseFormReturn<AddTransactionFormData>;
+    portfolioId: number;
 }
 
-const AddTransactionScreen = ({ form }: IAddTransactionScreenProps): JSX.Element => {
+const AddTransactionScreen = ({ form, portfolioId }: IAddTransactionScreenProps): JSX.Element => {
+    const modalState = useModalState("addTransaction");
+
     const { 
         register, 
         control, 
@@ -32,18 +54,39 @@ const AddTransactionScreen = ({ form }: IAddTransactionScreenProps): JSX.Element
     } = form;
 
     const onFormSubmit: SubmitHandler<AddTransactionFormData> = async (data) => {
-        const requestBody: AddTransactionRequest = {
+        const request: AddTransactionRequest = {
             coinName: data.coinName,
             coinTicker: data.coinTicker,
             type: data.type,
             pricePerUnit: data.pricePerUnit,
             amount: data.amount,
-            date: `${data.date.year()}-${data.date.month()+1}-${data.date.date()}`,
+            date: data.date.format("YYYY-MM-DD"),
             commission: !data.commission || data.commission === "" ? "0.0" : data.commission,
             notes: data.notes
         };
 
-        console.log("requestBody", requestBody);
+        try {
+            clearErrors();
+            await PortfolioApi.createTransaction(portfolioId, request);
+            modalState?.setOpen(false);
+        }
+        catch (ex) {
+            if (ex instanceof AxiosError) {
+                const responsePayload = ex.response?.data as AxiosErrorResponse;
+                if (responsePayload.status === 400) {
+                    setError("amount", { type: "validate", message: generateSellOverflowErrorMessage(responsePayload.detail)})
+                } else {
+                    setError("root.serverError", {
+                        type: ex.code,
+                        message: ex.message
+                    });
+
+                    if (telegram_isClientEnabled() && telegram_isVersionAtLeast("6.0")) {
+                        telegram_showAlert(GlobalVocab.ServerErrorRu);
+                    }
+                }
+            }
+        }
     }
 
     const handleCoinChange = (value: CoinOptions[0] | null) => {

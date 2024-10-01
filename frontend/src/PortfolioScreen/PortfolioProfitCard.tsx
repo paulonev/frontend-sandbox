@@ -3,15 +3,23 @@ import { Black, Green, Red } from "../Common/colors";
 import { ItemCard } from "../Common/components/ItemCard";
 import { formatGainLossWithPercentage } from "../Common/formatter";
 import { AppGlobalCurrencyCode } from "../constants";
-import { isGain } from "../MainScreen/types";
-import { PortfolioAssetShortView } from "./types";
+import { isPositiveNumber } from "../MainScreen/utils";
+import { PortfolioAssetShortView } from "../Api/portfolio.schema";
 
 interface IPortfolioProfitCardProps {
     readonly profitType: string;
-    readonly data: PortfolioAssetShortView;
+    readonly data: PortfolioAssetShortView | null;
 }
 
-export const PortfolioProfitCard = ({ data: { gainLoss, fullName, logoUrl }, profitType }: IPortfolioProfitCardProps): JSX.Element => {
+export const PortfolioProfitCard = ({ data, profitType }: IPortfolioProfitCardProps): JSX.Element => {
+    // when data is null, it means that no transactions were added to the portfolio 
+    // we'll show specific screen for that later 
+    if (data === null) {
+        return <></>;
+    }
+
+    const { gainLoss, fullName, logoUrl } = data;
+
     return (
         <ItemCard
             title={profitType}
@@ -25,7 +33,7 @@ export const PortfolioProfitCard = ({ data: { gainLoss, fullName, logoUrl }, pro
                     <span>{fullName}</span>
                 </ContainerStyled>
             )}
-            renderSecondaryText={() => formatGainLossWithPercentage(gainLoss.inVolume, AppGlobalCurrencyCode, gainLoss.inPercentage, gainLoss.type)}
+            renderSecondaryText={() => formatGainLossWithPercentage(gainLoss.inVolume, AppGlobalCurrencyCode, gainLoss.inPercentage)}
             primaryParagraphStyles={{
                 fontSize: 14,
                 color: Black,
@@ -34,9 +42,9 @@ export const PortfolioProfitCard = ({ data: { gainLoss, fullName, logoUrl }, pro
             }}
             secondaryParagraphStyles={{
                 fontSize: 9,
-                color: isGain(gainLoss.type) 
-                ? Green 
-                : Red
+                color: isPositiveNumber(gainLoss.inPercentage) 
+                    ? Green 
+                    : Red
             }}
             containerStyles={{
                 cursor: "unset",
@@ -54,4 +62,6 @@ const ContainerStyled = styled.div`
     display: flex;
     gap: 5px;
     margin-bottom: 5px;
+    overflow: hidden;
+    max-height: 40px;
 `;

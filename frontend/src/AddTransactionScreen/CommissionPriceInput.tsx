@@ -10,7 +10,8 @@ interface ICommissionPriceInputProps {
 
 export const CommissionPriceInput = ({ register, errors }: ICommissionPriceInputProps): JSX.Element => {
     return (
-        <PositiveDecimalInput 
+        <PositiveDecimalInput
+            key={"commision-price-input"} 
             isRequired={false}
             register={register} 
             errors={errors}
