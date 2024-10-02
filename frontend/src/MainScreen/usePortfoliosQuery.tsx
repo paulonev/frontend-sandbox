@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { PortfoliosData } from './types';
 import { MainScreenQueryKey } from '../constants';
+import { PortfoliosData } from '../Api/portfolios.schema';
 
 const MOCK_PORTFOLIOS: PortfoliosData = {
     meta: {
@@ -8,7 +8,6 @@ const MOCK_PORTFOLIOS: PortfoliosData = {
         gainLoss: {
             inVolume: 166.32,
             inPercentage: 0.0306,
-            type: "gain"
         }
     },
     items: [
@@ -19,13 +18,12 @@ const MOCK_PORTFOLIOS: PortfoliosData = {
                 gainLoss: {
                     inVolume: 56.32,
                     inPercentage: 0.0102,
-                    type: "loss"
                 }
             },
             isMain: true,
             name: "Крипта тест",
             tags: ["Crypto"],
-            colorScheme: "main"
+            colorScheme: "pattensBlue"
         },
         {
             id: 2,
@@ -34,7 +32,6 @@ const MOCK_PORTFOLIOS: PortfoliosData = {
                 gainLoss: {
                     inVolume: 56.32,
                     inPercentage: 0.0102,
-                    type: "gain"
                 }
             },
             isMain: false,
@@ -49,7 +46,6 @@ const MOCK_PORTFOLIOS: PortfoliosData = {
                 gainLoss: {
                     inVolume: 56.32,
                     inPercentage: 0.0102,
-                    type: "gain"
                 }
             },
             isMain: false,
@@ -64,7 +60,6 @@ const MOCK_PORTFOLIOS: PortfoliosData = {
                 gainLoss: {
                     inVolume: 56.32,
                     inPercentage: 0.0102,
-                    type: "gain"
                 }
             },
             isMain: false,

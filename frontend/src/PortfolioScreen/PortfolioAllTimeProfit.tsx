@@ -3,7 +3,7 @@ import { ItemCard } from "../Common/components/ItemCard";
 import { formatGainLoss, formatPercentage } from "../Common/formatter";
 import { AppGlobalCurrencyCode } from "../constants";
 import { PortfolioDifference } from "../Entities/Portfolio/types"
-import { isGain } from "../MainScreen/types";
+import { isPositiveNumber } from "../MainScreen/utils";
 import { PortfolioScreen } from "./vocabulary";
 
 interface IPortfolioAllTimeProfitProps {
@@ -18,12 +18,12 @@ export const PortfolioAllTimeProfit = ({ data }: IPortfolioAllTimeProfitProps): 
                 fontSize: 12,
                 color: Black
             }}
-            renderPrimaryText={() => formatGainLoss(data.inVolume, AppGlobalCurrencyCode, data.type)}
+            renderPrimaryText={() => formatGainLoss(data.inVolume, AppGlobalCurrencyCode)}
             renderSecondaryText={() => formatPercentage(data.inPercentage)}
             primaryParagraphStyles={{
                 marginTop: 11,
                 fontSize: 16,
-                color: isGain(data.type) 
+                color: isPositiveNumber(data.inVolume) 
                         ? Green 
                         : Red
             }}

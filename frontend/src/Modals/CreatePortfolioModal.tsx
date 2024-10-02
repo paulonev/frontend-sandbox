@@ -8,7 +8,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { MainScreenQueryKey } from "../constants";
 import { BodyBackgroundColor } from "../Common/colors";
 
-export const CreatePortfolioModal = () => {
+export const CreatePortfolioModal = ({ hasPortfolios }: { readonly hasPortfolios: boolean; }) => {
     const queryClient = useQueryClient();
     const modalState = useModalState("createPortfolio");
 
@@ -27,7 +27,7 @@ export const CreatePortfolioModal = () => {
                     <HeaderStyled>{Vocab.CreatePortfolioRu}</HeaderStyled>
                 </ModalHeader>
                 <ModalBody>
-                    <CreatePortfolioScreen />
+                    <CreatePortfolioScreen hasPortfolios={hasPortfolios} />
                 </ModalBody>
             </ContainerStyled>
         </Modal>

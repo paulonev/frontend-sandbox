@@ -12,12 +12,20 @@ interface IPortfolioScreenProps {
 }
 
 const PortfolioScreen = (props: IPortfolioScreenProps): JSX.Element => {
-    const { data, error, isLoading, isRefetching } = usePortfolioQuery({ id: props.id });
+    const { data, isLoading, isRefetching, isFetching, error } = usePortfolioQuery({ id: props.id });
 
-    // if error - show a native TG alert
-    if (error) {
+    if (error && !isFetching) {
+        // 404 - { title: "Coin Not Found" } - error boundary
+        // 500 - error boundary 
         throw error;
     }
+
+    if (data === null) {
+        // 404 - portfolio not found page { title: "Portfolio Not Found" }
+        // TODO: add portfolio not found page
+        return <div>Portfolio Not Found</div>;
+    }
+    
 
     return (isLoading || isRefetching) ? (
         <>
@@ -27,7 +35,7 @@ const PortfolioScreen = (props: IPortfolioScreenProps): JSX.Element => {
         </>
     ) : (
         <>
-            <AddTransactionModal />
+            <AddTransactionModal portfolioId={props.id} />
             <PortfolioStatisticsPanel data={data!} />
             <PortfolioBalancePanel data={data!.balance} />
             <PortfolioAssetsPanel data={data!.assets} />

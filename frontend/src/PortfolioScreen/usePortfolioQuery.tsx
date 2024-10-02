@@ -1,19 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
-import { Portfolio } from './types';
 import { PortfolioScreenQueryKey } from '../constants';
 import bitcoinLogoSvg from '/img/BitcoinLogo.svg';
+import { Portfolio } from '../Api/portfolio.schema';
 
 const MOCK_PORTFOLIOS: Portfolio[] = [{
     id: 1,
     name: "Крипта тест",
     overallVolume: 5672.00,
     gainLossDay: {
-        type: "gain",
         inVolume: 56.32,
         inPercentage: 0.0102,
     },
     gainLossAllTime: {
-        type: "gain",
         inVolume: 572.20,
         inPercentage: 0.1002,
     },
@@ -26,7 +24,6 @@ const MOCK_PORTFOLIOS: Portfolio[] = [{
             fullName: "Bitcoin",
             logoUrl: `${bitcoinLogoSvg}`,
             gainLoss: {
-                type: "gain",
                 inVolume: 5672.00,
                 inPercentage: 0.0102,
             }
@@ -36,7 +33,6 @@ const MOCK_PORTFOLIOS: Portfolio[] = [{
             fullName: "Bitcoin",
             logoUrl: `${bitcoinLogoSvg}`,
             gainLoss: {
-                type: "loss",
                 inVolume: 5672.00,
                 inPercentage: 0.0102,
             }
@@ -47,11 +43,10 @@ const MOCK_PORTFOLIOS: Portfolio[] = [{
             shortName: "BTC",
             logoUrl: `${bitcoinLogoSvg}`,
             volume: {
-                inAmount: 0.235,
+                inAmount: "0.235",
                 inFiat: 50023.03,
             },
             gainLoss: {
-                type: "gain",
                 inPercentage: 0.1,
                 inVolume: 1111
             }
@@ -62,11 +57,10 @@ const MOCK_PORTFOLIOS: Portfolio[] = [{
             shortName: "BTC",
             logoUrl: `${bitcoinLogoSvg}`,
             volume: {
-                inAmount: 0.235,
+                inAmount: "0.235",
                 inFiat: 50023.03,
             },
             gainLoss: {
-                type: "gain",
                 inPercentage: 0.1,
                 inVolume: 1111
             }
@@ -77,11 +71,10 @@ const MOCK_PORTFOLIOS: Portfolio[] = [{
             shortName: "BTC",
             logoUrl: `${bitcoinLogoSvg}`,
             volume: {
-                inAmount: 0.235,
+                inAmount: "0.235",
                 inFiat: 50023.03,
             },
             gainLoss: {
-                type: "gain",
                 inPercentage: 0.1,
                 inVolume: 1111
             }

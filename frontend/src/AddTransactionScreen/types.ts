@@ -32,10 +32,3 @@ export const defaultValues: AddTransactionFormData = {
     amount: "",
     date: dayjs(new Date()),
 }
-
-export type CoinOptions = {
-    coinName: string;
-    coinTicker: string;
-    pricePerUnit: string; // decimal("price_per_unit", 25, 15) [\d]*10.[\d]*15
-    webp64?: string;
-}[];

@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import { CoinOptions } from './types';
+import { CoinOptions } from '../Api/coinSearch.schema';
 
 const PopularCoinsContext = createContext<CoinOptions | undefined>(undefined);
 

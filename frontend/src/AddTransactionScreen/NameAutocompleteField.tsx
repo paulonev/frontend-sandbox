@@ -1,12 +1,12 @@
 import { FieldError } from "react-hook-form";
-import { CoinOptions } from "./types";
 import { useCallback, useEffect, useState } from "react";
 import debounce from "lodash.debounce";
 import { AutocompleteInput } from "./AutocompleteInput";
 import { usePopularCoins } from "./PopularCoinsProvider";
 import { Vocab } from "./vocabulary";
+import { CoinOptions } from "../Api/coinSearch.schema";
 
-const DefaultFetchCount: number = 100;
+const DefaultFetchCount: number = 50;
 
 export const requestDelayInMilliseconds: number = 500;
 
@@ -41,7 +41,7 @@ export const NameAutocompleteField = ({ errors, handleOnChange }: INameAutocompl
     const noOptionsText = useCallback((): string => {
         if (searching) {
             return Vocab.SearchingRu;
-        } else if (coinOptions.length === 0 ?? inputValue) {
+        } else if (coinOptions.length === 0 && inputValue) {
             return Vocab.NothingFoundRu;
         } else return '';
     }, [searching, coinOptions.length, inputValue]);

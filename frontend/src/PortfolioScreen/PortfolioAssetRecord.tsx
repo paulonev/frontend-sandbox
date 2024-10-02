@@ -1,10 +1,10 @@
 import styled from "styled-components";
-import { PortfolioAsset } from "./types"
 import { formatPercentage, formatPrice } from "../Common/formatter";
 import { AppGlobalCurrencyCode } from "../constants";
 import { Black, Green, Red } from "../Common/colors";
-import { isGain } from "../MainScreen/types";
-import { DifferenceType } from "../Entities/Portfolio/types";
+import { isPositiveNumber } from "../MainScreen/utils";
+import { PortfolioAsset } from "../Api/portfolio.schema";
+import Big from "big.js";
 
 interface IPortfolioAssetRecordProps {
     readonly data: PortfolioAsset;
@@ -15,8 +15,8 @@ export const PortfolioAssetRecord = ({ data }: IPortfolioAssetRecordProps): JSX.
         <ContainerStyled>
             <Div1Styled>{data.fullName}</Div1Styled>
             <Div2Styled>{formatPrice(data.volume.inFiat, AppGlobalCurrencyCode)}</Div2Styled>
-            <Div3Styled>{data.volume.inAmount} {data.shortName}</Div3Styled>
-            <Div4Styled isGain={isGain(data.gainLoss.type)}>{getPercentageOutput(data.gainLoss.inPercentage, data.gainLoss.type)}</Div4Styled>
+            <Div3Styled>{parseFloat(new Big(data.volume.inAmount).toFixed(5)).toString()} {data.shortName}</Div3Styled>
+            <Div4Styled $isGain={isPositiveNumber(data.gainLoss.inPercentage)}>{formatPercentage(data.gainLoss.inPercentage)}</Div4Styled>
             <Div5Styled>
                 <ImageContainerStyled>
                     <img src={data.logoUrl ?? ""} style={{ maxWidth: "100%", height: 40, objectFit: "contain" }}/>
@@ -24,10 +24,6 @@ export const PortfolioAssetRecord = ({ data }: IPortfolioAssetRecordProps): JSX.
             </Div5Styled>
         </ContainerStyled>
     );
-}
-
-function getPercentageOutput (percentage: number, gainLossType: DifferenceType) {
-    return isGain(gainLossType) ? `+${formatPercentage(percentage)}` : `-${formatPercentage(percentage)}`;
 }
 
 // [== STYLES ==]
@@ -65,12 +61,12 @@ const Div3Styled = styled.div`
     color: #575757;
     font-size: 14px;
 `;
-const Div4Styled = styled.div<{ isGain: boolean; }>`
+const Div4Styled = styled.div<{ $isGain: boolean; }>`
     grid-area: 2 / 3 / 3 / 4;
     display: flex;
     justify-content: flex-end;
     font-size: 14px;
-    color: ${props => props.isGain ? Green : Red};
+    color: ${props => props.$isGain ? Green : Red};
 `;
 const Div5Styled = styled.div`
     grid-area: 1 / 1 / 3 / 2;

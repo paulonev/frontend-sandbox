@@ -6,15 +6,15 @@ import { Black } from "../Common/colors";
 
 interface IPortfolioBalanceRecordProps {
     readonly volume: number;
-    readonly currencyCode?: string;
+    readonly currencyCode: string | null | undefined;
 }
 
-export const PortfolioBalanceRecord = ({ volume, currencyCode = AppGlobalCurrencyCode }: IPortfolioBalanceRecordProps): JSX.Element => {
+export const PortfolioBalanceRecord = ({ volume, currencyCode }: IPortfolioBalanceRecordProps): JSX.Element => {
     return (
         <GridContainerStyled>
             <BalanceVolumeSectionStyled>
                 <CurrencyCodeStyled>{currencyCode}</CurrencyCodeStyled>
-                <VolumeStyled>{formatPrice(volume, currencyCode)}</VolumeStyled>
+                <VolumeStyled>{formatPrice(volume, currencyCode ?? AppGlobalCurrencyCode)}</VolumeStyled>
             </BalanceVolumeSectionStyled>
             <AddBalanceButtonContainerStyled>
                 <AddButton />

@@ -1,8 +1,12 @@
 import styled from "styled-components";
-import { PortfolioItem } from "./types";
 import { PortfolioCard } from "./PortfolioCard";
 import { useModalState } from "../Common/ModalStateProvider";
 import { AddButton } from "../Common/components/AddButtonSvg";
+import { PortfolioItem } from "../Api/portfolios.schema";
+import { useUnlimitedPortfoliosViolationCheck } from "../PremiumFeatures/PremiumFeaturesProvider";
+import { telegram_showAlert } from "../Telegram/utils";
+import { MainScreen } from "./vocabulary";
+import { usePopup } from "@telegram-apps/sdk-react";
 
 interface IPortfolioCarouselProps {
     readonly items: PortfolioItem[];
@@ -10,9 +14,19 @@ interface IPortfolioCarouselProps {
 }
 
 export const PortfolioCarousel = ({ items, selectPortfolio }: IPortfolioCarouselProps) => {
+    const popup = usePopup();
     const modalState = useModalState("createPortfolio");
+    const { violated } = useUnlimitedPortfoliosViolationCheck();
 
-    const handleClickAddPortfolio = () => {
+    const handleClickAddPortfolio = async () => {
+        //TODO: pass valid isPremium
+        const isPremium = false;
+        if (violated(isPremium)) {
+            console.log('portfolios amount violation screen');
+            await telegram_showAlert(popup, MainScreen.MaximumAllowedPortfoliosViolationRu);
+            return;
+        }
+
         if (modalState) {
             const { open, setOpen } = modalState;
             setOpen(!open);

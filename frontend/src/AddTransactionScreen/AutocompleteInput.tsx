@@ -1,11 +1,11 @@
 import { FieldError } from "react-hook-form";
-import { CoinOptions } from "./types";
-import { useAutocomplete } from "@mui/base";
+import { useAutocomplete, createFilterOptions } from "@mui/base";
 import { Vocab } from "./vocabulary";
 import styled from "styled-components";
 import { Black, Red } from "../Common/colors";
 import { FormFieldStyled, InputStyled, LabelStyled } from "../Common/forms/styles";
 import { textValidationWrapper } from "../Common/utils/textValidation.utils";
+import { CoinOptions } from "../Api/coinSearch.schema";
 
 interface IAutocompleteInputProps {
     readonly errors: FieldError | undefined;
@@ -35,6 +35,9 @@ export const AutocompleteInput = ({ errors, options, handleOnChange, handleOnInp
             textValidationWrapper(handleOnInputChange)(value);
         },
         inputValue,
+        filterOptions: createFilterOptions({
+            stringify: (option) => `${option.coinName}${option.coinTicker}`
+        })
     });
 
     return (
@@ -46,7 +49,7 @@ export const AutocompleteInput = ({ errors, options, handleOnChange, handleOnInp
                     const optionProps = getOptionProps({ option, index });
                     return (
                         <ListItemStyled {...optionProps} key={`coin-${index}`}>
-                            <img src={option.webp64 ?? "/img/btc.webp"} style={{ maxWidth: "100%", height: 22, objectFit: "contain" }} />
+                            <img src={option.webp64 ?? ""} style={{ maxWidth: "100%", height: 22, objectFit: "contain" }} />
                             <CoinNameStyled>{option.coinName}</CoinNameStyled>
                             <CoinTickerStyled>{option.coinTicker}</CoinTickerStyled>
                         </ListItemStyled>
@@ -85,6 +88,9 @@ const ListboxStyled = styled.ul`
     border-radius: 12px;
     box-sizing: border-box;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+    max-height: 430px;
+    overflow-y: scroll;
+    z-index: 1;
 `;
 // '& li.Mui-focused': {
 //     backgroundColor: '#4a8df6',
