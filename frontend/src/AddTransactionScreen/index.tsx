@@ -20,6 +20,7 @@ import { AxiosErrorResponse } from "../Api/api.extensions";
 import { telegram_isClientEnabled, telegram_isVersionAtLeast, telegram_showAlert } from "../Telegram/utils";
 import { useModalState } from "../Common/ModalStateProvider";
 import { Vocab as GlobalVocab } from "../vocabulary";
+import { usePopup } from "@telegram-apps/sdk-react";
 
 function generateSellOverflowErrorMessage(detail: string | undefined): string {
     if (detail !== undefined && detail !== null) {
@@ -39,6 +40,7 @@ interface IAddTransactionScreenProps {
 }
 
 const AddTransactionScreen = ({ form, portfolioId }: IAddTransactionScreenProps): JSX.Element => {
+    const popup = usePopup();
     const modalState = useModalState("addTransaction");
 
     const { 
@@ -82,7 +84,7 @@ const AddTransactionScreen = ({ form, portfolioId }: IAddTransactionScreenProps)
                     });
 
                     if (telegram_isClientEnabled() && telegram_isVersionAtLeast("6.0")) {
-                        telegram_showAlert(GlobalVocab.ServerErrorRu);
+                        await telegram_showAlert(popup, GlobalVocab.ServerErrorRu);
                     }
                 }
             }

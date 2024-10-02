@@ -10,14 +10,16 @@ import { BodyBackgroundColor } from "../Common/colors";
 import { useForm } from "react-hook-form";
 import { AddTransactionFormData, defaultValues } from "../AddTransactionScreen/types";
 import { telegram_showConfirm, telegram_isVersionAtLeast, telegram_isClientEnabled } from "../Telegram/utils";
+import { usePopup } from "@telegram-apps/sdk-react";
 
 export const AddTransactionModal = ({ portfolioId }: { portfolioId: number }) => {
+    const popup = usePopup();
     const queryClient = useQueryClient();
     const modalState = useModalState("addTransaction");
 
     const form = useForm<AddTransactionFormData>({ defaultValues });
 
-    const onCloseClicked = () => {
+    const onCloseClicked = async () => {
         // initParams are initialized only within telegram client, where showConfirm should run
         // otherwise tgWebVersion is 6.0 and showConfirm is not available, so just closing the modal and clearing the form
         if (Object.entries(form.formState.dirtyFields).length === 0) {
@@ -27,11 +29,9 @@ export const AddTransactionModal = ({ portfolioId }: { portfolioId: number }) =>
         }
 
         if (telegram_isClientEnabled() && telegram_isVersionAtLeast("6.2"))  {
-            telegram_showConfirm(Vocab.RemovingUnsavedChangesWarningRu, (confirmed: boolean) => {
-                if (confirmed) {
-                    modalState?.setOpen(false);
-                    form.reset();
-                }
+            await telegram_showConfirm(popup, Vocab.RemovingUnsavedChangesWarningRu, () => {
+                modalState?.setOpen(false);
+                form.reset();
             });
             return;
         } else {
