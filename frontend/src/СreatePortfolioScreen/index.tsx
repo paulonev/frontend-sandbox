@@ -15,8 +15,10 @@ import { useEffect } from "react";
 import { AxiosErrorResponse } from "../Api/api.extensions";
 import { telegram_isClientEnabled, telegram_isVersionAtLeast, telegram_showAlert } from "../Telegram/utils";
 import { Vocab as GlobalVocab } from "../vocabulary";
+import { usePopup } from "@telegram-apps/sdk-react";
 
 const CreatePortfolioScreen = ({ hasPortfolios }: { readonly hasPortfolios: boolean; }): JSX.Element => {
+    const popup = usePopup();
     const modalState = useModalState("createPortfolio");
 
     const { 
@@ -49,7 +51,7 @@ const CreatePortfolioScreen = ({ hasPortfolios }: { readonly hasPortfolios: bool
                     });
 
                     if (telegram_isClientEnabled() && telegram_isVersionAtLeast("6.0")) {
-                        telegram_showAlert(GlobalVocab.ServerErrorRu);
+                        await telegram_showAlert(popup, GlobalVocab.ServerErrorRu);
                     }
                 }
             }

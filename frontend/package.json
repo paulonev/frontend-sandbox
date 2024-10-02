@@ -15,7 +15,7 @@
     "@mui/base": "^5.0.0-beta.40",
     "@mui/x-date-pickers": "^7.17.0",
     "@tanstack/react-query": "^5.51.9",
-    "@twa-dev/sdk": "^7.10.1",
+    "@telegram-apps/sdk-react": "^1.0.0",
     "@types/big.js": "^6.2.2",
     "@types/bootstrap": "^5.2.10",
     "@uiw/color-convert": "^2.3.0",

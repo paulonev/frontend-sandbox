@@ -1,17 +1,15 @@
-import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
-import { GlobalStyle } from './globalStyle';
-import 'react-loading-skeleton/dist/skeleton.css';
-import { telegram_disableVerticalSwipes, telegram_expand, telegram_ready } from './Telegram/utils.ts';
+import { App } from './App.tsx';
 
-telegram_ready();
-telegram_expand();
-telegram_disableVerticalSwipes();
+// Uncomment when integrate telegram ui kit
+// import '@telegram-apps/telegram-ui/dist/styles.css';
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-    <React.StrictMode>
-        <GlobalStyle />
-        <App />
-    </React.StrictMode>,
-)
+// Uncomment this import in case, you would like to develop the application even outside
+// the Telegram application, just in your browser.
+import "./mockEnv.ts"
+
+// telegram_ready();
+// telegram_expand();
+// telegram_disableVerticalSwipes();
+
+ReactDOM.createRoot(document.getElementById('root')!).render(<App />);
