@@ -189,10 +189,10 @@ fun main(args: Array<String>){
                                 Item(
                                     it.id.value,
                                     ItemMeta(
-                                        Utils.round(2, portfolioStatistics.currentAmountWithBalance),
-                                        Calculate.calculateGainLoss(
-                                            portfolioStatistics.currentAmount,
-                                            portfolioStatistics.purchaseAmount
+                                        Utils.round(2, portfolioStatistics.overallVolume),
+                                        GainLoss(
+                                            portfolioStatistics.profitUSD,
+                                            portfolioStatistics.profitPercent
                                         )
                                     ),
                                     it.isMain,
@@ -204,29 +204,29 @@ fun main(args: Array<String>){
                             portfolioStatistics
                         }
 
-                        var purchaseAmount = 0.0
-                        var currentAmount = 0.0
-                        var currentAmountWithBalance = 0.0
+                        var costBasis = 0.0
+                        var overallVolume = 0.0
+                        var profitUSD = 0.0
 
                         coroutineScope {
-                            val purchaseAmountAsync = async {
-                                portfolioStatisticsDataList.sumByDouble { it.purchaseAmount }
-                            }
-                            val currentAmountAsync = async {
-                                portfolioStatisticsDataList.sumByDouble { it.currentAmount }
+                            val costBasisAsync = async {
+                                portfolioStatisticsDataList.sumByDouble { it.allCostBasis }
                             }
                             val currentAmountWithBalanceAsync = async {
-                                portfolioStatisticsDataList.sumByDouble { it.currentAmountWithBalance }
+                                portfolioStatisticsDataList.sumByDouble { it.overallVolume }
+                            }
+                            val profitUSDAsync = async {
+                                portfolioStatisticsDataList.sumByDouble { it.profitUSD }
                             }
 
-                            purchaseAmount = purchaseAmountAsync.await()
-                            currentAmount = currentAmountAsync.await()
-                            currentAmountWithBalance = currentAmountWithBalanceAsync.await()
+                            costBasis = costBasisAsync.await()
+                            overallVolume = currentAmountWithBalanceAsync.await()
+                            profitUSD = profitUSDAsync.await()
                         }
 
                         mainPageRespond.meta = Meta(
-                            Utils.round(2, currentAmountWithBalance),
-                            Calculate.calculateGainLoss(currentAmount, purchaseAmount)
+                            Utils.round(2, overallVolume),
+                            Calculate.getGainLoss(profitUSD, costBasis)
                         )
                         call.respond(mainPageRespond)
                     }
