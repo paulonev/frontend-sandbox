@@ -28,6 +28,7 @@ import org.example.db.crypto.transactions.TransactionsCryptosDao
 import org.example.db.crypto.transactions.TransactionsCryptosTable
 import org.example.db.currency.currencies.CurrenciesTable
 import org.example.db.currency.portfoliocurrencies.PortfolioCurrenciesTable
+import org.example.db.currency.transactions.TransactionsCurrenciesDao
 import org.example.db.currency.transactions.TransactionsCurrenciesTable
 import org.example.db.portfolio.PortfolioDao
 import org.example.db.portfolio.PortfolioTable
@@ -41,8 +42,8 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.example.livecoinwatch.cache.CryptoPriceCache
-import org.example.livecoinwatch.request.Coins
 import org.example.receive.CryptoTransaction
+import org.example.receive.CurrencyTransaction
 
 object CryptoPriceCacheHolder{
     val cryptoPriceCache: CryptoPriceCache = CryptoPriceCache()
@@ -262,6 +263,14 @@ fun main(args: Array<String>){
                             "Portfolio id not found in url"
                         )
                         call.respond(PortfolioStatistics(portfolioId).getAllPortfolioData())
+                    }
+                }
+                post("/currencies/transactions", {
+                    Swagger(this).currencyTransactionPost()
+                }) {
+                    dbQuery {
+                        val currencyTransaction = call.receive<CurrencyTransaction>()
+                        call.respond(TransactionsCurrenciesDao.create(currencyTransaction))
                     }
                 }
             }

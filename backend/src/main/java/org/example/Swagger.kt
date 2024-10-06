@@ -3,6 +3,7 @@ package org.example
 import io.github.smiley4.ktorswaggerui.dsl.routes.OpenApiRoute
 import io.ktor.http.*
 import org.example.receive.CryptoTransaction
+import org.example.receive.CurrencyTransaction
 import org.example.receive.PortfolioReceive
 import org.example.receive.UserReceive
 import org.example.respond.CoinsListRespond
@@ -38,6 +39,14 @@ class Swagger(val openApiRoute: OpenApiRoute) {
     private fun OpenApiRoute.throwable(description: String) {
         response {
             HttpStatusCode.InternalServerError to {
+                this.description = description
+            }
+        }
+    }
+
+    private fun OpenApiRoute.badRequest(description: String) {
+        response {
+            HttpStatusCode.BadRequest to {
                 this.description = description
             }
         }
@@ -118,7 +127,7 @@ class Swagger(val openApiRoute: OpenApiRoute) {
             request {
                 body<CryptoTransaction>()
             }
-            throwable("You are trying to sell more than you have in your portfolio")
+            badRequest("You are trying to sell more than you have in your portfolio")
             successResponse()
         }
     }
@@ -140,6 +149,17 @@ class Swagger(val openApiRoute: OpenApiRoute) {
                     }
                 }
             }
+        }
+    }
+
+    fun currencyTransactionPost(){
+        with(openApiRoute){
+            description = "Create currency transaction"
+            request {
+                body<CurrencyTransaction>()
+            }
+            badRequest("You are trying to withdraw more than you have on balance in your portfolio")
+            successResponse()
         }
     }
 }

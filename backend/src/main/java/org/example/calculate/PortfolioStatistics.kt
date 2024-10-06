@@ -61,7 +61,7 @@ class PortfolioStatistics(val portfolioId: Int) {
             currentAmount + balance,
             allCostBasis,
             allProfit,
-            Utils.round(2, allProfit / allCostBasis * 100))
+            if (allCostBasis == 0.0) 0.0 else Utils.round(2, allProfit / allCostBasis * 100))
     }
 
     suspend fun getAllPortfolioData() = coroutineScope {
