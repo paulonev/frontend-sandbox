@@ -11,15 +11,15 @@ import java.time.LocalDate
 
 object TransactionsCryptosDao {
 
-    suspend fun create(cryptoTransaction: CryptoTransaction, portfolioId: Int){
+    suspend fun create(cryptoTransaction: CryptoTransaction){
         CoinsListCacheHolder.coinsListCache.updateIfNeeded()
         val cryptoCurrenciesEntity = CryptoCurrenciesDao.get(cryptoTransaction.coinTicker)
             ?: CryptoCurrenciesDao.create(
                 cryptoTransaction.coinName,
                 cryptoTransaction.coinTicker,
                 CoinsListCacheHolder.coinsListCache.getWebp64(cryptoTransaction.coinTicker))
-        val portfolioCryptosEntity = PortfolioCryptosDao.get(portfolioId, cryptoCurrenciesEntity.id.value)
-            ?: PortfolioCryptosDao.create(PortfolioDao.get(portfolioId), cryptoCurrenciesEntity)
+        val portfolioCryptosEntity = PortfolioCryptosDao.get(cryptoTransaction.portfolioId, cryptoCurrenciesEntity.id.value)
+            ?: PortfolioCryptosDao.create(PortfolioDao.get(cryptoTransaction.portfolioId), cryptoCurrenciesEntity)
 
         PortfolioCryptosDao.update(
             portfolioCryptosEntity, cryptoTransaction.amount,

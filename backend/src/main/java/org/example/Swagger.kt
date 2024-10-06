@@ -116,12 +116,8 @@ class Swagger(val openApiRoute: OpenApiRoute) {
         with(openApiRoute){
             description = "Create crypto transaction"
             request {
-                pathParameter<String>("portfolio_id") {
-                    description = "ID of the portfolio in which the transaction is added"
-                }
                 body<CryptoTransaction>()
             }
-            notFound("Portfolio id not found in url")
             throwable("You are trying to sell more than you have in your portfolio")
             successResponse()
         }

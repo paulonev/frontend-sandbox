@@ -245,16 +245,12 @@ fun main(args: Array<String>){
                     }
                     call.respond(results!!)
                 }
-                post("/portfolio/{portfolio_id}/transactions", {
+                post("/crypto/transactions", {
                     Swagger(this).cryptoTransactionPost()
                 }) {
                     dbQuery {
-                        val portfolioId = call.parameters["portfolio_id"]?.toInt() ?: throw ResourceNotFoundException(
-                            "Portfolio",
-                            "Portfolio id not found in url"
-                        )
                         val cryptoTransaction = call.receive<CryptoTransaction>()
-                        call.respond(TransactionsCryptosDao.create(cryptoTransaction, portfolioId))
+                        call.respond(TransactionsCryptosDao.create(cryptoTransaction))
                     }
                 }
                 get("/portfolio/{id}", {

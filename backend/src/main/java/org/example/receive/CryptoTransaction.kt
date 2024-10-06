@@ -6,6 +6,7 @@ import java.math.BigDecimal
 
 @Serializable
 data class CryptoTransaction(
+    val portfolioId: Int,
     val coinName: String,
     val coinTicker: String,
     val type: String,
