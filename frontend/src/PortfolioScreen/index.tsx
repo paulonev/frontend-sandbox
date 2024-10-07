@@ -6,6 +6,7 @@ import PortfolioBalancePanel_s from "./Skeletoned/PortfolioBalancePanel_skeleton
 import PortfolioAssetsPanel_s from "./Skeletoned/PortfolioAssetsPanel_skeletoned";
 import { usePortfolioQuery } from "./usePortfolioQuery";
 import { AddTransactionModal } from "../Modals/AddTransactionModal";
+import NoTransactionsScreen from "../NoTransactionsScreen";
 
 interface IPortfolioScreenProps {
     readonly id: number;
@@ -36,9 +37,15 @@ const PortfolioScreen = (props: IPortfolioScreenProps): JSX.Element => {
     ) : (
         <>
             <AddTransactionModal portfolioId={props.id} />
-            <PortfolioStatisticsPanel data={data!} />
-            <PortfolioBalancePanel data={data!.balance} />
-            <PortfolioAssetsPanel data={data!.assets} />
+            {data?.assets.items.length === 0 ? (
+                <NoTransactionsScreen />
+            ) : (
+                <>
+                    <PortfolioStatisticsPanel data={data!} />
+                    <PortfolioBalancePanel data={data!.balance} />
+                    <PortfolioAssetsPanel data={data!.assets} />
+                </>
+            )}
         </>
     );
 }
