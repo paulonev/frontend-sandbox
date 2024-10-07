@@ -2,12 +2,14 @@ package org.example.db.currency.transactions
 
 import io.ktor.server.plugins.*
 import org.example.db.currency.portfoliocurrencies.PortfolioCurrenciesDao
+import org.example.db.portfolio.PortfolioDao
 import org.example.receive.CurrencyTransaction
 import java.time.LocalDate
 
 object TransactionsCurrenciesDao {
 
     fun create(currencyTransaction: CurrencyTransaction){
+        PortfolioDao.get(currencyTransaction.portfolioId)
         val portfolioCurrenciesEntity = PortfolioCurrenciesDao.get(currencyTransaction.portfolioId)
 
         val transactionType = TransactionsCurrenciesType.valueOf(currencyTransaction.type)

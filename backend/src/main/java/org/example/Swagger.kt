@@ -128,6 +128,7 @@ class Swagger(val openApiRoute: OpenApiRoute) {
                 body<CryptoTransaction>()
             }
             badRequest("You are trying to sell more than you have in your portfolio")
+            notFound("Portfolio with id = {id} not found")
             successResponse()
         }
     }
@@ -159,6 +160,7 @@ class Swagger(val openApiRoute: OpenApiRoute) {
                 body<CurrencyTransaction>()
             }
             badRequest("You are trying to withdraw more than you have on balance in your portfolio")
+            notFound("Portfolio with id = {id} not found")
             successResponse()
         }
     }
