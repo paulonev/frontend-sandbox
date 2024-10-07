@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider, QueryErrorResetBoundary } from '@tanstack/react-query';
 import MainScreen from './MainScreen';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { ProvideModalState } from './Common/ModalStateProvider';
 import { DefaultTheme, ThemeProvider } from 'styled-components';
 import { Black, Green, Red } from './Common/colors';
@@ -12,6 +12,8 @@ import React from 'react';
 import { GlobalStyle } from './globalStyle';
 import { SDKProvider, useMiniApp, useViewport } from '@telegram-apps/sdk-react';
 import 'react-loading-skeleton/dist/skeleton.css';
+import { useUserPortfoliosCountQuery } from './useUserPortfoliosCountQuery';
+import WelcomeScreen from './WelcomeScreen';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -27,6 +29,7 @@ function Inner() {
   const viewPort = useViewport();
   // swipeBehavior not implemented
   miniApp.ready();
+  const { data: { portfoliosCount }, isFetched } = useUserPortfoliosCountQuery();
 
   useEffect(() => {
     if (viewPort !== undefined) {
@@ -37,27 +40,24 @@ function Inner() {
   const [createPortfolioModalOpen, setCreatePortfolioModalOpen] = useState(false);
   const [specificPortfolioModalOpen, setSpecificPortfolioModalOpen] = useState(false);
   const [addTransactionModalOpen, setAddTransactionModalOpen] = useState(false);
+  const [createFirstPortfolioModalOpen, setCreateFirstPortfolioModalOpen] = useState(false);
+  const [shouldRenderWelcomeScreen, setShouldRenderWelcomeScreen] = useState(true);
 
   return (
-      <ThemeProvider theme={{...defaultTheme, ...PortfolioCardTheme}}>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <ProvideModalState value={{ 
-                createPortfolio: { open: createPortfolioModalOpen, setOpen: setCreatePortfolioModalOpen },
-                specificPortfolio: { open: specificPortfolioModalOpen, setOpen: setSpecificPortfolioModalOpen },
-                addTransaction: { open: addTransactionModalOpen, setOpen: setAddTransactionModalOpen }
-          }}>
-              <QueryClientProvider client={queryClient}>
-                  <QueryErrorResetBoundary>
-                    {({ reset }) => (
-                        <CustomQueryErrorBoundary reset={reset}>
-                            <MainScreen />
-                        </CustomQueryErrorBoundary>
-                    )}
-                  </QueryErrorResetBoundary>
-              </QueryClientProvider>
-          </ProvideModalState>
-        </LocalizationProvider>
-      </ThemeProvider>
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <ProvideModalState value={{ 
+        createPortfolio: { open: createPortfolioModalOpen, setOpen: setCreatePortfolioModalOpen },
+        specificPortfolio: { open: specificPortfolioModalOpen, setOpen: setSpecificPortfolioModalOpen },
+        addTransaction: { open: addTransactionModalOpen, setOpen: setAddTransactionModalOpen },
+        createFirstPortfolio: { open: createFirstPortfolioModalOpen, setOpen: setCreateFirstPortfolioModalOpen }
+      }}>
+        { !shouldRenderWelcomeScreen
+          ? <MainScreen />
+          : isFetched && portfoliosCount > 0
+            ? <MainScreen />
+            : <WelcomeScreen setShouldRender={setShouldRenderWelcomeScreen} /> }
+      </ProvideModalState>
+    </LocalizationProvider>
   )
 }
 
@@ -65,8 +65,20 @@ export const App = () => {
   return (
     <React.StrictMode>
       <SDKProvider debug={false} acceptCustomStyles={false}>
-        <GlobalStyle />
-        <Inner />
+        <ThemeProvider theme={{...defaultTheme, ...PortfolioCardTheme}}>
+          <GlobalStyle />
+          <QueryClientProvider client={queryClient}>
+            <QueryErrorResetBoundary>
+              {({ reset }) => (
+                <CustomQueryErrorBoundary reset={reset}>
+                  <Suspense fallback={<div>Loading...</div>}>
+                    <Inner />
+                  </Suspense>
+                </CustomQueryErrorBoundary>
+              )}
+            </QueryErrorResetBoundary>
+          </QueryClientProvider>
+        </ThemeProvider>
       </SDKProvider>
     </React.StrictMode>
   )

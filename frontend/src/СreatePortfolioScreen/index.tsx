@@ -6,7 +6,7 @@ import { MainPortfolioSwitch } from "./MainPortfolioSwitch";
 import { ColorCircles } from "./ColorCircles";
 import { Vocab } from "./vocabulary";
 import { PortfolioApi } from "../Api/PortfolioApi";
-import { useModalState } from "../Common/ModalStateProvider";
+import { Modals, useModalState } from "../Common/ModalStateProvider";
 import { Spinner } from "reactstrap";
 import { AxiosError } from "axios";
 import { PrimaryButton } from "../Common/components/PrimaryButton";
@@ -17,9 +17,14 @@ import { telegram_isClientEnabled, telegram_isVersionAtLeast, telegram_showAlert
 import { Vocab as GlobalVocab } from "../vocabulary";
 import { usePopup } from "@telegram-apps/sdk-react";
 
-const CreatePortfolioScreen = ({ hasPortfolios }: { readonly hasPortfolios: boolean; }): JSX.Element => {
+interface ICreatePortfolioScreenProps {
+    readonly hasPortfolios: boolean;
+    readonly modalName: Modals;
+}
+
+const CreatePortfolioScreen = ({ hasPortfolios, modalName }: ICreatePortfolioScreenProps): JSX.Element => {
     const popup = usePopup();
-    const modalState = useModalState("createPortfolio");
+    const modalState = useModalState(modalName);
 
     const { 
         register, 

@@ -2,7 +2,8 @@ import { createContext, useContext } from 'react';
 
 export type Modals = "createPortfolio" 
     | "specificPortfolio" 
-    | "addTransaction";
+    | "addTransaction"
+    | "createFirstPortfolio";
 
 export type ModalStates = {
     [key in Modals]: IModalState;

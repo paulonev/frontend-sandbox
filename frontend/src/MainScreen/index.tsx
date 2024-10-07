@@ -7,14 +7,24 @@ import Portfolios_s from './Skeletoned/Portfolios_skeletoned';
 import { useMemo, useState } from "react";
 import { PortfolioViewModal } from "../Modals/PortfolioViewModal";
 import { useModalState } from "../Common/ModalStateProvider";
-import { CreatePortfolioModal } from "../Modals/CreatePortfolioModal";
 import { useCoinsQuery } from "../AddTransactionScreen/useCoinsQuery";
 import { ProvidePopularCoins } from "../AddTransactionScreen/PopularCoinsProvider";
-import { QueryErrorResetBoundary } from "@tanstack/react-query";
+import { QueryErrorResetBoundary, useQueryClient } from "@tanstack/react-query";
 import { CustomQueryErrorBoundary } from "../CustomQueryErrorBoundary";
 import { FallbackWithGoBackButton } from "../Common/components/FallbackWithGoBack";
+import CreatePortfolioModalFunction from "../Modals/CreatePortfolioModal";
+import { MainScreenQueryKey } from "../constants";
 
 const MainScreen = () => {
+    const queryClient = useQueryClient();
+
+    const CreatePortfolioModalComponent = useMemo(() => CreatePortfolioModalFunction({ 
+        modalName: "createPortfolio", 
+        hasPortfolios: true,
+        //reset MainScreen query to its pre-loaded (null in our case) state, and refetch the query since it's active
+        onModalClosed: () => queryClient.resetQueries({ queryKey: [MainScreenQueryKey], exact: true }), 
+    }), [queryClient]);
+
     const modalState = useModalState("specificPortfolio");
     const { data, isLoading, isRefetching, refetch } = usePortfoliosQuery();
     const { data: coins } = useCoinsQuery();
@@ -56,7 +66,7 @@ const MainScreen = () => {
                 {({ reset }) => (
                     <CustomQueryErrorBoundary reset={reset} Footer={<FallbackWithGoBackButton onClick={() => closePortfolio()} />}>
                         <PortfolioViewModal selectedPortfolio={selectedPortfolio} onClose={closePortfolio} />
-                        <CreatePortfolioModal hasPortfolios={!!data?.items.length} />
+                        <CreatePortfolioModalComponent />
                     </CustomQueryErrorBoundary>
                 )}
             </QueryErrorResetBoundary>

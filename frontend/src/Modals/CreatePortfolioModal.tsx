@@ -1,38 +1,56 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { Modal, ModalBody, ModalHeader } from "reactstrap";
-import { useModalState } from "../Common/ModalStateProvider";
+import { Modals, useModalState } from "../Common/ModalStateProvider";
 import styled from "styled-components";
 import { Vocab } from "../СreatePortfolioScreen/vocabulary";
 import CreatePortfolioScreen from "../СreatePortfolioScreen";
 import { ArrowLeft } from "../Common/components/ArrowLeft";
-import { useQueryClient } from "@tanstack/react-query";
-import { MainScreenQueryKey } from "../constants";
 import { BodyBackgroundColor } from "../Common/colors";
+import { FC, useRef } from "react";
 
-export const CreatePortfolioModal = ({ hasPortfolios }: { readonly hasPortfolios: boolean; }) => {
-    const queryClient = useQueryClient();
-    const modalState = useModalState("createPortfolio");
-
-    //reset MainScreen query to its pre-loaded (null in our case) state, and refetch the query since it's active
-    const resetPortfolioScreenQuery = () =>
-        queryClient.resetQueries({ queryKey: [MainScreenQueryKey], exact: true });
-
-    return (
-        // data for MainScreen query will be refetched once modal is closed
-        <Modal fullscreen={true} isOpen={modalState?.open} fade={false} onClosed={resetPortfolioScreenQuery}>
-			<ContainerStyled>
-                <GoBackButtonStyled onClick={() => modalState?.setOpen(false)}>
-                    <ArrowLeft />
-                </GoBackButtonStyled>
-                <ModalHeader style={{ borderBottom: "none", justifyContent: "center", paddingTop: 0, marginBottom: 20 }}>
-                    <HeaderStyled>{Vocab.CreatePortfolioRu}</HeaderStyled>
-                </ModalHeader>
-                <ModalBody>
-                    <CreatePortfolioScreen hasPortfolios={hasPortfolios} />
-                </ModalBody>
-            </ContainerStyled>
-        </Modal>
-    );
+interface ICreatePortfolioModalProps {
+    readonly modalName: Modals;
+    readonly onModalClosed: (formSubmitted: boolean) => void;
+    readonly onGoBackClicked?: () => void;
+    readonly hasPortfolios: boolean;
 }
+
+const CreatePortfolioModal = (props: ICreatePortfolioModalProps): FC => 
+    () => {
+        const goBackClicked = useRef(false);
+        const modalState = useModalState(props.modalName);
+
+        const onGoBackClickedInner = () => {
+            modalState?.setOpen(false);
+            props.onGoBackClicked && props.onGoBackClicked();
+            goBackClicked.current = true;
+        }
+
+        const onModalClosedInner = () => {
+            //modal could be closed either by clicking goBack btn or by submitting the form
+            //onModalClosed(true) - means that the modal was closed after the form was submittted
+            props.onModalClosed(!goBackClicked.current);
+            goBackClicked.current = false;
+        }
+
+        return (
+            <Modal fullscreen={true} isOpen={modalState?.open} fade={false} onClosed={onModalClosedInner}>
+                <ContainerStyled>
+                    <GoBackButtonStyled onClick={onGoBackClickedInner}>
+                        <ArrowLeft />
+                    </GoBackButtonStyled>
+                    <ModalHeader style={{ borderBottom: "none", justifyContent: "center", paddingTop: 0, marginBottom: 20 }}>
+                        <HeaderStyled>{Vocab.CreatePortfolioRu}</HeaderStyled>
+                    </ModalHeader>
+                    <ModalBody>
+                        <CreatePortfolioScreen hasPortfolios={props.hasPortfolios} modalName={props.modalName} />
+                    </ModalBody>
+                </ContainerStyled>
+            </Modal>
+        );
+}
+
+export default CreatePortfolioModal;
 
 // [== STYLES ==]
 const ContainerStyled = styled.div`
