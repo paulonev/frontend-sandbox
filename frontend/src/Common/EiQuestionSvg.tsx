@@ -1,4 +1,4 @@
-export const    EiQuestionSvg = (): JSX.Element => {
+export const EiQuestionSvg = (): JSX.Element => {
     return (
         <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12.5 21C7.8 21 4 17.2 4 12.5C4 7.8 7.8 4 12.5 4C17.2 4 21 7.8 21 12.5C21 17.2 17.2 21 12.5 21ZM12.5 5C8.35 5 5 8.35 5 12.5C5 16.65 8.35 20 12.5 20C16.65 20 20 16.65 20 12.5C20 8.35 16.65 5 12.5 5Z" fill="#426AF9" stroke="#426AF9" strokeWidth="0.2"/>

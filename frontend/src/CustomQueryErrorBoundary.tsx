@@ -16,7 +16,8 @@ function getFallbackRender({ Footer }: { Footer?: React.ReactNode }) {
         return (
             <ScreenStyled>
                 <ContainerStyled>
-                    <span>{Vocab.GeneralErrorRu}</span>
+                    <img src="/img/stone-face.png" />
+                    <SomethingWengWrongStyled>{Vocab.GeneralErrorRu}</SomethingWengWrongStyled>
                     {error instanceof ApiError ? (
                         <>
                             <span>ErrorId: <b>{error.errorId ?? "undefined"}</b></span>
@@ -48,7 +49,7 @@ export const CustomQueryErrorBoundary = ({ children, reset, Footer }: React.Prop
 // [=== STYLES ===]
 const ContainerStyled = styled.div`
     position: relative;
-    top: 45vh;
+    top: 35vh;
     display: flex;
     flex-flow: column;
     justify-content: center;
@@ -72,4 +73,8 @@ const ScreenStyled = styled.div`
     height: 100%;
     width: 100%;
     display: block;
+`;
+
+const SomethingWengWrongStyled = styled.span`
+    margin-top: 15px;
 `;
