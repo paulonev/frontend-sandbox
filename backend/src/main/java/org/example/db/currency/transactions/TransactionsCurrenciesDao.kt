@@ -1,6 +1,7 @@
 package org.example.db.currency.transactions
 
 import io.ktor.server.plugins.*
+import org.example.Utils
 import org.example.db.currency.portfoliocurrencies.PortfolioCurrenciesDao
 import org.example.db.portfolio.PortfolioDao
 import org.example.receive.CurrencyTransaction
@@ -16,14 +17,16 @@ object TransactionsCurrenciesDao {
 
         when(transactionType){
             TransactionsCurrenciesType.Replenish -> {
-                portfolioCurrenciesEntity.balance += currencyTransaction.amount
+                portfolioCurrenciesEntity.balance =
+                    Utils.round(2, portfolioCurrenciesEntity.balance + currencyTransaction.amount)
             }
             TransactionsCurrenciesType.Withdraw -> {
                 if (portfolioCurrenciesEntity.balance < currencyTransaction.amount){
                     val remainder = maxOf(0.0, portfolioCurrenciesEntity.balance)
                     throw BadRequestException("You can't withdraw more than $remainder")
                 }
-                portfolioCurrenciesEntity.balance -= currencyTransaction.amount
+                portfolioCurrenciesEntity.balance =
+                    Utils.round(2, portfolioCurrenciesEntity.balance - currencyTransaction.amount)
             }
         }
 
