@@ -3,6 +3,7 @@ package org.example.db.crypto.portfoliocryptos
 import io.ktor.server.plugins.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import org.example.Utils
 import org.example.db.crypto.cryptocurrencies.CryptoCurrenciesEntity
 import org.example.db.crypto.transactions.TransactionsCryptosDao
 import org.example.db.crypto.transactions.TransactionsCryptosType
@@ -43,7 +44,7 @@ object PortfolioCryptosDao {
                     (portfolioCryptosEntity.amount * portfolioCryptosEntity.averagePrice + amount * pricePerUnit) / newAmount
                 }
                 portfolioCurrenciesEntity.apply {
-                    this.balance = this.balance - (amount * pricePerUnit).toDouble() - commission
+                    this.balance = Utils.round(2, this.balance - (amount * pricePerUnit).toDouble() - commission)
                 }
                 NewData(newAmount, newAveragePriceAsync.await(), newCommission)
             }
@@ -56,7 +57,7 @@ object PortfolioCryptosDao {
                     } else BigDecimal.ZERO
                 }
                 portfolioCurrenciesEntity.apply {
-                    this.balance = this.balance + (amount * pricePerUnit).toDouble() - commission
+                    this.balance = Utils.round(2, this.balance + (amount * pricePerUnit).toDouble() - commission)
                 }
                 NewData(newAmount, newAveragePriceAsync.await(), newCommission)
             }

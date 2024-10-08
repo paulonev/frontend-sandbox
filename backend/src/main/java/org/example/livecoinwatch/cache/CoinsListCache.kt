@@ -50,7 +50,7 @@ class CoinsListCache(private val expirationDuration: Duration = Duration.ofDays(
                 CoinsListRespond(
                     it.name,
                     it.code,
-                    Utils.round(it.rate, 2),
+                    Utils.roundPricePerCoin(it.rate),
                     it.webp64
                 )
             }
