@@ -3,6 +3,7 @@ package org.example
 import io.github.smiley4.ktorswaggerui.dsl.routes.OpenApiRoute
 import io.ktor.http.*
 import org.example.receive.CryptoTransaction
+import org.example.receive.CurrencyTransaction
 import org.example.receive.PortfolioReceive
 import org.example.receive.UserReceive
 import org.example.respond.CoinsListRespond
@@ -38,6 +39,14 @@ class Swagger(val openApiRoute: OpenApiRoute) {
     private fun OpenApiRoute.throwable(description: String) {
         response {
             HttpStatusCode.InternalServerError to {
+                this.description = description
+            }
+        }
+    }
+
+    private fun OpenApiRoute.badRequest(description: String) {
+        response {
+            HttpStatusCode.BadRequest to {
                 this.description = description
             }
         }
@@ -116,13 +125,10 @@ class Swagger(val openApiRoute: OpenApiRoute) {
         with(openApiRoute){
             description = "Create crypto transaction"
             request {
-                pathParameter<String>("portfolio_id") {
-                    description = "ID of the portfolio in which the transaction is added"
-                }
                 body<CryptoTransaction>()
             }
-            notFound("Portfolio id not found in url")
-            throwable("You are trying to sell more than you have in your portfolio")
+            badRequest("You are trying to sell more than you have in your portfolio")
+            notFound("Portfolio with id = {id} not found")
             successResponse()
         }
     }
@@ -144,6 +150,18 @@ class Swagger(val openApiRoute: OpenApiRoute) {
                     }
                 }
             }
+        }
+    }
+
+    fun currencyTransactionPost(){
+        with(openApiRoute){
+            description = "Create currency transaction"
+            request {
+                body<CurrencyTransaction>()
+            }
+            badRequest("You are trying to withdraw more than you have on balance in your portfolio")
+            notFound("Portfolio with id = {id} not found")
+            successResponse()
         }
     }
 }

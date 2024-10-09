@@ -28,6 +28,7 @@ import org.example.db.crypto.transactions.TransactionsCryptosDao
 import org.example.db.crypto.transactions.TransactionsCryptosTable
 import org.example.db.currency.currencies.CurrenciesTable
 import org.example.db.currency.portfoliocurrencies.PortfolioCurrenciesTable
+import org.example.db.currency.transactions.TransactionsCurrenciesDao
 import org.example.db.currency.transactions.TransactionsCurrenciesTable
 import org.example.db.portfolio.PortfolioDao
 import org.example.db.portfolio.PortfolioTable
@@ -41,8 +42,8 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.example.livecoinwatch.cache.CryptoPriceCache
-import org.example.livecoinwatch.request.Coins
 import org.example.receive.CryptoTransaction
+import org.example.receive.CurrencyTransaction
 
 object CryptoPriceCacheHolder{
     val cryptoPriceCache: CryptoPriceCache = CryptoPriceCache()
@@ -189,10 +190,10 @@ fun main(args: Array<String>){
                                 Item(
                                     it.id.value,
                                     ItemMeta(
-                                        Utils.round(2, portfolioStatistics.currentAmountWithBalance),
-                                        Calculate.calculateGainLoss(
-                                            portfolioStatistics.currentAmount,
-                                            portfolioStatistics.purchaseAmount
+                                        Utils.round(2, portfolioStatistics.overallVolume),
+                                        GainLoss(
+                                            portfolioStatistics.profitUSD,
+                                            portfolioStatistics.profitPercent
                                         )
                                     ),
                                     it.isMain,
@@ -204,29 +205,29 @@ fun main(args: Array<String>){
                             portfolioStatistics
                         }
 
-                        var purchaseAmount = 0.0
-                        var currentAmount = 0.0
-                        var currentAmountWithBalance = 0.0
+                        var costBasis = 0.0
+                        var overallVolume = 0.0
+                        var profitUSD = 0.0
 
                         coroutineScope {
-                            val purchaseAmountAsync = async {
-                                portfolioStatisticsDataList.sumByDouble { it.purchaseAmount }
-                            }
-                            val currentAmountAsync = async {
-                                portfolioStatisticsDataList.sumByDouble { it.currentAmount }
+                            val costBasisAsync = async {
+                                portfolioStatisticsDataList.sumByDouble { it.allCostBasis }
                             }
                             val currentAmountWithBalanceAsync = async {
-                                portfolioStatisticsDataList.sumByDouble { it.currentAmountWithBalance }
+                                portfolioStatisticsDataList.sumByDouble { it.overallVolume }
+                            }
+                            val profitUSDAsync = async {
+                                portfolioStatisticsDataList.sumByDouble { it.profitUSD }
                             }
 
-                            purchaseAmount = purchaseAmountAsync.await()
-                            currentAmount = currentAmountAsync.await()
-                            currentAmountWithBalance = currentAmountWithBalanceAsync.await()
+                            costBasis = costBasisAsync.await()
+                            overallVolume = currentAmountWithBalanceAsync.await()
+                            profitUSD = profitUSDAsync.await()
                         }
 
                         mainPageRespond.meta = Meta(
-                            Utils.round(2, currentAmountWithBalance),
-                            Calculate.calculateGainLoss(currentAmount, purchaseAmount)
+                            Utils.round(2, overallVolume),
+                            Calculate.getGainLoss(profitUSD, costBasis)
                         )
                         call.respond(mainPageRespond)
                     }
@@ -245,16 +246,12 @@ fun main(args: Array<String>){
                     }
                     call.respond(results!!)
                 }
-                post("/portfolio/{portfolio_id}/transactions", {
+                post("/crypto/transactions", {
                     Swagger(this).cryptoTransactionPost()
                 }) {
                     dbQuery {
-                        val portfolioId = call.parameters["portfolio_id"]?.toInt() ?: throw ResourceNotFoundException(
-                            "Portfolio",
-                            "Portfolio id not found in url"
-                        )
                         val cryptoTransaction = call.receive<CryptoTransaction>()
-                        call.respond(TransactionsCryptosDao.create(cryptoTransaction, portfolioId))
+                        call.respond(TransactionsCryptosDao.create(cryptoTransaction))
                     }
                 }
                 get("/portfolio/{id}", {
@@ -266,6 +263,14 @@ fun main(args: Array<String>){
                             "Portfolio id not found in url"
                         )
                         call.respond(PortfolioStatistics(portfolioId).getAllPortfolioData())
+                    }
+                }
+                post("/currencies/transactions", {
+                    Swagger(this).currencyTransactionPost()
+                }) {
+                    dbQuery {
+                        val currencyTransaction = call.receive<CurrencyTransaction>()
+                        call.respond(TransactionsCurrenciesDao.create(currencyTransaction))
                     }
                 }
             }

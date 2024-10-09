@@ -20,7 +20,7 @@ data class PortfolioRespond(
             return PortfolioRespond(
                 portfolioId,
                 name,
-                0.0,
+                balance.volume,
                 GainLoss(0.0, 0.0),
                 GainLoss(0.0, 0.0),
                 balance,
