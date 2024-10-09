@@ -1,7 +1,6 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import { defaultValues, NewPortfolioFormData } from "./types";
 import { NameInput } from "./NameInput";
-import { TypeSelect } from "./TypeSelect";
 import { MainPortfolioSwitch } from "./MainPortfolioSwitch";
 import { ColorCircles } from "./ColorCircles";
 import { Vocab } from "./vocabulary";
@@ -16,6 +15,7 @@ import { AxiosErrorResponse } from "../Api/api.extensions";
 import { telegram_isClientEnabled, telegram_isVersionAtLeast, telegram_showAlert } from "../Telegram/utils";
 import { Vocab as GlobalVocab } from "../vocabulary";
 import { usePopup } from "@telegram-apps/sdk-react";
+import { TypeSelect } from "../Common/forms/TypeSelect";
 
 interface ICreatePortfolioScreenProps {
     readonly hasPortfolios: boolean;
@@ -76,7 +76,19 @@ const CreatePortfolioScreen = ({ hasPortfolios, modalName }: ICreatePortfolioScr
     return (
         <form onSubmit={handleSubmit(onFormSubmit)}>
             <NameInput register={register} errors={errors.name} />
-            <TypeSelect control={control} />
+            <TypeSelect 
+                name={"portfolioType"}
+                control={control}
+                label={Vocab.PortfolioTypeRu}
+                renderOptions={() => (
+                    <>
+                        <option value="crypto">{Vocab.CryptoSelectOptionRu}</option>
+                        <option value="stocks" disabled={true} aria-disabled={true}>
+                            {Vocab.StocksSelectOptionRu} ({GlobalVocab.SoonRu})
+                        </option>
+                    </>
+                )}
+            />
             <MainPortfolioSwitch control={control} disabled={!hasPortfolios} />
             {hasPortfolios && !watchIsMainPortfolio && <ColorCircles control={control} />}
             

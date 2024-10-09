@@ -5,12 +5,10 @@ import { PrimaryButton } from "../Common/components/PrimaryButton";
 import { Spinner } from "reactstrap";
 import { Vocab } from "./vocabulary";
 import { NameAutocompleteField } from "./NameAutocompleteField";
-import { TypeSelect } from "./TypeSelect";
 import { UnitPriceInput } from "./UnitPriceInput";
 import { QuantityInput } from "./QuantityInput";
-import { DateInput } from "./DateInput";
 import { CommissionPriceInput } from "./CommissionPriceInput";
-import { NotesInput } from "./NotesInput";
+import { NotesInput } from "../Common/forms/NotesInput";
 import { OverallTransactionAmount } from "./OverallTransactionAmount";
 import dayjs from "dayjs";
 import { CoinOptions } from "../Api/coinSearch.schema";
@@ -21,6 +19,8 @@ import { telegram_isClientEnabled, telegram_isVersionAtLeast, telegram_showAlert
 import { useModalState } from "../Common/ModalStateProvider";
 import { Vocab as GlobalVocab } from "../vocabulary";
 import { usePopup } from "@telegram-apps/sdk-react";
+import DateInput from "../Common/forms/DateInput";
+import { TypeSelect } from "../Common/forms/TypeSelect";
 
 function generateSellOverflowErrorMessage(detail: string | undefined): string {
     if (detail !== undefined && detail !== null) {
@@ -133,12 +133,28 @@ const AddTransactionScreen = ({ form, portfolioId }: IAddTransactionScreenProps)
     return (
         <form onSubmit={handleSubmit(onFormSubmit)}>
             <NameAutocompleteField errors={errors.coinName} handleOnChange={handleCoinChange}/>
-            <TypeSelect control={control} />
+            <TypeSelect
+                name="type"
+                label={Vocab.TransactionTypeRu} 
+                control={control}
+                renderOptions={() => (
+                    <>
+                        <option value="Buy">{Vocab.TransactionTypeBuyRu}</option>
+                        <option value="Sell">{Vocab.TransactionTypeSellRu}</option>
+                    </>
+                )}
+            />
             <UnitPriceInput register={register} errors={errors.pricePerUnit} />
             <QuantityInput register={register} errors={errors.amount} />
-            <DateInput control={control} type={watch("type")} clearErrors={clearErrors} />
+            <DateInput 
+                name="date" 
+                label={watch("type") === "Buy" ? Vocab.BuyDateLabelRu : Vocab.SellDateLabelRu} 
+                control={control} 
+                clearErrors={clearErrors} 
+                onRequiredViolated={() => Vocab.EmptyRequiredFieldErrorRu } 
+            />
             <CommissionPriceInput register={register} errors={errors.commission} />
-            <NotesInput register={register} />
+            <NotesInput name="notes" label={Vocab.NotesLabelRu} register={register} />
             <OverallTransactionAmount amount={watch("amount")} pricePerUnit={watch("pricePerUnit")} commission={watch("commission")} type={watch("type")} />
 
             <ButtonContainerStyled>

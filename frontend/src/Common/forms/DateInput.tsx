@@ -1,29 +1,29 @@
-import { Control, Controller, UseFormClearErrors } from "react-hook-form";
-import { FormFieldStyled, LabelStyled } from "../Common/forms/styles";
-import { Black, Red, White } from "../Common/colors";
+import { Control, Controller, FieldError, FieldValues, Path, UseFormClearErrors } from "react-hook-form";
+import { FormFieldStyled, LabelStyled } from "./styles";
+import { Black, Red, White } from "../colors";
 import styled from "styled-components";
-import { AddTransactionFormData, TransactionType } from "./types";
-import { Vocab } from "./vocabulary";
 import { DateField } from "@mui/x-date-pickers";
 
-interface IDateInputProps {
-    readonly type: TransactionType;
-    readonly control: Control<AddTransactionFormData>;
-    readonly clearErrors: UseFormClearErrors<AddTransactionFormData>;
+interface IDateInputProps<T extends FieldValues> {
+    readonly label: string;
+    readonly control: Control<T>;
+    readonly name: Path<T>;
+    readonly onRequiredViolated: (error?: FieldError | undefined) => string;
+    readonly clearErrors: UseFormClearErrors<T>;
 }
 
-export const DateInput = ({ type, control, clearErrors }: IDateInputProps): JSX.Element => {
+const DateInput = <T extends FieldValues>({ label, control, name, onRequiredViolated, clearErrors }: IDateInputProps<T>): JSX.Element => {
     return (
         <Controller 
-            name="date"
+            name={name}
             control={control}
             render={({ field: { onChange, onBlur, name, value, ref }, fieldState: { error }}) => (
                 <FormFieldStyled>
-                    <LabelStyled htmlFor="date">{type === "Buy" ? Vocab.BuyDateLabelRu : Vocab.SellDateLabelRu}</LabelStyled>
+                    <LabelStyled htmlFor={name}>{label}</LabelStyled>
                     <DateField
                         name={name}
                         value={value}
-                        onChange={(value) => { onChange(value); clearErrors("date"); }}
+                        onChange={(value) => { onChange(value); clearErrors(name); }}
                         onBlur={onBlur}
                         format="DD.MM.YYYY"
                         inputRef={ref}
@@ -52,7 +52,7 @@ export const DateInput = ({ type, control, clearErrors }: IDateInputProps): JSX.
                         variant="filled"
                     />
                     {error?.type === "required" ? (
-                        <ErrorTextStyled role="alert">{Vocab.EmptyRequiredFieldErrorRu}</ErrorTextStyled>
+                        <ErrorTextStyled role="alert">{onRequiredViolated(error)}</ErrorTextStyled>
                     ) : error?.message ? (
                         <ErrorTextStyled role="alert">{error.message}</ErrorTextStyled>
                     ) : null}
@@ -61,6 +61,8 @@ export const DateInput = ({ type, control, clearErrors }: IDateInputProps): JSX.
         />
     );
 }
+
+export default DateInput;
 
 // [== STYLES ==]
 const ErrorTextStyled = styled.p`
