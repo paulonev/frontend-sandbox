@@ -57,6 +57,7 @@ const AddTransactionScreen = ({ form, portfolioId }: IAddTransactionScreenProps)
 
     const onFormSubmit: SubmitHandler<AddTransactionFormData> = async (data) => {
         const request: AddTransactionRequest = {
+            portfolioId,
             coinName: data.coinName,
             coinTicker: data.coinTicker,
             type: data.type,
@@ -69,7 +70,7 @@ const AddTransactionScreen = ({ form, portfolioId }: IAddTransactionScreenProps)
 
         try {
             clearErrors();
-            await PortfolioApi.createTransaction(portfolioId, request);
+            await PortfolioApi.createTransaction(request);
             modalState?.setOpen(false);
         }
         catch (ex) {

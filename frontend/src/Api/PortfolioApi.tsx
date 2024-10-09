@@ -7,6 +7,7 @@ import { PortfoliosData, PortfoliosDataSchema } from "./portfolios.schema";
 import { ApiError } from "../Entities/Errors/ApiError";
 import { Portfolio, PortfolioSchema } from "./portfolio.schema";
 import { AddTransactionRequest } from "../AddTransactionScreen/types";
+import { AddCurrencyTransactionRequest } from "../AddCurrencyTransactionScreen/types";
 
 export class PortfolioApi {
     public static async createPortfolio(data: NewPortfolioFormData): Promise<void> {
@@ -63,14 +64,28 @@ export class PortfolioApi {
         }
     }
 
-    public static async createTransaction(portfolioId: number, request: AddTransactionRequest): Promise<void> {
+    public static async createTransaction(request: AddTransactionRequest): Promise<void> {
         try {
-            await HttpClient.post(`api/portfolio/${portfolioId}/transactions`, request)
+            await HttpClient.post(`api/crypto/transactions`, request)
         } catch (error) {
             if (error instanceof AxiosError) {
                 ApiExtensions.processAxiosError(error, this.createTransaction.name);
             } else {
                 console.error(`Unhandled error in ${this.createTransaction.name}`);
+            }
+
+            throw error;
+        }
+    }
+
+    public static async createCurrencyTransaction(request: AddCurrencyTransactionRequest): Promise<void> {
+        try {
+            await HttpClient.post(`api/currencies/transactions`, request)
+        } catch (error) {
+            if (error instanceof AxiosError) {
+                ApiExtensions.processAxiosError(error, this.createCurrencyTransaction.name);
+            } else {
+                console.error(`Unhandled error in ${this.createCurrencyTransaction.name}`);
             }
 
             throw error;

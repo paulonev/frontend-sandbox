@@ -42,6 +42,7 @@ function Inner() {
   const [addTransactionModalOpen, setAddTransactionModalOpen] = useState(false);
   const [createFirstPortfolioModalOpen, setCreateFirstPortfolioModalOpen] = useState(false);
   const [shouldRenderWelcomeScreen, setShouldRenderWelcomeScreen] = useState(true);
+  const [addCurrencyTransactionModalOpen, setAddCurrencyTransactionModalOpen] = useState(false);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -49,7 +50,8 @@ function Inner() {
         createPortfolio: { open: createPortfolioModalOpen, setOpen: setCreatePortfolioModalOpen },
         specificPortfolio: { open: specificPortfolioModalOpen, setOpen: setSpecificPortfolioModalOpen },
         addTransaction: { open: addTransactionModalOpen, setOpen: setAddTransactionModalOpen },
-        createFirstPortfolio: { open: createFirstPortfolioModalOpen, setOpen: setCreateFirstPortfolioModalOpen }
+        createFirstPortfolio: { open: createFirstPortfolioModalOpen, setOpen: setCreateFirstPortfolioModalOpen },
+        addCurrencyTransaction: { open: addCurrencyTransactionModalOpen, setOpen: setAddCurrencyTransactionModalOpen }
       }}>
         { !shouldRenderWelcomeScreen
           ? <MainScreen />
