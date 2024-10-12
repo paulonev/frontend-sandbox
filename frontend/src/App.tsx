@@ -76,11 +76,11 @@ export const App = () => {
     <React.StrictMode>
       <SDKProvider debug={false} acceptCustomStyles={false}>
         <ThemeProvider theme={{...defaultTheme, ...PortfolioCardTheme}}>
+          <GlobalStyle />
           <QueryClientProvider client={queryClient}>
             <QueryErrorResetBoundary>
               {({ reset }) => (
                 <CustomQueryErrorBoundary reset={reset}>
-                  <GlobalStyle />
                   <Inner />
                 </CustomQueryErrorBoundary>
               )}
