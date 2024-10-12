@@ -10,9 +10,10 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { CustomQueryErrorBoundary } from './CustomQueryErrorBoundary';
 import React from 'react';
 import { GlobalStyle } from './globalStyle';
-import { bindMiniAppCSSVars, bindThemeParamsCSSVars, bindViewportCSSVars, SDKProvider, useLaunchParams, useMiniApp, useThemeParams, useViewport } from '@telegram-apps/sdk-react';
+import { bindMiniAppCSSVars, bindThemeParamsCSSVars, bindViewportCSSVars, SDKProvider, useLaunchParams, useMiniApp, usePopup, useThemeParams, useViewport } from '@telegram-apps/sdk-react';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { AppRoot } from '@telegram-apps/telegram-ui';
+import { telegram_showAlert } from './Telegram/utils';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,6 +25,7 @@ const queryClient = new QueryClient({
 
 // 1. screen-overlay routing - CreatePortfolioScreen screen over MainScreen, not as separate urls like /home, /new
 function Inner() {
+  const popup = usePopup();
   const lp = useLaunchParams();
   const miniApp = useMiniApp();
   const viewPort = useViewport();
@@ -50,6 +52,7 @@ function Inner() {
   const [specificPortfolioModalOpen, setSpecificPortfolioModalOpen] = useState(false);
   const [addTransactionModalOpen, setAddTransactionModalOpen] = useState(false);
 
+  telegram_showAlert(popup, `The theme is ${miniApp.isDark ? 'dark' : 'light'}. Theme params: ${JSON.stringify(themeParams)}`)
   return (
     <AppRoot
       appearance={miniApp.isDark ? 'dark' : 'light'}
