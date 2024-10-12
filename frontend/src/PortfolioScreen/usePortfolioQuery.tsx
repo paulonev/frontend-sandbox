@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { PortfolioScreenQueryKey } from '../constants';
-import bitcoinLogoSvg from '/img/BitcoinLogo.svg';
+import bitcoinLogoSvg from "/img/BitcoinLogo.svg";
 import { Portfolio } from '../Api/portfolio.schema';
 
 const MOCK_PORTFOLIOS: Portfolio[] = [{
@@ -90,9 +90,6 @@ export const usePortfolioQuery = ({ id }: UsePortfolioQueryProps) => {
     return useQuery<Portfolio>({
         queryKey: [PortfolioScreenQueryKey, id],
         queryFn: () => {
-            // TODO: when integrating with PortfolioApi layer
-            // write a function that returns a promise that either resolves with data or rejects with any error, like (401, 404, 5xx, ...)
-            
             //simulate network delay
             //for the sake of simplicity, always returns first portfolio from the mocked portfolios array
             return new Promise(res => setTimeout(() => {

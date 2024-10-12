@@ -5,21 +5,34 @@ import { PrimaryButton } from "../Common/components/PrimaryButton";
 import { Spinner } from "reactstrap";
 import { Vocab } from "./vocabulary";
 import { NameAutocompleteField } from "./NameAutocompleteField";
-import { TypeSelect } from "./TypeSelect";
 import { UnitPriceInput } from "./UnitPriceInput";
 import { QuantityInput } from "./QuantityInput";
-import { DateInput } from "./DateInput";
 import { CommissionPriceInput } from "./CommissionPriceInput";
-import { NotesInput } from "./NotesInput";
+import { NotesInput } from "../Common/forms/NotesInput";
 import { OverallTransactionAmount } from "./OverallTransactionAmount";
 import dayjs from "dayjs";
 import { CoinOptions } from "../Api/coinSearch.schema";
 import { PortfolioApi } from "../Api/PortfolioApi";
 import { AxiosError } from "axios";
+import { AxiosErrorResponse } from "../Api/api.extensions";
 import { telegram_isClientEnabled, telegram_isVersionAtLeast, telegram_showAlert } from "../Telegram/utils";
 import { useModalState } from "../Common/ModalStateProvider";
 import { Vocab as GlobalVocab } from "../vocabulary";
 import { usePopup } from "@telegram-apps/sdk-react";
+import DateInput from "../Common/forms/DateInput";
+import { TypeSelect } from "../Common/forms/TypeSelect";
+
+function generateSellOverflowErrorMessage(detail: string | undefined): string {
+    if (detail !== undefined && detail !== null) {
+        const thanIndex = detail.indexOf("than");
+        if (thanIndex > -1) {
+            const [limit, coinName] = detail.substring(thanIndex + "than".length).trim().split(" ", 2);
+            return Vocab.SellAmountOverflowErrorRu.replace("X", limit).replace("Y", coinName).toString();
+        }
+    }
+
+    return "";
+}
 
 interface IAddTransactionScreenProps {
     form: UseFormReturn<AddTransactionFormData>;
@@ -44,6 +57,7 @@ const AddTransactionScreen = ({ form, portfolioId }: IAddTransactionScreenProps)
 
     const onFormSubmit: SubmitHandler<AddTransactionFormData> = async (data) => {
         const request: AddTransactionRequest = {
+            portfolioId,
             coinName: data.coinName,
             coinTicker: data.coinTicker,
             type: data.type,
@@ -56,18 +70,24 @@ const AddTransactionScreen = ({ form, portfolioId }: IAddTransactionScreenProps)
 
         try {
             clearErrors();
-            await PortfolioApi.createTransaction(portfolioId, request);
+            await PortfolioApi.createTransaction(request);
             modalState?.setOpen(false);
         }
         catch (ex) {
-            const axiosError = ex as AxiosError;
-            setError("root.serverError", {
-                type: axiosError.code,
-                message: axiosError.message
-            });
+            if (ex instanceof AxiosError) {
+                const responsePayload = ex.response?.data as AxiosErrorResponse;
+                if (responsePayload.status === 400) {
+                    setError("amount", { type: "validate", message: generateSellOverflowErrorMessage(responsePayload.detail)})
+                } else {
+                    setError("root.serverError", {
+                        type: ex.code,
+                        message: ex.message
+                    });
 
-            if (telegram_isClientEnabled() && telegram_isVersionAtLeast("6.0")) {
-                await telegram_showAlert(popup, GlobalVocab.ServerErrorRu);
+                    if (telegram_isClientEnabled() && telegram_isVersionAtLeast("6.0")) {
+                        await telegram_showAlert(popup, GlobalVocab.ServerErrorRu);
+                    }
+                }
             }
         }
     }
@@ -114,12 +134,28 @@ const AddTransactionScreen = ({ form, portfolioId }: IAddTransactionScreenProps)
     return (
         <form onSubmit={handleSubmit(onFormSubmit)}>
             <NameAutocompleteField errors={errors.coinName} handleOnChange={handleCoinChange}/>
-            <TypeSelect control={control} />
+            <TypeSelect
+                name="type"
+                label={Vocab.TransactionTypeRu} 
+                control={control}
+                renderOptions={() => (
+                    <>
+                        <option value="Buy">{Vocab.TransactionTypeBuyRu}</option>
+                        <option value="Sell">{Vocab.TransactionTypeSellRu}</option>
+                    </>
+                )}
+            />
             <UnitPriceInput register={register} errors={errors.pricePerUnit} />
             <QuantityInput register={register} errors={errors.amount} />
-            <DateInput control={control} type={watch("type")} clearErrors={clearErrors} />
+            <DateInput 
+                name="date" 
+                label={watch("type") === "Buy" ? Vocab.BuyDateLabelRu : Vocab.SellDateLabelRu} 
+                control={control} 
+                clearErrors={clearErrors} 
+                onRequiredViolated={() => Vocab.EmptyRequiredFieldErrorRu } 
+            />
             <CommissionPriceInput register={register} errors={errors.commission} />
-            <NotesInput register={register} />
+            <NotesInput name="notes" label={Vocab.NotesLabelRu} register={register} />
             <OverallTransactionAmount amount={watch("amount")} pricePerUnit={watch("pricePerUnit")} commission={watch("commission")} type={watch("type")} />
 
             <ButtonContainerStyled>

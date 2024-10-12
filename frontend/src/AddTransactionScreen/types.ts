@@ -14,6 +14,7 @@ export type AddTransactionFormData = {
 }
 
 export type AddTransactionRequest = {
+    portfolioId: number;
     coinName: string;
     coinTicker: string;
     type: TransactionType;

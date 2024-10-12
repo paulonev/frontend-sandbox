@@ -13,7 +13,7 @@ export const PortfolioCardTags = ({ value, colorScheme }: IPortfolioCardTagsProp
 
     return (
         <TagsContainerStyled>
-            {value.map((tag, i) => (<TagStyled key={i} colorScheme={colorScheme} theme={theme} disabled>{tag}</TagStyled>))}
+            {value.map((tag, i) => (<TagStyled key={i} $colorScheme={colorScheme} theme={theme} disabled>{tag}</TagStyled>))}
         </TagsContainerStyled>
     );
 }
@@ -24,9 +24,9 @@ const TagsContainerStyled = styled.div`
     justify-content: flex-end;
 `;
 
-const TagStyled = styled.button<{ colorScheme?: string; theme: DefaultTheme }>`
-    background-color: ${props => props.colorScheme ? props.theme[props.colorScheme].tagsBgColor : props.theme.card_default.tagsBgColor};
-    color: ${props => props.colorScheme ? props.theme[props.colorScheme].textColor : props.theme.card_default.textColor};
+const TagStyled = styled.button<{ $colorScheme?: string; theme: DefaultTheme }>`
+    background-color: ${props => props.$colorScheme ? props.theme[props.$colorScheme].tagsBgColor : props.theme.card_default.tagsBgColor};
+    color: ${props => props.$colorScheme ? props.theme[props.$colorScheme].textColor : props.theme.card_default.textColor};
     
     border: none;
     border-radius: 10px;

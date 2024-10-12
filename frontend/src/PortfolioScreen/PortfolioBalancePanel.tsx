@@ -10,7 +10,6 @@ interface IPortfolioBalancePanelProps {
     readonly data: PortfolioBalance; 
 }
 
-//TODO: fix color matching for popover
 export const PortfolioBalancePanel = ({ data }: IPortfolioBalancePanelProps): JSX.Element => {
     return (
         <ContainerStyled>

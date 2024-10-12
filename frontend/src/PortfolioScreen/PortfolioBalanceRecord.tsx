@@ -3,6 +3,7 @@ import { AppGlobalCurrencyCode } from "../constants";
 import { formatPrice } from "../Common/formatter";
 import { AddButton } from "../Common/components/AddButtonSvg";
 import { Black } from "../Common/colors";
+import { useModalState } from "../Common/ModalStateProvider";
 
 interface IPortfolioBalanceRecordProps {
     readonly volume: number;
@@ -10,13 +11,22 @@ interface IPortfolioBalanceRecordProps {
 }
 
 export const PortfolioBalanceRecord = ({ volume, currencyCode }: IPortfolioBalanceRecordProps): JSX.Element => {
+    const modalState = useModalState("addCurrencyTransaction");
+
+    const onAddCurrentTransactionClicked = () => {
+        if (modalState) {
+            const { open, setOpen } = modalState;
+            setOpen(!open);
+        }
+    }
+    
     return (
         <GridContainerStyled>
             <BalanceVolumeSectionStyled>
                 <CurrencyCodeStyled>{currencyCode}</CurrencyCodeStyled>
                 <VolumeStyled>{formatPrice(volume, currencyCode ?? AppGlobalCurrencyCode)}</VolumeStyled>
             </BalanceVolumeSectionStyled>
-            <AddBalanceButtonContainerStyled>
+            <AddBalanceButtonContainerStyled onClick={onAddCurrentTransactionClicked}>
                 <AddButton />
             </AddBalanceButtonContainerStyled>
         </GridContainerStyled>

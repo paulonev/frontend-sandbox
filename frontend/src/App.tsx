@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider, QueryErrorResetBoundary } from '@tanstack/react-query';
 import MainScreen from './MainScreen';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { ProvideModalState } from './Common/ModalStateProvider';
 import { DefaultTheme, ThemeProvider } from 'styled-components';
 import { Black, Green, Red } from './Common/colors';
@@ -10,10 +10,11 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { CustomQueryErrorBoundary } from './CustomQueryErrorBoundary';
 import React from 'react';
 import { GlobalStyle } from './globalStyle';
-import { bindMiniAppCSSVars, bindThemeParamsCSSVars, bindViewportCSSVars, SDKProvider, useLaunchParams, useMiniApp, usePopup, useThemeParams, useViewport } from '@telegram-apps/sdk-react';
+import { bindMiniAppCSSVars, bindThemeParamsCSSVars, bindViewportCSSVars, SDKProvider, useLaunchParams, useMiniApp, useThemeParams, useViewport } from '@telegram-apps/sdk-react';
 import 'react-loading-skeleton/dist/skeleton.css';
+import { useUserPortfoliosCountQuery } from './useUserPortfoliosCountQuery';
+import WelcomeScreen from './WelcomeScreen';
 import { AppRoot } from '@telegram-apps/telegram-ui';
-import { telegram_showAlert } from './Telegram/utils';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,13 +26,13 @@ const queryClient = new QueryClient({
 
 // 1. screen-overlay routing - CreatePortfolioScreen screen over MainScreen, not as separate urls like /home, /new
 function Inner() {
-  const popup = usePopup();
   const lp = useLaunchParams();
   const miniApp = useMiniApp();
   const viewPort = useViewport();
   const themeParams = useThemeParams();
   // swipeBehavior not implemented
   miniApp.ready();
+  const { data: { portfoliosCount }, isFetched } = useUserPortfoliosCountQuery();
 
   useEffect(() => {
     return bindMiniAppCSSVars(miniApp, themeParams);
@@ -48,17 +49,12 @@ function Inner() {
     }
   }, [viewPort]);
 
-  useEffect(() => {
-    async function a() {
-      await telegram_showAlert(popup, `The theme is ${miniApp.isDark ? 'dark' : 'light'}. Theme params: ${JSON.stringify(themeParams)}`)
-    }
-
-    a();
-  }, [popup]);
-
   const [createPortfolioModalOpen, setCreatePortfolioModalOpen] = useState(false);
   const [specificPortfolioModalOpen, setSpecificPortfolioModalOpen] = useState(false);
   const [addTransactionModalOpen, setAddTransactionModalOpen] = useState(false);
+  const [createFirstPortfolioModalOpen, setCreateFirstPortfolioModalOpen] = useState(false);
+  const [shouldRenderWelcomeScreen, setShouldRenderWelcomeScreen] = useState(true);
+  const [addCurrencyTransactionModalOpen, setAddCurrencyTransactionModalOpen] = useState(false);
 
   return (
     <AppRoot
@@ -69,9 +65,15 @@ function Inner() {
         <ProvideModalState value={{ 
           createPortfolio: { open: createPortfolioModalOpen, setOpen: setCreatePortfolioModalOpen },
           specificPortfolio: { open: specificPortfolioModalOpen, setOpen: setSpecificPortfolioModalOpen },
-          addTransaction: { open: addTransactionModalOpen, setOpen: setAddTransactionModalOpen }
+          addTransaction: { open: addTransactionModalOpen, setOpen: setAddTransactionModalOpen },
+          createFirstPortfolio: { open: createFirstPortfolioModalOpen, setOpen: setCreateFirstPortfolioModalOpen },
+          addCurrencyTransaction: { open: addCurrencyTransactionModalOpen, setOpen: setAddCurrencyTransactionModalOpen }
         }}>
-          <MainScreen />
+          { !shouldRenderWelcomeScreen
+            ? <MainScreen />
+            : isFetched && portfoliosCount > 0
+            ? <MainScreen />
+            : <WelcomeScreen setShouldRender={setShouldRenderWelcomeScreen} /> }
         </ProvideModalState>
       </LocalizationProvider>
     </AppRoot>
@@ -88,7 +90,9 @@ export const App = () => {
             <QueryErrorResetBoundary>
               {({ reset }) => (
                 <CustomQueryErrorBoundary reset={reset}>
-                  <Inner />
+                  <Suspense fallback={<div>Loading...</div>}>
+                    <Inner />
+                  </Suspense>
                 </CustomQueryErrorBoundary>
               )}
             </QueryErrorResetBoundary>

@@ -8,8 +8,4 @@ import '@telegram-apps/telegram-ui/dist/styles.css';
 // the Telegram application, just in your browser.
 import "./mockEnv.ts"
 
-// telegram_ready();
-// telegram_expand();
-// telegram_disableVerticalSwipes();
-
 ReactDOM.createRoot(document.getElementById('root')!).render(<App />);
