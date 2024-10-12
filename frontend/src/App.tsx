@@ -10,8 +10,9 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { CustomQueryErrorBoundary } from './CustomQueryErrorBoundary';
 import React from 'react';
 import { GlobalStyle } from './globalStyle';
-import { SDKProvider, useMiniApp, useViewport } from '@telegram-apps/sdk-react';
+import { bindMiniAppCSSVars, bindThemeParamsCSSVars, bindViewportCSSVars, SDKProvider, useLaunchParams, useMiniApp, useThemeParams, useViewport } from '@telegram-apps/sdk-react';
 import 'react-loading-skeleton/dist/skeleton.css';
+import { AppRoot } from '@telegram-apps/telegram-ui';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -23,41 +24,47 @@ const queryClient = new QueryClient({
 
 // 1. screen-overlay routing - CreatePortfolioScreen screen over MainScreen, not as separate urls like /home, /new
 function Inner() {
+  const lp = useLaunchParams();
   const miniApp = useMiniApp();
   const viewPort = useViewport();
+  const themeParams = useThemeParams();
   // swipeBehavior not implemented
   miniApp.ready();
 
   useEffect(() => {
+    return bindMiniAppCSSVars(miniApp, themeParams);
+  }, [miniApp, themeParams]);
+
+  useEffect(() => {
+    return bindThemeParamsCSSVars(themeParams);
+  }, [themeParams]);
+
+  useEffect(() => {
     if (viewPort !== undefined) {
       if (!viewPort.isExpanded) viewPort.expand();
+      bindViewportCSSVars(viewPort);
     }
   }, [viewPort]);
-  
+
   const [createPortfolioModalOpen, setCreatePortfolioModalOpen] = useState(false);
   const [specificPortfolioModalOpen, setSpecificPortfolioModalOpen] = useState(false);
   const [addTransactionModalOpen, setAddTransactionModalOpen] = useState(false);
 
   return (
-      <ThemeProvider theme={{...defaultTheme, ...PortfolioCardTheme}}>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <ProvideModalState value={{ 
-                createPortfolio: { open: createPortfolioModalOpen, setOpen: setCreatePortfolioModalOpen },
-                specificPortfolio: { open: specificPortfolioModalOpen, setOpen: setSpecificPortfolioModalOpen },
-                addTransaction: { open: addTransactionModalOpen, setOpen: setAddTransactionModalOpen }
-          }}>
-              <QueryClientProvider client={queryClient}>
-                  <QueryErrorResetBoundary>
-                    {({ reset }) => (
-                        <CustomQueryErrorBoundary reset={reset}>
-                            <MainScreen />
-                        </CustomQueryErrorBoundary>
-                    )}
-                  </QueryErrorResetBoundary>
-              </QueryClientProvider>
-          </ProvideModalState>
-        </LocalizationProvider>
-      </ThemeProvider>
+    <AppRoot
+      appearance={miniApp.isDark ? 'dark' : 'light'}
+      platform={['macos', 'ios'].includes(lp.platform) ? 'ios' : 'base'}
+    >
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <ProvideModalState value={{ 
+          createPortfolio: { open: createPortfolioModalOpen, setOpen: setCreatePortfolioModalOpen },
+          specificPortfolio: { open: specificPortfolioModalOpen, setOpen: setSpecificPortfolioModalOpen },
+          addTransaction: { open: addTransactionModalOpen, setOpen: setAddTransactionModalOpen }
+        }}>
+          <MainScreen />
+        </ProvideModalState>
+      </LocalizationProvider>
+    </AppRoot>
   )
 }
 
@@ -65,8 +72,18 @@ export const App = () => {
   return (
     <React.StrictMode>
       <SDKProvider debug={false} acceptCustomStyles={false}>
-        <GlobalStyle />
-        <Inner />
+        <ThemeProvider theme={{...defaultTheme, ...PortfolioCardTheme}}>
+          <QueryClientProvider client={queryClient}>
+            <QueryErrorResetBoundary>
+              {({ reset }) => (
+                <CustomQueryErrorBoundary reset={reset}>
+                  <GlobalStyle />
+                  <Inner />
+                </CustomQueryErrorBoundary>
+              )}
+            </QueryErrorResetBoundary>
+          </QueryClientProvider>
+        </ThemeProvider>
       </SDKProvider>
     </React.StrictMode>
   )
