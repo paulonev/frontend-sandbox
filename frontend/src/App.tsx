@@ -10,10 +10,11 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { CustomQueryErrorBoundary } from './CustomQueryErrorBoundary';
 import React from 'react';
 import { GlobalStyle } from './globalStyle';
-import { SDKProvider, useMiniApp, useViewport } from '@telegram-apps/sdk-react';
+import { bindMiniAppCSSVars, bindThemeParamsCSSVars, bindViewportCSSVars, SDKProvider, useLaunchParams, useMiniApp, useThemeParams, useViewport } from '@telegram-apps/sdk-react';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { useUserPortfoliosCountQuery } from './useUserPortfoliosCountQuery';
 import WelcomeScreen from './WelcomeScreen';
+import { AppRoot } from '@telegram-apps/telegram-ui';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,18 +26,29 @@ const queryClient = new QueryClient({
 
 // 1. screen-overlay routing - CreatePortfolioScreen screen over MainScreen, not as separate urls like /home, /new
 function Inner() {
+  const lp = useLaunchParams();
   const miniApp = useMiniApp();
   const viewPort = useViewport();
+  const themeParams = useThemeParams();
   // swipeBehavior not implemented
   miniApp.ready();
   const { data: { portfoliosCount }, isFetched } = useUserPortfoliosCountQuery();
 
   useEffect(() => {
+    return bindMiniAppCSSVars(miniApp, themeParams);
+  }, [miniApp, themeParams]);
+
+  useEffect(() => {
+    return bindThemeParamsCSSVars(themeParams);
+  }, [themeParams]);
+
+  useEffect(() => {
     if (viewPort !== undefined) {
       if (!viewPort.isExpanded) viewPort.expand();
+      bindViewportCSSVars(viewPort);
     }
   }, [viewPort]);
-  
+
   const [createPortfolioModalOpen, setCreatePortfolioModalOpen] = useState(false);
   const [specificPortfolioModalOpen, setSpecificPortfolioModalOpen] = useState(false);
   const [addTransactionModalOpen, setAddTransactionModalOpen] = useState(false);
@@ -45,21 +57,26 @@ function Inner() {
   const [addCurrencyTransactionModalOpen, setAddCurrencyTransactionModalOpen] = useState(false);
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <ProvideModalState value={{ 
-        createPortfolio: { open: createPortfolioModalOpen, setOpen: setCreatePortfolioModalOpen },
-        specificPortfolio: { open: specificPortfolioModalOpen, setOpen: setSpecificPortfolioModalOpen },
-        addTransaction: { open: addTransactionModalOpen, setOpen: setAddTransactionModalOpen },
-        createFirstPortfolio: { open: createFirstPortfolioModalOpen, setOpen: setCreateFirstPortfolioModalOpen },
-        addCurrencyTransaction: { open: addCurrencyTransactionModalOpen, setOpen: setAddCurrencyTransactionModalOpen }
-      }}>
-        { !shouldRenderWelcomeScreen
-          ? <MainScreen />
-          : isFetched && portfoliosCount > 0
+    <AppRoot
+      appearance={miniApp.isDark ? 'dark' : 'light'}
+      platform={['macos', 'ios'].includes(lp.platform) ? 'ios' : 'base'}
+    >
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <ProvideModalState value={{ 
+          createPortfolio: { open: createPortfolioModalOpen, setOpen: setCreatePortfolioModalOpen },
+          specificPortfolio: { open: specificPortfolioModalOpen, setOpen: setSpecificPortfolioModalOpen },
+          addTransaction: { open: addTransactionModalOpen, setOpen: setAddTransactionModalOpen },
+          createFirstPortfolio: { open: createFirstPortfolioModalOpen, setOpen: setCreateFirstPortfolioModalOpen },
+          addCurrencyTransaction: { open: addCurrencyTransactionModalOpen, setOpen: setAddCurrencyTransactionModalOpen }
+        }}>
+          { !shouldRenderWelcomeScreen
+            ? <MainScreen />
+            : isFetched && portfoliosCount > 0
             ? <MainScreen />
             : <WelcomeScreen setShouldRender={setShouldRenderWelcomeScreen} /> }
-      </ProvideModalState>
-    </LocalizationProvider>
+        </ProvideModalState>
+      </LocalizationProvider>
+    </AppRoot>
   )
 }
 
