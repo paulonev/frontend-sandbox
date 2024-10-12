@@ -5,6 +5,7 @@ import { formatGainLossWithPercentage } from "../Common/formatter";
 import { AppGlobalCurrencyCode } from "../constants";
 import { isPositiveNumber } from "../MainScreen/utils";
 import { PortfolioAssetShortView } from "../Api/portfolio.schema";
+import { useEffect, useState } from "react";
 
 interface IPortfolioProfitCardProps {
     readonly profitType: string;
@@ -12,6 +13,19 @@ interface IPortfolioProfitCardProps {
 }
 
 export const PortfolioProfitCard = ({ data, profitType }: IPortfolioProfitCardProps): JSX.Element => {
+    const [isLess560Screen, setIsLess560Screen] = useState(false);
+
+    //TODO: find a way to use native stylesheet overrides as props to component
+    useEffect(() => {
+        const mediaQuery = window.matchMedia('(max-width: 560px)');
+        setIsLess560Screen(mediaQuery.matches);
+
+        const handleMediaChange = () => setIsLess560Screen(mediaQuery.matches);
+        mediaQuery.addListener(handleMediaChange);
+        
+        return () => mediaQuery.removeListener(handleMediaChange);
+    }, []);
+
     // when data is null, it means that no transactions were added to the portfolio 
     // we'll show specific screen for that later 
     if (data === null) {
@@ -35,13 +49,13 @@ export const PortfolioProfitCard = ({ data, profitType }: IPortfolioProfitCardPr
             )}
             renderSecondaryText={() => formatGainLossWithPercentage(gainLoss.inVolume, AppGlobalCurrencyCode, gainLoss.inPercentage)}
             primaryParagraphStyles={{
-                fontSize: 14,
+                fontSize: isLess560Screen ? 12 : 14,
                 color: Black,
                 marginTop: 8,
                 fontWeight: 500
             }}
             secondaryParagraphStyles={{
-                fontSize: 9,
+                fontSize: isLess560Screen ? 10 : 11,
                 color: isPositiveNumber(gainLoss.inPercentage) 
                     ? Green 
                     : Red
