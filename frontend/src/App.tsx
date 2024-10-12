@@ -48,11 +48,18 @@ function Inner() {
     }
   }, [viewPort]);
 
+  useEffect(() => {
+    async function a() {
+      await telegram_showAlert(popup, `The theme is ${miniApp.isDark ? 'dark' : 'light'}. Theme params: ${JSON.stringify(themeParams)}`)
+    }
+
+    a();
+  }, [popup]);
+
   const [createPortfolioModalOpen, setCreatePortfolioModalOpen] = useState(false);
   const [specificPortfolioModalOpen, setSpecificPortfolioModalOpen] = useState(false);
   const [addTransactionModalOpen, setAddTransactionModalOpen] = useState(false);
 
-  telegram_showAlert(popup, `The theme is ${miniApp.isDark ? 'dark' : 'light'}. Theme params: ${JSON.stringify(themeParams)}`)
   return (
     <AppRoot
       appearance={miniApp.isDark ? 'dark' : 'light'}
