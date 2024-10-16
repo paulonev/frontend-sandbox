@@ -2,7 +2,7 @@
 import { MainScreen } from './vocabulary';
 import { formatGainLossWithPercentage, formatPrice } from '../Common/formatter';
 import styled from 'styled-components';
-import { Green, Red, SecondaryHeaderColor } from '../Common/colors';
+import { Black, Green, Red, SecondaryHeaderColor } from '../Common/colors';
 import { isPositiveNumber } from './utils';
 import { AppGlobalCurrencyCode } from '../constants';
 import { PortfolioDifference } from '../Entities/Portfolio/types';
@@ -55,6 +55,7 @@ const TotalAmountStyled = styled.div`
     font-family: "Inter", sans-serif;
     font-weight: 800;
     font-size: 20px;
+    color: ${Black};
 `;
 
 const GainLossAmountStyled = styled.div<{ $isGain: boolean; }>`
