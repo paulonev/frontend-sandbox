@@ -1,5 +1,5 @@
 import styled, { CSSProperties } from "styled-components";
-import { Black } from "../Common/colors";
+import { Black } from "../colors";
 
 export const LabelStyled = styled.label`
     display: block;

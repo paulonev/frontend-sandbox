@@ -2,13 +2,16 @@ import { Control, Controller } from "react-hook-form";
 import { NewPortfolioFormData } from "./types";
 import { FormGroup, Input, Label } from "reactstrap";
 import { Vocab } from "./vocabulary";
-import { FormFieldStyled } from "./styles";
+import { FormFieldStyled } from "../Common/forms/styles";
+import styled from "styled-components";
+import { Black } from "../Common/colors";
 
 interface IMainPortfolioSwitchProps {
     readonly control: Control<NewPortfolioFormData>;
+    readonly disabled: boolean;
 }
 
-export const MainPortfolioSwitch = ({ control }: IMainPortfolioSwitchProps): JSX.Element => {
+export const MainPortfolioSwitch = ({ control, disabled }: IMainPortfolioSwitchProps): JSX.Element => {
     return (
         <Controller 
             name="isMainPortfolio"
@@ -26,10 +29,21 @@ export const MainPortfolioSwitch = ({ control }: IMainPortfolioSwitchProps): JSX
                             checked={value}
                             innerRef={ref}
                             style={{ float: "right", minHeight: 22, width: 40 }}
+                            disabled={disabled}
                         />
+                        {disabled && (
+                            <InfoParagraphStyled>{Vocab.FirstPortfolioShouldBeMainWarningRu}</InfoParagraphStyled>
+                        )}
                     </FormGroup>
                 </FormFieldStyled>
             )}
         />
     )
 }
+
+// [== STYLES ==]
+const InfoParagraphStyled = styled.p`
+    color: ${Black};
+    font-size: 11px;
+    margin-top: 5px;
+`;

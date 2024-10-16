@@ -1,7 +1,7 @@
 import { Vocab } from "./vocabulary";
 import { FieldError, UseFormRegister } from "react-hook-form";
 import { NewPortfolioFormData } from "./types";
-import { FormFieldStyled, InputStyled, LabelStyled } from "./styles";
+import { FormFieldStyled, InputStyled, LabelStyled } from "../Common/forms/styles";
 import { Red } from "../Common/colors";
 import styled from "styled-components";
 
@@ -17,6 +17,9 @@ export const NameInput = ({ register, errors }: INameInputProps): JSX.Element =>
             <InputStyled {...register("name", { required: true })} aria-invalid={errors ? "true" : "false"}/>
             {errors?.type === "required" && (
                 <ErrorTextStyled role="alert">{Vocab.EmptyPortfolioNameErrorRu}</ErrorTextStyled>
+            )}
+            {errors?.type === "validate" && (
+                <ErrorTextStyled role="alert">{errors?.message}</ErrorTextStyled>
             )}
         </FormFieldStyled>
     )

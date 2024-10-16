@@ -1,30 +1,45 @@
 import styled from "styled-components";
-import { PortfolioItem } from "./types";
 import { PortfolioCard } from "./PortfolioCard";
-import addPortfolioButton from '../assets/add-portfolio-btn.png'
 import { useModalState } from "../Common/ModalStateProvider";
+import { AddButton } from "../Common/components/AddButtonSvg";
+import { PortfolioItem } from "../Api/portfolios.schema";
+import { useUnlimitedPortfoliosViolationCheck } from "../PremiumFeatures/PremiumFeaturesProvider";
+import { telegram_showAlert } from "../Telegram/utils";
+import { MainScreen } from "./vocabulary";
+import { usePopup } from "@telegram-apps/sdk-react";
 
 interface IPortfolioCarouselProps {
     readonly items: PortfolioItem[];
+    readonly selectPortfolio: (item: PortfolioItem) => void;
 }
 
-export const PortfolioCarousel = ({ items }: IPortfolioCarouselProps) => {
+export const PortfolioCarousel = ({ items, selectPortfolio }: IPortfolioCarouselProps) => {
+    const popup = usePopup();
     const modalState = useModalState("createPortfolio");
+    const { violated } = useUnlimitedPortfoliosViolationCheck();
 
-    const handleClickAddPortfolio = () => {
+    const handleClickAddPortfolio = async () => {
+        //TODO: pass valid isPremium
+        const isPremium = false;
+        if (violated(isPremium)) {
+            console.log('portfolios amount violation screen');
+            await telegram_showAlert(popup, MainScreen.MaximumAllowedPortfoliosViolationRu);
+            return;
+        }
+
         if (modalState) {
-            const { setOpen } = modalState;
-            setOpen(value => !value);
+            const { open, setOpen } = modalState;
+            setOpen(!open);
         }
     }
 
     return (
         <CarouselContainerStyled>
             <CarouselStyled>
-                {items.length ? items.map((x, index) => <PortfolioCard key={index} item={x} />) : null}
+                {items.length ? items.map((x, index) => <PortfolioCard key={index} item={x} onClick={selectPortfolio} />) : null}
                 <AddButtonCardStyled>
                     <button onClick={handleClickAddPortfolio}>
-                        <img src={addPortfolioButton} alt="Add Portfolio" />
+                        <AddButton />
                     </button>
                 </AddButtonCardStyled>
             </CarouselStyled>
