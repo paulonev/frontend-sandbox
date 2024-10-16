@@ -14,8 +14,10 @@ import { CustomQueryErrorBoundary } from "../CustomQueryErrorBoundary";
 import { FallbackWithGoBackButton } from "../Common/components/FallbackWithGoBack";
 import CreatePortfolioModalFunction from "../Modals/CreatePortfolioModal";
 import { MainScreenQueryKey } from "../constants";
+import { useLaunchParams } from "@telegram-apps/sdk-react";
 
 const MainScreen = () => {
+    const lp = useLaunchParams();
     const queryClient = useQueryClient();
 
     const CreatePortfolioModalComponent = useMemo(() => CreatePortfolioModalFunction({ 
@@ -75,6 +77,12 @@ const MainScreen = () => {
             </Section>
             <Section enableDelimiter={false}>
                 <Portfolios items={data!.items} selectPortfolio={selectPortfolio} />
+            </Section>
+            <Section>
+                <span style={{ color: "#000"}}>
+                    {"Theme params: \n "}
+                    {JSON.stringify(lp.themeParams)}
+                </span>
             </Section>
         </ProvidePopularCoins>
     );

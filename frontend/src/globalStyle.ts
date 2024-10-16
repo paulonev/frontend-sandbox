@@ -32,8 +32,7 @@ export const GlobalStyle = createGlobalStyle`
         display: block;
         max-width: 1280px;
         font-family: "Inter", sans-serif;
-        background-color: var(--tg-theme-bg-color);
-        #background-color: ${BodyBackgroundColor};
+        background-color: ${BodyBackgroundColor};
     }
 
     h1 {
