@@ -39,34 +39,6 @@ const MOCK_PORTFOLIOS: PortfoliosData = {
             tags: ["Crypto"],
             colorScheme: "pattensBlue"
         },
-        {
-            id: 3,
-            meta: {
-                volume: 5672,
-                gainLoss: {
-                    inVolume: 56.32,
-                    inPercentage: 0.0102,
-                }
-            },
-            isMain: false,
-            name: "Металлы",
-            tags: ["Crypto"],
-            colorScheme: "springSun"
-        },
-        {
-            id: 4,
-            meta: {
-                volume: 5672,
-                gainLoss: {
-                    inVolume: 56.32,
-                    inPercentage: 0.0102,
-                }
-            },
-            isMain: false,
-            name: "Металлы",
-            tags: ["Crypto"],
-            colorScheme: "hintOfGreen"
-        }
     ],
 };
 
