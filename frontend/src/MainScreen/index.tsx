@@ -14,9 +14,15 @@ import { CustomQueryErrorBoundary } from "../CustomQueryErrorBoundary";
 import { FallbackWithGoBackButton } from "../Common/components/FallbackWithGoBack";
 import CreatePortfolioModalFunction from "../Modals/CreatePortfolioModal";
 import { MainScreenQueryKey } from "../constants";
+import { useLaunchParams, useMiniApp, usePopup } from "@telegram-apps/sdk-react";
+import { Black } from "../Common/colors";
+import { telegram_showAlert } from "../Telegram/utils";
 
 const MainScreen = () => {
+    const lp = useLaunchParams();
     const queryClient = useQueryClient();
+    const popup = usePopup();
+    const miniApp = useMiniApp();
 
     const CreatePortfolioModalComponent = useMemo(() => CreatePortfolioModalFunction({ 
         modalName: "createPortfolio", 
@@ -51,6 +57,15 @@ const MainScreen = () => {
         refetch();
     }
 
+    const onRefreshClick = async () => {
+        // if (telegram_isClientEnabled() && telegram_isVersionAtLeast("6.0")) {
+            await telegram_showAlert(popup, "The app will reload", () => {
+                window.location.href = "https://t.me/randomtwa1_bot/app1";
+                miniApp.close();
+            });
+        // }
+    }
+
     return !portfolioId && (isLoading || isRefetching) ? (
         <>
             <Section>
@@ -75,6 +90,14 @@ const MainScreen = () => {
             </Section>
             <Section enableDelimiter={false}>
                 <Portfolios items={data!.items} selectPortfolio={selectPortfolio} />
+            </Section>
+            <Section>
+                <button onClick={onRefreshClick}>Refresh</button>
+            </Section>
+            <Section>
+                <span style={{ color: Black, textWrap: "wrap" }}>
+                    {"auth_date: "}{lp.initData?.authDate.toString()}
+                </span>
             </Section>
         </ProvidePopularCoins>
     );
