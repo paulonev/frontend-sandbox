@@ -8,6 +8,7 @@ import { usePortfolioQuery } from "./usePortfolioQuery";
 import { AddTransactionModal } from "../Modals/AddTransactionModal";
 import NoTransactionsScreen from "../NoTransactionsScreen";
 import { AddCurrencyTransactionModal } from "../Modals/AddCurrencyTransactionModal";
+import { ApiError } from "../Entities/Errors/ApiError";
 
 interface IPortfolioScreenProps {
     readonly id: number;
@@ -28,6 +29,7 @@ const PortfolioScreen = (props: IPortfolioScreenProps): JSX.Element => {
         return <div>Portfolio Not Found</div>;
     }
     
+    throw new ApiError({ message: "Test" } as Error, "afd0d11f-c81f-4e92-99ee-8f645aef117c");
 
     return (isLoading || isRefetching) ? (
         <>

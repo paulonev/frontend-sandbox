@@ -1497,3 +1497,23 @@ textarea.form-control-lg {
 }
 
 /*# sourceMappingURL=custom-bootstrap.css.map */
+
+/* custom section */
+.custom-popover {
+  position: absolute;
+  background-color: #000;
+  padding: 0;
+  border-radius: 8px;
+  max-width: 200px;
+  z-index: 1080;
+  transition: opacity 0.3s ease;
+  opacity: 1;
+  color: #fff;
+  font-size: 12px;
+  font-family: "Inter", sans-serif;
+}
+
+.custom-popover-hidden {
+  opacity: 0;
+  visibility: hidden;
+}
