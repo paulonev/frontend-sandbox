@@ -7,7 +7,7 @@ const MOCK_TOPTENCOINS: CoinOptions = [
         coinName: "Bitcoin",
         coinTicker: "BTC",
         pricePerUnit: "58669.22",
-        webp64: "/img/btc.webp"
+        webp64: "./img/btc.webp"
     },
     {
         coinName: "Ethereum",

@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { ErrorBoundary, FallbackProps } from "react-error-boundary";
 import styled from "styled-components";
 import { PortfolioCardTheme } from "./MainScreen/PortfolioCardTheme";
-import { White } from "./Common/colors";
+import { Black, White } from "./Common/colors";
 import { ApiError } from "./Entities/Errors/ApiError";
 import { Vocab } from "./vocabulary";
 
@@ -104,6 +104,7 @@ const ContainerStyled = styled.div`
     flex-flow: column;
     justify-content: center;
     align-items: center;
+    color: ${Black};
 `;
 
 const ButtonStyled = styled.button`
@@ -140,11 +141,11 @@ const InlineInputStyled = styled.input.attrs({
     font-family: "Inter", sans-serif;
     margin-left: 5px;
     text-align: center;
-    max-width: 285px;
+    min-width: 265px;
 `;
 
 const CopyButtonStyled = styled.button`
-    background-image: url(/img/copy-icon.png);
+    background-image: url(./img/copy-icon.png);
     background-size: 14px;
     background-color: #fff;
     background-position: 50%;
