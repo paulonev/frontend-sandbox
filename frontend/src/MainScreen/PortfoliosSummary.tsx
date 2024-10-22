@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { MainScreen } from './vocabulary';
-import { formatGainLoss, formatPrice } from '../Common/formatter';
+import { formatGainLossWithPercentage, formatPrice } from '../Common/formatter';
 import styled from 'styled-components';
-import { Green, SecondaryHeaderColor } from '../Common/colors';
-import { DifferenceType, isGain, PortfolioDifference } from './types';
+import { Black, Green, Red, SecondaryHeaderColor } from '../Common/colors';
+import { isPositiveNumber } from './utils';
 import { AppGlobalCurrencyCode } from '../constants';
+import { PortfolioDifference } from '../Entities/Portfolio/types';
 
 interface IPortfoliosSummary {
     readonly totalAmount: number;
@@ -22,8 +23,8 @@ export const PortfoliosSummary = ({
             <HeaderStyled>{MainScreen.OverallVolumeRu}</HeaderStyled>
             <ContentStyled>
                 <TotalAmountStyled>{formatPrice(totalAmount, currency)}</TotalAmountStyled>
-                <GainLossAmountStyled $type={difference.type}>
-                    {formatGainLoss(difference.inVolume, currency, difference.inPercentage, difference.type)}
+                <GainLossAmountStyled $isGain={isPositiveNumber(difference.inVolume)}>
+                    {formatGainLossWithPercentage(difference.inVolume, currency, difference.inPercentage)}
                 </GainLossAmountStyled>
             </ContentStyled>
         </SectionStyled>
@@ -54,11 +55,12 @@ const TotalAmountStyled = styled.div`
     font-family: "Inter", sans-serif;
     font-weight: 800;
     font-size: 20px;
+    color: ${Black};
 `;
 
-const GainLossAmountStyled = styled.div<{ $type: DifferenceType; }>`
+const GainLossAmountStyled = styled.div<{ $isGain: boolean; }>`
     font-family: "Inter", sans-serif;
     font-weight: 500;
     font-size: 14px;
-    color: ${props => isGain(props.$type) ? Green : "red"};
+    color: ${props => props.$isGain ? Green : Red};
 `;

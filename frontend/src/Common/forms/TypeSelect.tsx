@@ -1,25 +1,26 @@
-import { Control, Controller } from "react-hook-form";
-import { NewPortfolioFormData } from "./types";
+import { Control, Controller, FieldValues, Path } from "react-hook-form";
 import { FormFieldStyled, LabelStyleRules } from "./styles";
-import { Vocab } from "./vocabulary";
 import { FormGroup, Input, Label } from "reactstrap";
 import { CSSProperties } from "react";
-import { Black } from "../Common/colors";
+import { Black } from "../colors";
 
-interface ITypeSelectProps {
-    readonly control: Control<NewPortfolioFormData>;
+interface ITypeSelectProps<T extends FieldValues> {
+    readonly name: Path<T>;
+    readonly label: string;
+    readonly control: Control<T>;
+    readonly renderOptions: () => JSX.Element;
 }
 
-export const TypeSelect = ({ control }: ITypeSelectProps) => {
+export const TypeSelect = <T extends FieldValues>({ name, label, control, renderOptions }: ITypeSelectProps<T>) => {
     return (
         <Controller 
-            name="portfolioType"
+            name={name}
             control={control}
             render={({ field: { onChange, onBlur, name, value, ref }}) => (
                 <FormFieldStyled>
                     <FormGroup>
-                        <Label htmlFor="portfolioType" style={LabelStyleRules}>
-                            {Vocab.PortfolioTypeRu}
+                        <Label htmlFor={name} style={LabelStyleRules}>
+                            {label}
                         </Label>
                         <Input
                             type="select"
@@ -30,10 +31,7 @@ export const TypeSelect = ({ control }: ITypeSelectProps) => {
                             value={value}
                             innerRef={ref}
                         >
-                            <option value="crypto">{Vocab.CryptoSelectOptionRu}</option>
-                            <option value="stocks" disabled={true} aria-disabled={true}>
-                                {Vocab.StocksSelectOptionRu}
-                            </option>
+                            {renderOptions()}
                         </Input>
                     </FormGroup>
                 </FormFieldStyled>

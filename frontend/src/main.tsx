@@ -1,15 +1,11 @@
-import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
-import { GlobalStyle } from './globalStyle';
+import { App } from './App.tsx';
 
-import WebApp from '@twa-dev/sdk'
+// Uncomment when integrate telegram ui kit
+import '@telegram-apps/telegram-ui/dist/styles.css';
 
-WebApp.ready();
+// Uncomment this import in case, you would like to develop the application even outside
+// the Telegram application, just in your browser.
+import "./mockEnv.ts"
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-    <React.StrictMode>
-        <GlobalStyle />
-        <App />
-    </React.StrictMode>,
-)
+ReactDOM.createRoot(document.getElementById('root')!).render(<App />);

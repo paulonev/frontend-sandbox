@@ -1,21 +1,30 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import { defaultValues, NewPortfolioFormData } from "./types";
 import { NameInput } from "./NameInput";
-import { TypeSelect } from "./TypeSelect";
 import { MainPortfolioSwitch } from "./MainPortfolioSwitch";
 import { ColorCircles } from "./ColorCircles";
-import { White } from "../Common/colors";
 import { Vocab } from "./vocabulary";
-import styled from "styled-components";
-import { PortfolioCardTheme } from "../MainScreen/PortfolioCardTheme";
 import { PortfolioApi } from "../Api/PortfolioApi";
-import { useModalState } from "../Common/ModalStateProvider";
+import { Modals, useModalState } from "../Common/ModalStateProvider";
 import { Spinner } from "reactstrap";
 import { AxiosError } from "axios";
-import { telegram_showAlert } from "../Telegram/utils";
+import { PrimaryButton } from "../Common/components/PrimaryButton";
+import styled from "styled-components";
+import { useEffect } from "react";
+import { AxiosErrorResponse } from "../Api/api.extensions";
+import { telegram_isClientEnabled, telegram_isVersionAtLeast, telegram_showAlert } from "../Telegram/utils";
+import { Vocab as GlobalVocab } from "../vocabulary";
+import { usePopup } from "@telegram-apps/sdk-react";
+import { TypeSelect } from "../Common/forms/TypeSelect";
 
-const CreatePortfolioScreen = (): JSX.Element => {
-    const modalState = useModalState("createPortfolio");
+interface ICreatePortfolioScreenProps {
+    readonly hasPortfolios: boolean;
+    readonly modalName: Modals;
+}
+
+const CreatePortfolioScreen = ({ hasPortfolios, modalName }: ICreatePortfolioScreenProps): JSX.Element => {
+    const popup = usePopup();
+    const modalState = useModalState(modalName);
 
     const { 
         register, 
@@ -23,58 +32,81 @@ const CreatePortfolioScreen = (): JSX.Element => {
         watch,
         handleSubmit,
         setError,
+        setValue,
+        clearErrors,
         formState: { errors, isSubmitting, isValid } 
-    } = useForm<NewPortfolioFormData>({ defaultValues });
+    } = useForm<NewPortfolioFormData>({ defaultValues: {...defaultValues, isMainPortfolio: !hasPortfolios } });
     const watchIsMainPortfolio = watch("isMainPortfolio", defaultValues.isMainPortfolio);
 
     const onFormSubmit: SubmitHandler<NewPortfolioFormData> = async (data) => {
         try {
+            clearErrors();
             await PortfolioApi.createPortfolio(data);
             modalState?.setOpen(false);
         }
         catch (ex) {
-            const axiosError = ex as AxiosError;
-            setError("root.serverError", {
-                type: axiosError.code,
-                message: axiosError.message
-            });
+            if (ex instanceof AxiosError) {
+                const responsePayload = ex.response?.data as AxiosErrorResponse;
+                if (responsePayload.status === 409) {
+                    setError("name", { type: "validate", message: Vocab.NameForPortfolioIsInUseRu })
+                } else {
+                    setError("root.serverError", {
+                        type: ex.code,
+                        message: ex.message
+                    });
 
-            telegram_showAlert(Vocab.ServerErrorRu);
+                    if (telegram_isClientEnabled() && telegram_isVersionAtLeast("6.0")) {
+                        await telegram_showAlert(popup, GlobalVocab.ServerErrorRu);
+                    }
+                }
+            }
         }
     }
+
+    useEffect(() => {
+        const { unsubscribe } = watch((data) => {
+            if (!!data.isMainPortfolio && data.portfolioColor !== "pattensBlue") {
+                setValue("portfolioColor", "pattensBlue");
+            }
+        });
+
+        return () => unsubscribe();
+    }, [setValue, watch]);
 
     return (
         <form onSubmit={handleSubmit(onFormSubmit)}>
             <NameInput register={register} errors={errors.name} />
-            <TypeSelect control={control} />
-            <MainPortfolioSwitch control={control} />
-            {!watchIsMainPortfolio && <ColorCircles control={control} />}
+            <TypeSelect 
+                name={"portfolioType"}
+                control={control}
+                label={Vocab.PortfolioTypeRu}
+                renderOptions={() => (
+                    <>
+                        <option value="crypto">{Vocab.CryptoSelectOptionRu}</option>
+                        <option value="stocks" disabled={true} aria-disabled={true}>
+                            {Vocab.StocksSelectOptionRu} ({GlobalVocab.SoonRu})
+                        </option>
+                    </>
+                )}
+            />
+            <MainPortfolioSwitch control={control} disabled={!hasPortfolios} />
+            {hasPortfolios && !watchIsMainPortfolio && <ColorCircles control={control} />}
             
-            <ButtonStyled type="submit" disabled={!isValid || isSubmitting}>
-                {isSubmitting && <Spinner size="sm">{''}</Spinner>}
-                {' '}
-                {Vocab.SubmitButtonRu}
-            </ButtonStyled>
+            <ButtonContainerStyled>
+                <PrimaryButton type="submit" disabled={!isValid || isSubmitting}>
+                    {isSubmitting && <Spinner size="sm">{''}</Spinner>}
+                    {' '}
+                    {Vocab.SubmitButtonRu}
+                </PrimaryButton>
+            </ButtonContainerStyled>
         </form>
     )
 }
 
 export default CreatePortfolioScreen;
-// [== STYLES ==]
-const ButtonStyled = styled.button`
-    background-color: ${PortfolioCardTheme.main.bgColor};
-    color: ${White};
 
+// [== STYLES ==]
+const ButtonContainerStyled = styled.div`
     position: absolute;
     bottom: 20px;
-    width: 91.5vw;
-
-    border-radius: 12.13px;
-    height: 40px;
-    text-align: center;
-    box-sizing: border-box;
-
-    &:disabled {
-        background-color: rgba(66, 106, 249, 0.4);
-    }
 `;
