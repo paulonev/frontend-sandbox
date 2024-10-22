@@ -50,7 +50,7 @@ function getFallbackRender({ Footer }: { Footer?: React.ReactNode }) {
         return (
             <ScreenStyled>
                 <ContainerStyled>
-                    <img src="/img/stone-face.png" />
+                    <img src="./img/stone-face.png" />
                     <SomethingWengWrongStyled>{Vocab.GeneralErrorRu}</SomethingWengWrongStyled>
                     {error instanceof ApiError ? (
                         <ErrorInfoContainerStyled>
