@@ -56,7 +56,7 @@ function getFallbackRender({ Footer }: { Footer?: React.ReactNode }) {
                         <ErrorInfoContainerStyled>
                             <p style={{ margin: 0, padding: 0 }}>{Vocab.ContactCustomerSupportRu}</p>
                             {error.errorId && (
-                                <span>
+                                <div style={{ display: "inline-block"}}>
                                     <InlineInputStyled value={error.errorId} />
                                     <CopyButtonStyled ref={triggerBtnRef} onClick={async() => await copyButtonClicked(error.errorId!)}/>
                                     <div ref={popoverRef} className="custom-popover custom-popover-hidden">
@@ -70,7 +70,7 @@ function getFallbackRender({ Footer }: { Footer?: React.ReactNode }) {
                                     >
                                         <PopoverBody style={{ padding: 5, margin: 0 }}>{Vocab.CopiedRu}</PopoverBody>
                                     </UncontrolledPopover> */}
-                                </span>
+                                </div>
                             )}
                             {/* TODO: use openTelegramLink() for opening support chat*/}
                         </ErrorInfoContainerStyled>
